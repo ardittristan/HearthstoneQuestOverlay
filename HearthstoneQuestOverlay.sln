@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HearthMirrorGenerator", "HearthMirrorGenerator\HearthMirrorGenerator.csproj", "{E02E70AD-FE8E-4C64-9A9B-6720FDAF3784}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestOverlayPlugin", "QuestOverlayPlugin\QuestOverlayPlugin.csproj", "{48EAC139-5942-437D-BFD1-01823ACA9930}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSReflection", "HSReflection\HSReflection.csproj", "{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E02E70AD-FE8E-4C64-9A9B-6720FDAF3784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E02E70AD-FE8E-4C64-9A9B-6720FDAF3784}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E02E70AD-FE8E-4C64-9A9B-6720FDAF3784}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E02E70AD-FE8E-4C64-9A9B-6720FDAF3784}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48EAC139-5942-437D-BFD1-01823ACA9930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48EAC139-5942-437D-BFD1-01823ACA9930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48EAC139-5942-437D-BFD1-01823ACA9930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48EAC139-5942-437D-BFD1-01823ACA9930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D24D0C79-260D-4617-9D7F-AD4D97F73CFD}
+	EndGlobalSection
+EndGlobal
