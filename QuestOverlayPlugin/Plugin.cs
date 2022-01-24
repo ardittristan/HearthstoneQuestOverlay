@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Controls;
+using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Enums.Hearthstone;
@@ -10,7 +12,11 @@ using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
 using HSReflection;
+using Newtonsoft.Json;
 using QuestOverlayPlugin.Overlay;
+using Shared;
+using TextureExtractor;
+using Core = Hearthstone_Deck_Tracker.API.Core;
 
 namespace QuestOverlayPlugin
 {
@@ -48,6 +54,8 @@ namespace QuestOverlayPlugin
         {
             Instance = this;
 
+            SetupIPC();
+
             Log.Info("Loaded Hearthstone Quest Overlay.");
 
             _questListButton = new QuestListButton(QuestListVM);
@@ -79,6 +87,26 @@ namespace QuestOverlayPlugin
             GameEvents.OnModeChanged.Add(Update);
             Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
             if (Core.Game.IsRunning) Update();
+
+            Extractor.Extract("initial_prog_global-0");
+        }
+
+        private static void SetupIPC()
+        {
+            try
+            {
+                using StreamWriter sw = File.CreateText(HSDataOptions.FilePath);
+                sw.WriteLine(JsonConvert.SerializeObject(new HSData
+                {
+                    AssemblyPath = Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay"),
+                    AssetsPath = Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win"),
+                    HearthstoneBuild = Core.Game.MetaData.HearthstoneBuild.ToString()
+                }));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
         }
 
         public void OnUnload()

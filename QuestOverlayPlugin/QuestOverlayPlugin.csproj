@@ -58,6 +58,11 @@
       <HintPath>$(HSDTPath)\MahApps.Metro.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(HSDTPath)\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -70,6 +75,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Texture2DExtractor\HSData.cs" />
     <Compile Include="Overlay\QuestListButton.xaml.cs">
       <DependentUpon>QuestListButton.xaml</DependentUpon>
     </Compile>
@@ -95,6 +101,10 @@
     <ProjectReference Include="..\HSReflection\HSReflection.csproj">
       <Project>{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}</Project>
       <Name>HSReflection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TextureExtractor\TextureExtractor.csproj">
+      <Project>{5caaa1ce-4591-485f-bc9a-eb08833b2814}</Project>
+      <Name>TextureExtractor</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
