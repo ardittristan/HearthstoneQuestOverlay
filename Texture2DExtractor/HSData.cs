@@ -4,6 +4,7 @@
 // ReSharper disable once CheckNamespace
 namespace Shared
 {
+
     internal static class HSDataOptions
     {
         public static readonly string FilePath = Path.Combine(Path.GetTempPath(), "QuestOverlayPluginIPC.json");
