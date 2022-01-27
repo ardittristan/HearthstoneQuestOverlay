@@ -6,18 +6,14 @@
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MSBuildTasks">
-      <Version>1.5.0.235</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
+  <Target Name="PreBuildClone" BeforeTargets="Build">
+    <Exec Condition="!Exists('obj/AssetRipper')" Command="git clone https://github.com/AssetRipper/AssetRipper.git obj/AssetRipper" />
+    <Exec Command="cd obj\AssetRipper &#38;&#38; git fetch --all" />
+    <Exec Command="cd obj\AssetRipper &#38;&#38; git reset --hard origin/master" />
+  </Target>
 
-  <Target Name="PreCompileClone">
-	<MSBuild.Community.Tasks.Git.GitClient Condition="!Exists('obj/AssetRipper')" Command="clone" Arguments="https://github.com/AssetRipper/AssetRipper.git obj/AssetRipper" />
-    <MSBuild.Community.Tasks.Git.GitClient Command="fetch" Arguments="--all" LocalPath="obj/AssetRipper" />
-    <MSBuild.Community.Tasks.Git.GitClient Command="reset" Arguments="--hard origin/master" LocalPath="obj/AssetRipper" />
+  <Target Name="PreCleanClean" BeforeTargets="Clean">
+    <Exec Command="rmdir /s /q AssetRipper" IgnoreExitCode="true" WorkingDirectory="obj" />
   </Target>
 
 </Project>

@@ -53,12 +53,5 @@
     <Compile Include="Extractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AssetRipperFetcher\AssetRipperFetcher.csproj">
-      <Project>{6f567ca2-c217-4dbb-b31f-559ca35c629e}</Project>
-      <Name>AssetRipperFetcher</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

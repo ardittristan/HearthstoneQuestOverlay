@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project InitialTargets="PreBuild" Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,11 +19,11 @@
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
   </ItemGroup>
 
+  <Target Name="PreBuild">
+    <Exec Command="dotnet build" WorkingDirectory="..\AssetRipperFetcher" />
+  </Target>
+
   <ItemGroup>
-    <ProjectReference Include="..\AssetRipperFetcher\AssetRipperFetcher.csproj">
-      <CopyLocal>False</CopyLocal>
-      <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
-    </ProjectReference>
     <ProjectReference Include="..\AssetRipperFetcher\obj\AssetRipper\AssetRipperLibrary\AssetRipperLibrary.csproj" />
   </ItemGroup>
 
