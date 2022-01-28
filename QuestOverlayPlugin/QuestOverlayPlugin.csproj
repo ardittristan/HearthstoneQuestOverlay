@@ -102,10 +102,6 @@
       <Project>{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}</Project>
       <Name>HSReflection</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TextureExtractor\TextureExtractor.csproj">
-      <Project>{5caaa1ce-4591-485f-bc9a-eb08833b2814}</Project>
-      <Name>TextureExtractor</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Overlay\QuestListButton.xaml">
@@ -124,6 +120,13 @@
   <ItemGroup>
     <Resource Include="Resources\QuestIcon.png" />
   </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="Build">
+    <ItemGroup>
+      <Texture2DExtractorFiles Include="..\Texture2DExtractor\bin\Release\net6.0\publish\**\*.*" />
+    </ItemGroup>
+    <Exec Command="dotnet publish -p:PublishProfile=PublishRelease" WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
+    <Copy SourceFiles="@(Texture2DExtractorFiles)" DestinationFolder="$(TargetDir)Texture2DExtractor" SkipUnchangedFiles="true" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)*.*" $(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay"</PostBuildEvent>

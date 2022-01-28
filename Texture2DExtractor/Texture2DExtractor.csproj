@@ -1,4 +1,4 @@
-﻿<Project InitialTargets="PreBuild" Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,24 +7,15 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;MSB3270</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;MSB3270</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
   </ItemGroup>
 
-  <Target Name="PreBuild">
-    <Exec Command="dotnet build" WorkingDirectory="..\AssetRipperFetcher" />
-  </Target>
-
   <ItemGroup>
-    <ProjectReference Include="..\AssetRipperFetcher\obj\AssetRipper\AssetRipperLibrary\AssetRipperLibrary.csproj" />
+    <ProjectReference Include="..\AssetRipper\AssetRipperLibrary\AssetRipperLibrary.csproj">
+      <SetConfiguration Condition="'$(PublishProtocol)'==''">Configuration=$(Configuration)Windows</SetConfiguration>
+      <SetConfiguration Condition="'$(PublishProtocol)'!=''">Configuration=ReleaseWindows</SetConfiguration>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

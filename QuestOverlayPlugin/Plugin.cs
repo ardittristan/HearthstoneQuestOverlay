@@ -15,7 +15,6 @@ using HSReflection;
 using Newtonsoft.Json;
 using QuestOverlayPlugin.Overlay;
 using Shared;
-using TextureExtractor;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
 namespace QuestOverlayPlugin
@@ -88,7 +87,7 @@ namespace QuestOverlayPlugin
             Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
             if (Core.Game.IsRunning) Update();
 
-            Extractor.Extract("initial_prog_global-0");
+            //Extractor.Extract("initial_prog_global-0");
         }
 
         private static void SetupIPC()
