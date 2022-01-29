@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Texture2DExtractor": {
+      "commandName": "Project",
+      "commandLineArgs": "initial_prog_global-0",
+      "hotReloadEnabled": false
+    }
+  }
+}

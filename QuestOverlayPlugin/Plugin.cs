@@ -87,7 +87,9 @@ namespace QuestOverlayPlugin
             Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
             if (Core.Game.IsRunning) Update();
 
-            //Extractor.Extract("initial_prog_global-0");
+#pragma warning disable CS4014
+            Extractor.ExtractAsync("initial_prog_global-0");
+#pragma warning restore CS4014
         }
 
         private static void SetupIPC()

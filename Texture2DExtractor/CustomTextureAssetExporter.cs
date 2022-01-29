@@ -12,7 +12,7 @@ namespace Texture2DExtractor;
 
 public class CustomTextureAssetExporter : TextureAssetExporter
 {
-    private ImageExportFormat ImageExportFormat { get; set; }
+    private ImageExportFormat ImageExportFormat { get; }
 
     public CustomTextureAssetExporter(LibraryConfiguration configuration) : base(configuration)
     {
