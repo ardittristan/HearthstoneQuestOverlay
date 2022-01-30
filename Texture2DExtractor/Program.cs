@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+#if DEBUG
+using System.Diagnostics;
+#endif
 using System.IO;
-using System.Reflection;
 using System.Text.Json;
 using AssetRipper.Core.IO.MultiFile;
 using AssetRipper.Core.Logging;
 using AssetRipper.Core.Utils;
+using Bluegrams.Application;
+using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Shared;
-using Cfg = Texture2DExtractor.Config.Cfg;
 
 namespace Texture2DExtractor;
 
@@ -18,11 +22,7 @@ internal static class Program
     internal static readonly HSData HsData =
         JsonSerializer.Deserialize<HSData>(File.ReadAllText(HSDataOptions.FilePath));
 
-    internal static readonly string AssemblyPath = HsData.AssemblyPath;
-
-    internal static readonly string AssetsPath = HsData.AssetsPath;
-
-    public static readonly string ExportPath = Path.Combine(AssemblyPath, "TextureExtractor", "Export");
+    public static readonly string ExportPath = Path.Combine(HsData.AssemblyPath, "Texture2DExtractor", "Export");
         
     public class FileDoesNotExitException : Exception
     {
@@ -32,23 +32,29 @@ internal static class Program
     internal class Options
     {
         public string FileToExport { get; init; }
-        public IReadOnlyList<string> FilesToExport { get; init; }
-        public Config.Cfg cfg = new();
+        public IReadOnlyList<string> FilesToExport { get; set; }
     }
 
     public static void Main(string[] args)
     {
+        SetupSettings();
+
         Options options = new()
         {
-            FileToExport = Path.Combine(AssetsPath, args[0] + ".unity3d"),
-            FilesToExport = new[] { args[0] }
+            FileToExport = Path.Combine(HsData.AssetsPath, args[0] + ".unity3d")
         };
-
-        options.cfg.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
-            "settings.xml"));
+        options.FilesToExport = new[] { options.FileToExport };
 
         bool validated = ValidateOptions(options);
         if (validated) Run(options);
+    }
+
+    private static void SetupSettings()
+    {
+        PortableSettingsProvider.SettingsFileName = "settings.config";
+        PortableSettingsProviderBase.SettingsDirectory = ExportPath;
+        PortableSettingsProviderBase.AllRoaming = true;
+        PortableSettingsProvider.ApplyProvider(Properties.Settings.Default);
     }
 
     private static bool ValidateOptions(Options options)
@@ -56,13 +62,17 @@ internal static class Program
         if (!MultiFileStream.Exists(options.FileToExport))
             throw new FileDoesNotExitException();
 
-        return IsForced() || HasUpdated();
+#if DEBUG
+        Debug.WriteLine("ValidateOptions: " + !(IsForced() || HasUpdated(options)));
+        return true;
+#else
+        return !(IsForced() || HasUpdated(options));
+#endif
     }
 
-    private static bool HasUpdated()
+    private static bool HasUpdated(Options options)
     {
-
-        return true;
+        return string.Equals(Properties.Settings.Default.VersionStore[options.FileToExport], HsData.HearthstoneBuild);
     }
 
     private static bool IsForced() =>
@@ -76,10 +86,24 @@ internal static class Program
         Logger.AllowVerbose = false;
         Logger.Add(new ConsoleLogger(false));
         Logger.Add(new FileLogger(new FileInfo(ExecutingDirectory.Combine(DefaultLogFileName)).FullName));
+
         CustomRipper ripper = new();
         ripper.Load(options.FilesToExport);
         PrepareExportDirectory(Path.Combine(ExportPath, fileToExport.Name));
         ripper.ExportProject(Path.Combine(ExportPath, fileToExport.Name));
+
+        DeleteMeta(Path.Combine(ExportPath, fileToExport.Name));
+
+        Properties.Settings.Default.VersionStore[options.FileToExport] = HsData.HearthstoneBuild;
+        Properties.Settings.Default.Save();
+    }
+
+    private static void DeleteMeta(string lookupDir)
+    {
+        Matcher matcher = new();
+        matcher.AddInclude("**/*.meta");
+        foreach (FilePatternMatch match in matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(lookupDir))).Files)
+            File.Delete(Path.Combine(lookupDir, match.Path));
     }
 
     private static void PrepareExportDirectory(string path)

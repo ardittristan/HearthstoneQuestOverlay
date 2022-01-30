@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
+using Hearthstone_Deck_Tracker;
+using Hearthstone_Deck_Tracker.Utility.Logging;
 
 #nullable enable
 
@@ -10,7 +12,7 @@ namespace QuestOverlayPlugin
     public static class Extractor
     {
         public static readonly string ExtractorFolder =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Texture2DExtractor");
+            Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "Texture2DExtractor");
 
         public static async Task<bool> ExtractAsync(string fileName, bool force = false)
         {
@@ -29,7 +31,7 @@ namespace QuestOverlayPlugin
                 {
                     Arguments = fileName,
                     CreateNoWindow = true,
-                    FileName = "Texture2DExtractor.exe",
+                    FileName = Path.Combine(ExtractorFolder, "Texture2DExtractor.exe"),
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     WorkingDirectory = ExtractorFolder,
@@ -41,8 +43,9 @@ namespace QuestOverlayPlugin
                 exeProcess.WaitForExit();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Log.Error(ex);
                 return false;
             }
         }

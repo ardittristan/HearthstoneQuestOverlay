@@ -2,4 +2,5 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=InconsistentNaming/@EntryIndexedValue">HINT</s:String>
 	<s:Boolean x:Key="/Default/Environment/RuntimeUsedReferences/SolutionImplicitUsedModulesNames/=Nullable/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/RuntimeUsedReferences/SolutionImplicitUsedModulesNames/=AssetRipperFetcher/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=ardittristan/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Reroll/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
