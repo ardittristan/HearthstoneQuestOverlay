@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-	<HSDTPathLength>$([MSBUILD]::Subtract($([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`).Length), 1))</HSDTPathLength>
+    <HSDTPathLength>$([MSBUILD]::Subtract($([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`).Length), 1))</HSDTPathLength>
     <HSDTPath>$([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`)[$(HSDTPathLength)])</HSDTPath>
   </PropertyGroup>
   <PropertyGroup>
@@ -91,12 +91,16 @@
     <Compile Include="Overlay\QuestViewModel.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\Icon.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Nullable">
       <Version>1.3.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="WriteableBitmapEx">
+      <Version>1.6.8</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +126,7 @@
   <ItemGroup>
     <Resource Include="Resources\QuestIcon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Target Name="PostBuild" AfterTargets="Build">
     <ItemGroup>
       <Texture2DExtractorFiles Include="..\Texture2DExtractor\bin\Release\net6.0\publish\**\*.*" />
@@ -130,11 +135,11 @@
     <Exec Command="dotnet publish -p:PublishProfile=PublishReleaseTrimmed" Condition=" '$(Configuration)' == 'Release' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
     <Copy SourceFiles="@(Texture2DExtractorFiles)" DestinationFolder="$(TargetDir)Texture2DExtractor" SkipUnchangedFiles="true" />
   </Target>
-	<Target Name="PostPostBuild" AfterTargets="PostBuild">
-		<ItemGroup>
-          <FilesToCopy Include="$(TargetDir)**\*.*" />
-        </ItemGroup>
-      <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
-    </Target>
+  <Target Name="PostPostBuild" AfterTargets="PostBuild">
+    <ItemGroup>
+      <FilesToCopy Include="$(TargetDir)**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

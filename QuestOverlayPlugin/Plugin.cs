@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
 using Hearthstone_Deck_Tracker;
@@ -12,6 +13,7 @@ using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
 using HSReflection;
+using HSReflection.Objects;
 using Newtonsoft.Json;
 using QuestOverlayPlugin.Overlay;
 using Shared;
@@ -189,7 +191,11 @@ namespace QuestOverlayPlugin
 
         internal static void Update()
         {
-            Log.Info(Reflection.GetQuests().ToString());
+            List<Quest> quests = Reflection.GetQuests();
+            foreach (Quest quest in quests)
+            {
+                Log.Info(quest.Icon ?? "");
+            }
         }
     }
 }
