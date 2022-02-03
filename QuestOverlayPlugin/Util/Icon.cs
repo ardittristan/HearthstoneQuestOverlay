@@ -17,13 +17,14 @@ namespace QuestOverlayPlugin.Util
 
         public ImageSource ImageSource { get; }
 
-        public Icon(string? name, string assetBundle)
+        public Icon(string? name, string assetBundle = Plugin.QUEST_ICONS_LOC)
         {
             Name = name;
             AssetBundle = assetBundle;
             ImageSource = name switch
             {
                 null => BrokenIcon,
+                { Length: 0 } => BrokenIcon,
                 { } n when n.Contains(",") && n.Contains("Class_") => ExtendedIcon,
                 _ => NormalIcon
             };
@@ -57,10 +58,10 @@ namespace QuestOverlayPlugin.Util
 
             using (wb.GetBitmapContext())
             {
-                wb.Crop(0, 0, background.PixelWidth, background.PixelHeight / 2);
-                AddIcon(wb, icons[0], 25, 50);
-                AddIcon(wb, icons[1], 50, 25);
-                AddIcon(wb, icons[2], 75, 50);
+                wb = wb.Crop(0, 0, background.PixelWidth, background.PixelHeight / 2);
+                AddIcon(wb, icons[0], 30, 50);
+                AddIcon(wb, icons[1], 50, 38);
+                AddIcon(wb, icons[2], 70, 50);
             }
 
             return wb;
@@ -76,7 +77,7 @@ namespace QuestOverlayPlugin.Util
                 ), 
                 new WriteableBitmap(icon),
                 new Rect(0, 0, icon.PixelWidth, icon.PixelHeight),
-                WriteableBitmapExtensions.BlendMode.None
+                WriteableBitmapExtensions.BlendMode.Alpha
             );
 
         private static string GetBackground(string name)
@@ -88,7 +89,30 @@ namespace QuestOverlayPlugin.Util
             };
         }
 
-        private ImageSource NormalIcon => new BitmapImage(GetImageUri(Name + "-icon.png"));
+        private ImageSource NormalIcon
+        {
+            get
+            {
+                BitmapImage image = new BitmapImage(GetImageUri(IconNameFilter(Name!) + "-icon.png"));
+                WriteableBitmap wb = new WriteableBitmap(image);
+
+                using (wb.GetBitmapContext())
+                {
+                    wb = wb.Crop(0, 0, image.PixelWidth, image.PixelHeight / 2);
+                }
+                
+                return wb;
+            }
+        }
+
+        private static string IconNameFilter(string name)
+        {
+            return name switch
+            {
+                "Generic" => name + "2",
+                _ => name
+            };
+        }
 
         private ImageSource BrokenIcon => new BitmapImage(GetImageUri("testt.png"));
 

@@ -23,6 +23,8 @@ namespace QuestOverlayPlugin
 {
     public class Plugin : IPlugin
     {
+        public const string QUEST_ICONS_LOC = "initial_prog_global-0";
+
         public string Name => "Hearthstone Quest Overlay";
         public string Description => "Plugin that adds an overlay to show current daily and weekly quests.";
         public string ButtonText => "";
@@ -90,7 +92,7 @@ namespace QuestOverlayPlugin
             if (Core.Game.IsRunning) Update();
 
 #pragma warning disable CS4014
-            Extractor.ExtractAsync("initial_prog_global-0");
+            Extractor.ExtractAsync(QUEST_ICONS_LOC);
 #pragma warning restore CS4014
         }
 
@@ -165,6 +167,11 @@ namespace QuestOverlayPlugin
             _questListButtonBehavior.Hide();
         }
 
+        internal void UpdateQuestList()
+        {
+            ((QuestListViewModel)_questListView.DataContext).Update(true);
+        }
+
         internal void ShowQuests()
         {
             ShowQuestsButton();
@@ -191,11 +198,14 @@ namespace QuestOverlayPlugin
 
         internal static void Update()
         {
+            Instance.ShowQuestsButton();
+#if DEBUG
             List<Quest> quests = Reflection.GetQuests();
             foreach (Quest quest in quests)
             {
                 Log.Info(quest.Icon ?? "");
             }
+#endif
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Hearthstone_Deck_Tracker.Utility.Extensions;
-using static Hearthstone_Deck_Tracker.Windows.OverlayWindow;
 
 namespace QuestOverlayPlugin.Overlay
 {
@@ -26,19 +25,16 @@ namespace QuestOverlayPlugin.Overlay
         private bool _showQuests;
         private async void OnMouseEnter(object sender, MouseEventArgs e)
         {
-            if (!(e is CustomMouseEventArgs))
-                return;
             _showQuests = true;
             await Task.Delay(150);
             if (!_showQuests)
                 return;
+            Plugin.Instance.UpdateQuestList();
             Plugin.Instance.ShowQuests();
         }
 
         private void OnMouseLeave(object sender, MouseEventArgs e)
         {
-            if (!(e is CustomMouseEventArgs))
-                return;
             _showQuests = false;
             Plugin.Instance.HideQuests();
         }

@@ -9,9 +9,9 @@
     <UserControl.Resources>
         <hearthstone_deck_tracker_mercenaries:ProgressBarFillWidthConverter x:Key="ProgressBarFillWidthConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Width="478">
         <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3" Margin="50,0,0,0">
-            <DockPanel Margin="50,8,8,8" MinWidth="280">
+            <DockPanel Margin="109,8,8,8" MinWidth="280">
                 <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold" FontSize="18" DockPanel.Dock="Top" />
                 <Grid DockPanel.Dock="Bottom" Margin="0,4,0,0">
                     <Border Name="ProgressBar" Background="#110C0C" CornerRadius="3">
@@ -29,16 +29,22 @@
                 <TextBlock Text="{Binding Description}" Foreground="White" TextWrapping="Wrap" Margin="0,4" FontSize="14" />
             </DockPanel>
         </Border>
-        <Ellipse Width="80" Height="104" Fill="#221717" Margin="10,0,0,0" HorizontalAlignment="Left" />
-        <Grid Width="100" Height="100" HorizontalAlignment="Left" Margin="0,2">
-            <!-- TODO -->
-            <Image Source="{Binding CardPortrait.AssetPath}" Height="110" Width="110" Margin="-5,-5,0,0" RenderOptions.BitmapScalingMode="Fant">
-                <Image.Clip>
-                    <EllipseGeometry Center="55,55" RadiusX="35" RadiusY="47" />
-                </Image.Clip>
-            </Image>
-            <!-- TODO -->
-            <Image Source="{StaticResource MercsFrame}" Height="100" Width="100" RenderOptions.BitmapScalingMode="Fant" />
+        <Ellipse Width="163" Fill="#221717" Margin="-1,9,0,6" HorizontalAlignment="Left" />
+        <Grid Width="160" Height="100" HorizontalAlignment="Left" Margin="0,8,0,9">
+            <Grid.Background>
+                <ImageBrush ImageSource="{Binding Image}" d:ImageSource="/Resources/Games-icon.png" RenderOptions.BitmapScalingMode="Fant" Stretch="UniformToFill" />
+            </Grid.Background>
+            <Grid.Clip>
+                <EllipseGeometry Center="81,52" RadiusX="78" RadiusY="47" />
+            </Grid.Clip>
         </Grid>
+        <Image Source="pack://application:,,,/QuestOverlayPlugin;component/Resources/Frame.png" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="Fant" RenderTransformOrigin="0.5,0.5" Height="100" Margin="0,2,0,0" >
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1.2"/>
+                    <TranslateTransform X="13"/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
     </Grid>
 </UserControl>

@@ -45,8 +45,7 @@ namespace HSReflection
                 if (quest == null) continue;
 
                 int questPoolId = quest["m_questPoolId"];
-                dynamic? questPoolRecord = questPool?["valueSlots"][questPoolId];
-                
+
                 questRecords.Add(questKey, new QuestRecord()
                 {
                     CanAbandon = quest["m_canAbandon"],
@@ -58,7 +57,8 @@ namespace HSReflection
                     QuestPool = new QuestPool()
                     {
                         Id = questPoolId,
-                        PoolType = (QuestPoolType)(questPoolRecord?["m_questPoolType"] ?? QuestPoolType.NONE),
+                        PoolType = (QuestPoolType)(Map.GetValue(questPoolState, questPoolId)?["_QuestPoolId"] ??
+                                                   QuestPoolType.NONE),
                         RerollAvailableCount = questPoolState == null
                             ? 0
                             : Map.GetValue(questPoolState, questPoolId)?["_RerollAvailableCount"] ?? 0

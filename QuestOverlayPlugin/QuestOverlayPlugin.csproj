@@ -92,6 +92,7 @@
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Icon.cs" />
+    <Compile Include="Util\StringUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Nullable">
@@ -124,9 +125,14 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Frame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Games-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resources\QuestIcon.png" />
   </ItemGroup>
-  <ItemGroup />
   <Target Name="PostBuild" AfterTargets="Build">
     <ItemGroup>
       <Texture2DExtractorFiles Include="..\Texture2DExtractor\bin\Release\net6.0\publish\**\*.*" />

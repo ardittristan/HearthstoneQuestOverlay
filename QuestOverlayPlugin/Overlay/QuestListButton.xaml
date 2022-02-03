@@ -8,6 +8,6 @@
         <Border CornerRadius="3" Margin="0,1,30,5" Background="#221717" BorderBrush="#110C0C" BorderThickness="2">
             <TextBlock Text="Quests" Foreground="White" TextAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Margin="20,0,40,0" />
         </Border>
-        <Image Source="/Resources/QuestIcon.png" Height="60" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="Fant" />
+        <Image Source="pack://application:,,,/QuestOverlayPlugin;component/Resources/QuestIcon.png" Height="60" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="Fant" />
     </Grid>
 </UserControl>

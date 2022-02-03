@@ -41,9 +41,9 @@ namespace QuestOverlayPlugin.Overlay
         }
 
         private List<Quest>? _questData;
-        public bool Update()
+        public bool Update(bool force = false)
         {
-            if (_questData == null)
+            if (_questData == null || force)
                 _questData = Reflection.GetQuests();
 
             if (_questData == null)
@@ -53,9 +53,9 @@ namespace QuestOverlayPlugin.Overlay
             {
                 if (quest.Status != QuestStatus.ACTIVE)
                     return null;
-                return new QuestViewModel(quest.Name, quest.Description, quest.ProgressMessage, quest.Quota,
-                    quest.Progress);
-            }).WhereNotNull().ToList();
+                return new QuestViewModel(quest.Name, quest.Description, quest.Icon, quest.ProgressMessage, quest.Quota,
+                    quest.Progress, quest.PoolType);
+            }).WhereNotNull().OrderBy(q => q.QuestType).ToList();
             return true;
         }
     }
