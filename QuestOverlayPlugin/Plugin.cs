@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.API;
+using Hearthstone_Deck_Tracker.Controls.Overlay.Mercenaries;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Enums.Hearthstone;
 using Hearthstone_Deck_Tracker.Hearthstone;
@@ -21,6 +24,7 @@ using Core = Hearthstone_Deck_Tracker.API.Core;
 
 namespace QuestOverlayPlugin
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class Plugin : IPlugin
     {
         public const string QUEST_ICONS_LOC = "initial_prog_global-0";
@@ -77,7 +81,7 @@ namespace QuestOverlayPlugin
             {
                 GetRight = () => Core.OverlayWindow.Height * 0.01,
                 GetBottom = () =>
-                    _questListButton.ActualHeight * Core.OverlayWindow.AutoScaling + QuestsButtonOffset + 8,
+                    _questListButton.ActualHeight * Core.OverlayWindow.AutoScaling + QuestsButtonOffset + 96,
                 GetScaling = () => Core.OverlayWindow.AutoScaling,
                 AnchorSide = Side.Right,
                 EntranceAnimation = AnimationType.Slide,
@@ -140,11 +144,17 @@ namespace QuestOverlayPlugin
 
         private void AddOverlay()
         {
+            int index = 1;
+            if (Core.OverlayCanvas.Children.OfType<MercenariesTaskListButton>().Any())
+                index = Core.OverlayCanvas.Children.OfType<UIElement>()
+                    .Select((c, i) => new { I = i, C = c })
+                    .Single(item => item.C.GetType() == typeof(MercenariesTaskListButton)).I;
+
             if (!Core.OverlayCanvas.Children.Contains(_questListButton))
-                Core.OverlayCanvas.Children.Add(_questListButton);
+                Core.OverlayCanvas.Children.Insert(index, _questListButton);
 
             if (!Core.OverlayCanvas.Children.Contains(_questListView))
-                Core.OverlayCanvas.Children.Add(_questListView);
+                Core.OverlayCanvas.Children.Insert(index + 1, _questListView);
         }
 
         private void RemoveOverlay()

@@ -14,7 +14,7 @@ namespace QuestOverlayPlugin.Overlay
 
             Name = "QuestListButton";
             Visibility = Visibility.Collapsed;
-            Canvas.SetBottom(this, 8);
+            Canvas.SetBottom(this, 128);
             Canvas.SetRight(this, 16);
             OverlayExtensions.SetIsOverlayHitTestVisible(this, true);
             MouseEnter += OnMouseEnter;

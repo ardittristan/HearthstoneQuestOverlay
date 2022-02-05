@@ -2,6 +2,8 @@
 
 #pragma warning disable ET002,CS8618
 // ReSharper disable once CheckNamespace
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Shared
 {
 
