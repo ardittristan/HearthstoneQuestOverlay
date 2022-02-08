@@ -40,10 +40,12 @@ namespace QuestOverlayPlugin.Overlay
             set { _quests = value; OnPropertyChanged(); }
         }
 
+        public bool ForceNext;
+
         private List<Quest>? _questData;
         public bool Update(bool force = false)
         {
-            if (_questData == null || force)
+            if (_questData == null || force || ForceNext)
                 _questData = Reflection.GetQuests();
 
             if (_questData == null)
@@ -56,6 +58,7 @@ namespace QuestOverlayPlugin.Overlay
                 return new QuestViewModel(quest.Name, quest.Description, quest.Icon, quest.ProgressMessage, quest.Quota,
                     quest.Progress, quest.PoolType);
             }).WhereNotNull().OrderBy(q => q.QuestType).ToList();
+            ForceNext = false;
             return true;
         }
     }

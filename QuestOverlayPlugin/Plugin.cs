@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Controls.Overlay.Mercenaries;
-using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Enums.Hearthstone;
 using Hearthstone_Deck_Tracker.Hearthstone;
 using Hearthstone_Deck_Tracker.Plugins;
@@ -90,7 +89,6 @@ namespace QuestOverlayPlugin
 
             GameEvents.OnInMenu.Add(Update);
             GameEvents.OnGameEnd.Add(Update);
-            GameEvents.OnTurnStart.Add(Update);
             GameEvents.OnModeChanged.Add(Update);
             Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
             if (Core.Game.IsRunning) Update();
@@ -177,9 +175,14 @@ namespace QuestOverlayPlugin
             _questListButtonBehavior.Hide();
         }
 
-        internal void UpdateQuestList()
+        internal void UpdateQuestList(bool force = false)
         {
-            ((QuestListViewModel)_questListView.DataContext).Update(true);
+            ((QuestListViewModel)_questListView.DataContext).Update(force);
+        }
+
+        internal void ForceNextQuestUpdate()
+        {
+            ((QuestListViewModel)_questListView.DataContext).ForceNext = true;
         }
 
         internal void ShowQuests()
@@ -199,16 +202,12 @@ namespace QuestOverlayPlugin
             if (args.IsChanged) Update();
         }
 
-        internal static void Update(ActivePlayer player)
-        {
-            if (player == ActivePlayer.Player || player == ActivePlayer.None) Update();
-        }
-
         internal static void Update(Mode mode) => Update();
 
         internal static void Update()
         {
             Instance.ShowQuestsButton();
+            Instance.ForceNextQuestUpdate();
 #if DEBUG
             List<Quest> quests = Reflection.GetQuests();
             foreach (Quest quest in quests)
