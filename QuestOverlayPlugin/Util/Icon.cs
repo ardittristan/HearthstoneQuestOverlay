@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Hearthstone_Deck_Tracker.Utility.Logging;
 
 #nullable enable
 
@@ -21,13 +22,21 @@ namespace QuestOverlayPlugin.Util
         {
             Name = name;
             AssetBundle = assetBundle;
-            ImageSource = name switch
+            try
             {
-                null => BrokenIcon,
-                { Length: 0 } => BrokenIcon,
-                { } n when n.Contains(",") && n.Contains("Class_") => ExtendedIcon,
-                _ => NormalIcon
-            };
+                ImageSource = name switch
+                {
+                    null => BrokenIcon,
+                    { Length: 0 } => BrokenIcon,
+                    { } n when n.Contains(",") && n.Contains("Class_") => ExtendedIcon,
+                    _ => NormalIcon
+                };
+            }
+            catch (FileNotFoundException e)
+            {
+                Log.Error(e);
+                ImageSource = BrokenIcon;
+            }
         }
 
         private ImageSource ExtendedIcon
@@ -107,11 +116,37 @@ namespace QuestOverlayPlugin.Util
 
         private static string IconNameFilter(string name)
         {
-            return name switch
+            switch (name)
             {
-                "Generic" => name + "2",
-                _ => name
-            };
+                case "Generic":
+                    return name + "2";
+
+                case "Damage_Heroes":
+                    return "DmgHeroes";
+
+                case "Damage_Minions":
+                    return "dmgMinions";
+
+                case "Battlegrounds":
+                case "Arena":
+                case "Duels":
+                    return "GameMode_" + name;
+
+                case "TavernBrawl":
+                    return "GameMode_" + name + "2";
+
+                case "Adventure":
+                    return "GameMode_" + name + "3";
+
+                case "Damage":
+                    return "Generic2"; // TODO: Figure out if this is correct
+
+                case "Social":
+                    return "Friend"; // TODO: Figure out if this is correct
+
+                default:
+                    return name;
+            }
         }
 
         private ImageSource BrokenIcon => new BitmapImage(GetImageUri("testt.png"));
