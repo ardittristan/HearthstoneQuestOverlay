@@ -126,12 +126,12 @@
     <Resource Include="Resources\QuestIcon.png" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="Build">
+    <Exec Command="dotnet publish -p:PublishProfile=PublishRelease" Condition=" '$(Configuration)' == 'Debug' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
+    <Exec Command="dotnet publish -p:PublishProfile=PublishReleaseTrimmed" Condition=" '$(Configuration)' == 'Release' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
     <ItemGroup>
       <Texture2DExtractorFiles Include="..\Texture2DExtractor\bin\Release\net6.0\publish\**\*.*" />
     </ItemGroup>
-    <Exec Command="dotnet publish -p:PublishProfile=PublishRelease" Condition=" '$(Configuration)' == 'Debug' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
-    <Exec Command="dotnet publish -p:PublishProfile=PublishReleaseTrimmed" Condition=" '$(Configuration)' == 'Release' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
-    <Copy SourceFiles="@(Texture2DExtractorFiles)" DestinationFolder="$(TargetDir)Texture2DExtractor" />
+    <Copy SourceFiles="@(Texture2DExtractorFiles)" DestinationFolder="$(TargetDir)Texture2DExtractor" SkipUnchangedFiles="true" />
   </Target>
   <Target Name="PostPostBuild" AfterTargets="PostBuild">
     <ItemGroup>
@@ -139,7 +139,7 @@
       <FilesToCopy Include="$(TargetDir)**\*.exe" />
     </ItemGroup>
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(CI)' != 'true' " SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)..\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(Configuration)' == 'Release' " />
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)..\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(Configuration)' == 'Release' " SkipUnchangedFiles="true" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
