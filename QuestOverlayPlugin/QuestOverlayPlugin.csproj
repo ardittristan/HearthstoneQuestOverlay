@@ -126,8 +126,8 @@
     <Resource Include="Resources\QuestIcon.png" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="Build">
-    <Exec Command="dotnet publish -p:PublishProfile=PublishRelease" Condition=" '$(Configuration)' == 'Debug' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
-    <Exec Command="dotnet publish -p:PublishProfile=PublishReleaseTrimmed" Condition=" '$(Configuration)' == 'Release' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
+    <Exec Command="dotnet publish -c Release -p:Configuration=Release -p:PublishProfile=PublishRelease" Condition=" '$(Configuration)' == 'Debug' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
+    <Exec Command="dotnet publish -c Release -p:Configuration=Release -p:PublishProfile=PublishReleaseTrimmed" Condition=" '$(Configuration)' == 'Release' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
     <ItemGroup>
       <Texture2DExtractorFiles Include="..\Texture2DExtractor\bin\Release\net6.0\publish\**\*.*" />
     </ItemGroup>
