@@ -42,6 +42,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
+      - name: Download HSDeckTracker
+        uses: aochmann/actions-download-artifact@1.0.4
+        with:
+          name: HDT-Installer.exe
+          latest: true
+          repo: HearthSim/HDT-Releases
+      - name: Setup Hearthstone Deck Tracker
+        run: HDT-Installer.exe
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
         with:
