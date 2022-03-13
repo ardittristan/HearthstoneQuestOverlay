@@ -24,7 +24,6 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
       tag: ${{ steps.get-tag.outputs.tag }}
-    if: ${{ !github.event.inputs.doNotRelease }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
