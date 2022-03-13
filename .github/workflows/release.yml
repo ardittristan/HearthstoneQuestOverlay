@@ -1,0 +1,68 @@
+name: Create release on push
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "**.cs"
+      - "**.xaml"
+      - "**.csproj"
+      - "**.sln"
+      - "**.pubxml"
+      - "**/Resources/**.*"
+  workflow_dispatch:
+
+jobs:
+  should-release:
+    name: Should Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: v${{ steps.get-version.outputs.version }}
+      tag: ${{ steps.get-tag.outputs.tag }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get Previous tag
+        id: get-tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+      - name: Get version
+        shell: bash
+        id: get-version
+        run: echo "::set-output name=version::$(node ./.github/workflows/get-version.js)"
+        
+  release:
+    name: Release
+    runs-on: windows-2022
+    needs: should-release
+    if: needs.should-release.outputs.version != needs.should-release.outputs.tag
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x64
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+      - name: Build solution
+        run: msbuild HearthstoneQuestOverlay.sln -t:restore,build -p:RestorePackagesConfig=true -p:Configuration=Release
+        shell: bash
+      - name: Zip release
+        uses: papeloto/action-zip@v1
+        with:
+          files: QuestOverlayPlugin/bin/HearthstoneQuestOverlay
+          dest: HearthstoneQuestOverlay.zip
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: false
+          name: Release ${{ needs.should-release.outputs.version }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: './HearthstoneQuestOverlay.zip'
+          tag: v${{ needs.should-release.outputs.version }}
