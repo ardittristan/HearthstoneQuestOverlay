@@ -52,6 +52,7 @@ jobs:
           zipBall: false
       - name: Setup Hearthstone Deck Tracker
         run: HDT-Installer.exe
+        shell: cmd
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
         with:
