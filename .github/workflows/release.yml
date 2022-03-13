@@ -63,10 +63,10 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
         with:
           msbuild-architecture: x64
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 6.0.x
+      #- name: Setup dotnet
+      #  uses: actions/setup-dotnet@v2
+      #  with:
+      #    dotnet-version: 6.0.x
       - name: Build solution
         run: msbuild HearthstoneQuestOverlay.sln -m -t:restore,build -p:RestorePackagesConfig=true -p:Configuration=Release
       - name: Zip release
