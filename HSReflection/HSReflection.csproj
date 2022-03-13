@@ -86,7 +86,4 @@
     <CompilerGeneratedFilesOutputPath>obj\Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)*.*" $(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay"</PostBuildEvent>
-  </PropertyGroup>
 </Project>
