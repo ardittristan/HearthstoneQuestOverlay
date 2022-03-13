@@ -50,7 +50,6 @@ jobs:
           dotnet-version: 6.0.x
       - name: Build solution
         run: msbuild HearthstoneQuestOverlay.sln -t:restore,build -p:RestorePackagesConfig=true -p:Configuration=Release
-        shell: bash
       - name: Zip release
         uses: papeloto/action-zip@v1
         with:
