@@ -66,7 +66,7 @@ jobs:
       - name: Zip release
         uses: papeloto/action-zip@v1
         with:
-          files: QuestOverlayPlugin/bin/HearthstoneQuestOverlay
+          files: QuestOverlayPlugin/bin/HearthstoneQuestOverlay/
           dest: HearthstoneQuestOverlay.zip
       - name: Create Release
         uses: ncipollo/release-action@v1
