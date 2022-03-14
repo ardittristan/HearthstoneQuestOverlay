@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smolv", "AssetRipper\Smolv\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpirV", "AssetRipper\SpirV\SpirV.csproj", "{47AAC83B-76CA-4463-8103-593910BFA5D1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github Workflows", "Github Workflows", "{70AD2C46-D59D-40C1-9008-1A2CAD76F2BB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{70AD2C46-D59D-40C1-9008-1A2CAD76F2BB}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
@@ -33,6 +33,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7450954D-5D58-4D5E-BEAB-378971713B26}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\get-version.js = .github\workflows\get-version.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github", "Github", "{3C3BBB12-3746-4E9D-9FE3-4961D7A51DC2}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Global
@@ -412,6 +417,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{70AD2C46-D59D-40C1-9008-1A2CAD76F2BB} = {3C3BBB12-3746-4E9D-9FE3-4961D7A51DC2}
 		{7450954D-5D58-4D5E-BEAB-378971713B26} = {70AD2C46-D59D-40C1-9008-1A2CAD76F2BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
