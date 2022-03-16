@@ -26,7 +26,7 @@ jobs:
       tag: ${{ steps.get-tag.outputs.tag }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Get Previous tag
@@ -44,10 +44,16 @@ jobs:
     if: needs.should-release.outputs.version != needs.should-release.outputs.tag || github.event.inputs.doNotRelease
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
-      # TODO: setup HDT installation cache
+      - name: Cache NuGet
+        uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
       - name: Download HSDeckTracker
         uses: robinraju/release-downloader@v1.3
         with:
@@ -56,7 +62,14 @@ jobs:
           repository: HearthSim/HDT-Releases
           tarBall: false
           zipBall: false
+      - name: Cache HSDeckTracker
+        id: cache-hdt
+        uses: actions/cache@v2
+        with:
+          path: ~\AppData\Local\HearthstoneDeckTracker
+          key: ${{ runner.os }}-hdt-${{ hashFiles('HDT-Installer.exe') }}
       - name: Setup Hearthstone Deck Tracker
+        if: steps.cache-hdt.outputs.cache-hit != 'true'
         run: HDT-Installer.exe
         shell: cmd
       - name: Setup MSBuild
