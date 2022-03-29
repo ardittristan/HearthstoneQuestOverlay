@@ -79,10 +79,6 @@ jobs:
       - name: Build solution
         run: msbuild HearthstoneQuestOverlay.sln -m -t:restore,build -p:RestorePackagesConfig=true -p:Configuration=Release
       - name: Zip release
-#        uses: papeloto/action-zip@v1
-#        with:
-#          files: QuestOverlayPlugin/bin/HearthstoneQuestOverlay/
-#          dest: HearthstoneQuestOverlay.zip
         run: cd QuestOverlayPlugin/bin && 7z a -tzip ..\..\HearthstoneQuestOverlay HearthstoneQuestOverlay
         shell: cmd
       - name: Create Release
