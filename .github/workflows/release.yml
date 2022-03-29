@@ -83,7 +83,7 @@ jobs:
 #        with:
 #          files: QuestOverlayPlugin/bin/HearthstoneQuestOverlay/
 #          dest: HearthstoneQuestOverlay.zip
-        run: 7z a -tzip HearthstoneQuestOverlay QuestOverlayPlugin/bin/HearthstoneQuestOverlay
+        run: cd QuestOverlayPlugin/bin && 7z a -tzip ..\..\HearthstoneQuestOverlay HearthstoneQuestOverlay
         shell: cmd
       - name: Create Release
         if: ${{ !github.event.inputs.doNotRelease }}
