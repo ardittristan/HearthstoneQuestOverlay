@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HearthMirrorGenerator", "HearthMirrorGenerator\HearthMirrorGenerator.csproj", "{E02E70AD-FE8E-4C64-9A9B-6720FDAF3784}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestOverlayPlugin", "QuestOverlayPlugin\QuestOverlayPlugin.csproj", "{48EAC139-5942-437D-BFD1-01823ACA9930}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D5EA0269-3B62-4A38-A2E4-0F69B345C8A5} = {D5EA0269-3B62-4A38-A2E4-0F69B345C8A5}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSReflection", "HSReflection\HSReflection.csproj", "{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}"
 EndProject
@@ -14,8 +17,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipperCommon", "AssetRipper\AssetRipperCommon\AssetRipperCommon.csproj", "{B01944AA-BD81-4C64-96F7-400E1BF2E461}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipperLibrary", "AssetRipper\AssetRipperLibrary\AssetRipperLibrary.csproj", "{18C8C596-EBD2-493C-83B3-3025D6697EE1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Texture2DDecoderWrapper", "AssetRipper\Texture2DDecoderWrapper\Texture2DDecoderWrapper.csproj", "{34D1FCCB-E4CB-4303-92B9-68F383D634B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Texture2DExtractor", "Texture2DExtractor\Texture2DExtractor.csproj", "{D5EA0269-3B62-4A38-A2E4-0F69B345C8A5}"
 EndProject
@@ -38,6 +39,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github", "Github", "{3C3BBB12-3746-4E9D-9FE3-4961D7A51DC2}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3CF284B4-64EA-422E-A12D-14E825842CD4}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Global
@@ -236,8 +242,8 @@ Global
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.DebugWindows|Any CPU.Build.0 = DebugWindows|x64
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.DebugWindows|x64.ActiveCfg = DebugWindows|x64
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.DebugWindows|x64.Build.0 = DebugWindows|x64
-		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.Release|Any CPU.ActiveCfg = DebugWindows|x64
-		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.Release|Any CPU.Build.0 = DebugWindows|x64
+		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.Release|Any CPU.ActiveCfg = ReleaseWindows|x64
+		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.Release|Any CPU.Build.0 = ReleaseWindows|x64
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.Release|x64.ActiveCfg = ReleaseWindows|x64
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.Release|x64.Build.0 = ReleaseWindows|x64
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.ReleaseLinux|Any CPU.ActiveCfg = ReleaseLinux|x64
@@ -252,38 +258,6 @@ Global
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.ReleaseWindows|Any CPU.Build.0 = ReleaseWindows|x64
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.ReleaseWindows|x64.ActiveCfg = ReleaseWindows|x64
 		{18C8C596-EBD2-493C-83B3-3025D6697EE1}.ReleaseWindows|x64.Build.0 = ReleaseWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Debug|Any CPU.ActiveCfg = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Debug|Any CPU.Build.0 = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Debug|x64.ActiveCfg = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Debug|x64.Build.0 = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugLinux|Any CPU.ActiveCfg = DebugLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugLinux|Any CPU.Build.0 = DebugLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugLinux|x64.ActiveCfg = DebugLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugLinux|x64.Build.0 = DebugLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugMac|Any CPU.ActiveCfg = DebugMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugMac|Any CPU.Build.0 = DebugMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugMac|x64.ActiveCfg = DebugMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugMac|x64.Build.0 = DebugMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugWindows|Any CPU.ActiveCfg = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugWindows|Any CPU.Build.0 = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugWindows|x64.ActiveCfg = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.DebugWindows|x64.Build.0 = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Release|Any CPU.ActiveCfg = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Release|Any CPU.Build.0 = DebugWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Release|x64.ActiveCfg = ReleaseWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.Release|x64.Build.0 = ReleaseWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseLinux|Any CPU.ActiveCfg = ReleaseLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseLinux|Any CPU.Build.0 = ReleaseLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseLinux|x64.ActiveCfg = ReleaseLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseLinux|x64.Build.0 = ReleaseLinux|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseMac|Any CPU.ActiveCfg = ReleaseMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseMac|Any CPU.Build.0 = ReleaseMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseMac|x64.ActiveCfg = ReleaseMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseMac|x64.Build.0 = ReleaseMac|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseWindows|Any CPU.ActiveCfg = ReleaseWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseWindows|Any CPU.Build.0 = ReleaseWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseWindows|x64.ActiveCfg = ReleaseWindows|x64
-		{34D1FCCB-E4CB-4303-92B9-68F383D634B9}.ReleaseWindows|x64.Build.0 = ReleaseWindows|x64
 		{D5EA0269-3B62-4A38-A2E4-0F69B345C8A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5EA0269-3B62-4A38-A2E4-0F69B345C8A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5EA0269-3B62-4A38-A2E4-0F69B345C8A5}.Debug|x64.ActiveCfg = Debug|Any CPU
