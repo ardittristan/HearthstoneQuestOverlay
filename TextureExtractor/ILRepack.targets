@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="ListDependencies.targets" />
+  <Target Name="ListDependencies" AfterTargets="ResolveAssemblyReferences">
+    <Exec Command="echo ===References===" />
+    <LogDependencies Files="@(ReferenceCopyLocalPaths)" />
+    <Exec Command="echo ===End References===" />
+    <Exec Command="echo." />
+  </Target>
+  <Target Name="ILRepacker" AfterTargets="Build">
+
+    <ItemGroup>
+      <InputAssemblies Include="$(OutputPath)$(AssemblyName).dll" />
+      <InputAssemblies Include="$(OutputPath)\AssetsTools.NET.dll" />
+      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.dll" />
+      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.Mdb.dll" />
+      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.Pdb.dll" />
+      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.Rocks.dll" />
+      <InputAssemblies Include="$(OutputPath)\PortableSettingsProvider.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <DoNotInternalizeAssemblies Include="$(AssemblyName)" />
+    </ItemGroup>
+
+    <!-- ReSharper disable once UnknownTask -->
+    <ILRepack
+      Parallel="true"
+      Internalize="true"
+      InternalizeExclude="@(DoNotInternalizeAssemblies)"
+      InputAssemblies="@(InputAssemblies)"
+      TargetKind="Dll"
+      OutputFile="$(OutputPath)$(AssemblyName).dll"
+    />
+
+  </Target>
+  <Target Name="ILRepackerCleanup" AfterTargets="ILRepacker">
+    <ItemGroup>
+      <FilesToDelete Include="$(OutputPath)*.dll" Exclude="$(OutputPath)$(AssemblyName).dll" />
+      <FilesToDelete Include="$(OutputPath)*.pdb" Exclude="$(OutputPath)$(AssemblyName).pdb" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
+</Project>

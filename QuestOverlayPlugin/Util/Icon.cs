@@ -151,8 +151,8 @@ namespace QuestOverlayPlugin.Util
 
         private ImageSource BrokenIcon => new BitmapImage(GetImageUri("testt.png"));
 
-        private Uri GetImageUri(string fileName) => new Uri(Path.Combine(Extractor.ExtractorFolder, "Export",
-            AssetBundle + ".unity3d", @"Assets\Asset_Bundles", AssetBundle + ".unity3d", fileName), UriKind.Absolute);
+        private Uri GetImageUri(string fileName) =>
+            new Uri(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName), UriKind.Absolute);
     }
 }
 

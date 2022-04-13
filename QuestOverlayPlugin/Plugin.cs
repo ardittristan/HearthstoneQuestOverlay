@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -14,11 +13,8 @@ using Hearthstone_Deck_Tracker.Utility;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
-using HSReflection;
-using HSReflection.Objects;
-using Newtonsoft.Json;
 using QuestOverlayPlugin.Overlay;
-using Shared;
+using TextureExtractor;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
 namespace QuestOverlayPlugin
@@ -36,6 +32,7 @@ namespace QuestOverlayPlugin
         public MenuItem MenuItem => null!;
 
         internal static Plugin Instance { get; private set; } = null!;
+        internal Extractor Extractor = null!;
 
         internal QuestListViewModel QuestListVM { get; } = new QuestListViewModel();
 
@@ -59,8 +56,6 @@ namespace QuestOverlayPlugin
         public void OnLoad()
         {
             Instance = this;
-
-            SetupIPC();
 
             Log.Info("Loaded Hearthstone Quest Overlay.");
 
@@ -93,27 +88,18 @@ namespace QuestOverlayPlugin
             Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
             if (Core.Game.IsRunning) Update();
 
+            Extractor = new Extractor(
+                Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "TextureExtractor"),
+                Core.Game.MetaData.HearthstoneBuild.ToString());
+
 #pragma warning disable CS4014
-            Extractor.ExtractAsync(QUEST_ICONS_LOC);
+            Extractor.ExtractAsync(CreateBundlePath(QUEST_ICONS_LOC));
 #pragma warning restore CS4014
         }
 
-        private static void SetupIPC()
+        public static string CreateBundlePath(string bundleName)
         {
-            try
-            {
-                using StreamWriter sw = File.CreateText(HSDataOptions.FilePath);
-                sw.WriteLine(JsonConvert.SerializeObject(new HSData
-                {
-                    AssemblyPath = Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay"),
-                    AssetsPath = Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win"),
-                    HearthstoneBuild = Core.Game.MetaData.HearthstoneBuild.ToString()
-                }));
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
+            return Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win", bundleName + ".unity3d");
         }
 
         public void OnUnload()
@@ -209,8 +195,8 @@ namespace QuestOverlayPlugin
             Instance.ShowQuestsButton();
             Instance.ForceNextQuestUpdate();
 #if DEBUG
-            List<Quest> quests = Reflection.GetQuests();
-            foreach (Quest quest in quests)
+            System.Collections.Generic.List<Quest> quests = HSReflection.Reflection.GetQuests();
+            foreach (HSReflection.Objects.Quest quest in quests)
             {
                 Log.Info(quest.Icon ?? "");
             }

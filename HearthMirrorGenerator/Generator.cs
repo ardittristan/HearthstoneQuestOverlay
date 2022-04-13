@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -78,9 +77,9 @@ public static partial class Reflection
 
         public void Initialize(GeneratorInitializationContext context)
         {
-//#if DEBUG
-//            if (!Debugger.IsAttached) Debugger.Launch();
-//#endif 
+            //#if DEBUG
+            //            if (!System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Launch();
+            //#endif 
         }
     }
 }

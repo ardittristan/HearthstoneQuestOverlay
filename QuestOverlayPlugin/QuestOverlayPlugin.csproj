@@ -1,109 +1,68 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <HSDTPathLength>$([MSBUILD]::Subtract($([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`).Length), 1))</HSDTPathLength>
     <HSDTPath>$([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`)[$(HSDTPathLength)])</HSDTPath>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyTitle>QuestOverlayPlugin</AssemblyTitle>
+    <Company>ardittristan</Company>
+    <Product>QuestOverlayPlugin</Product>
+    <Copyright>Copyright ©  2022</Copyright>
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <ProjectGuid>{48EAC139-5942-437D-BFD1-01823ACA9930}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QuestOverlayPlugin</RootNamespace>
-    <AssemblyName>QuestOverlayPlugin</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net472</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <Version>1.1.0</Version>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="Build">
+    <ItemGroup>
+      <FilesToCopy Include="$(TargetDir)**\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(CI)' != 'true' " SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)..\..\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(Configuration)' == 'Release' " SkipUnchangedFiles="true" />
+  </Target>
   <ItemGroup>
     <Reference Include="HearthMirror">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(HSDTPath)\HearthMirror.dll</HintPath>
       <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="HearthWatcher">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(HSDTPath)\HearthWatcher.dll</HintPath>
       <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="HearthstoneDeckTracker">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(HSDTPath)\HearthstoneDeckTracker.exe</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(HSDTPath)\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Texture2DExtractor\HSData.cs" />
-    <Compile Include="Extractor.cs" />
-    <Compile Include="Overlay\QuestListButton.xaml.cs">
+    <Compile Update="Overlay\QuestListButton.xaml.cs">
       <DependentUpon>QuestListButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Overlay\QuestListView.xaml.cs">
+    <Compile Update="Overlay\QuestListView.xaml.cs">
       <DependentUpon>QuestListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Overlay\QuestListViewModel.cs" />
-    <Compile Include="Overlay\QuestView.xaml.cs">
+    <Compile Update="Overlay\QuestView.xaml.cs">
       <DependentUpon>QuestView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Overlay\QuestViewModel.cs" />
-    <Compile Include="Plugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Stub\HearthstoneTextBlockStub.cs" />
-    <Compile Include="Stub\OutlinedTextBlockStub.cs" />
-    <Compile Include="Stub\ProgressBarFillWidthConverterStub.cs" />
-    <Compile Include="Util\Icon.cs" />
-    <Compile Include="Util\StringUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Nullable">
-      <Version>1.3.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Nullable" Version="1.3.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="WriteableBitmapEx">
-      <Version>1.6.8</Version>
-    </PackageReference>
+    <PackageReference Include="WriteableBitmapEx" Version="1.6.8" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HSReflection\HSReflection.csproj">
-      <Project>{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}</Project>
-      <Name>HSReflection</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\HSReflection\HSReflection.csproj" />
+    <ProjectReference Include="..\TextureExtractor\TextureExtractor.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Overlay\QuestListButton.xaml">
@@ -121,29 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Frame.png" />
+    <Resource Include="Resources\QuestIcon.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Games-icon.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\QuestIcon.png" />
-  </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="Build">
-    <Exec Command="dotnet publish -c Release -p:PublishProfile=PublishRelease" Condition=" '$(Configuration)' == 'Debug' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
-    <Exec Command="dotnet publish -c Release -p:PublishProfile=PublishReleaseTrimmed" Condition=" '$(Configuration)' == 'Release' " WorkingDirectory="..\Texture2DExtractor" IgnoreStandardErrorWarningFormat="true" CustomErrorRegularExpression="^\s*(((?&lt;ORIGIN&gt;(((\d+&gt;)?[a-zA-Z]?:[^:]*)|([^:]*))):)|())(?&lt;SUBCATEGORY&gt;(()|([^:]*? )))(?&lt;CATEGORY&gt;(error))( \s*(?&lt;CODE&gt;[^: ]*))?\s*:(?&lt;TEXT&gt;.*)$" />
-    <ItemGroup>
-      <Texture2DExtractorFiles Include="..\Texture2DExtractor\bin\Release\net6.0\publish\**\*.*" />
-    </ItemGroup>
-    <Copy SourceFiles="@(Texture2DExtractorFiles)" DestinationFolder="$(TargetDir)Texture2DExtractor" SkipUnchangedFiles="true" />
-  </Target>
-  <Target Name="PostPostBuild" AfterTargets="PostBuild">
-    <ItemGroup>
-      <FilesToCopy Include="$(TargetDir)**\*.dll" />
-      <FilesToCopy Include="$(TargetDir)**\*.md" />
-      <FilesToCopy Include="$(TargetDir)**\*.exe" />
-    </ItemGroup>
-    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(CI)' != 'true' " SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)..\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(Configuration)' == 'Release' " SkipUnchangedFiles="true" />
-  </Target>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
