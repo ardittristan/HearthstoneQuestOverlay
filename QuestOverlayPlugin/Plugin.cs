@@ -195,7 +195,7 @@ namespace QuestOverlayPlugin
             Instance.ShowQuestsButton();
             Instance.ForceNextQuestUpdate();
 #if DEBUG
-            System.Collections.Generic.List<Quest> quests = HSReflection.Reflection.GetQuests();
+            System.Collections.Generic.List<HSReflection.Objects.Quest> quests = HSReflection.Reflection.GetQuests();
             foreach (HSReflection.Objects.Quest quest in quests)
             {
                 Log.Info(quest.Icon ?? "");
