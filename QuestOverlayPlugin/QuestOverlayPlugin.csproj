@@ -83,6 +83,9 @@
     <Compile Include="Overlay\QuestViewModel.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stub\HearthstoneTextBlockStub.cs" />
+    <Compile Include="Stub\OutlinedTextBlockStub.cs" />
+    <Compile Include="Stub\ProgressBarFillWidthConverterStub.cs" />
     <Compile Include="Util\Icon.cs" />
     <Compile Include="Util\StringUtils.cs" />
   </ItemGroup>
@@ -136,6 +139,7 @@
   <Target Name="PostPostBuild" AfterTargets="PostBuild">
     <ItemGroup>
       <FilesToCopy Include="$(TargetDir)**\*.dll" />
+      <FilesToCopy Include="$(TargetDir)**\*.md" />
       <FilesToCopy Include="$(TargetDir)**\*.exe" />
     </ItemGroup>
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(CI)' != 'true' " SkipUnchangedFiles="true" />

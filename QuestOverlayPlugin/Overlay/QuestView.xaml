@@ -3,19 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:hearthstone_deck_tracker="clr-namespace:Hearthstone_Deck_Tracker;assembly=HearthstoneDeckTracker"
-             xmlns:hearthstone_deck_tracker_mercenaries="clr-namespace:Hearthstone_Deck_Tracker.Controls.Overlay.Mercenaries;assembly=HearthstoneDeckTracker"
+             xmlns:stub="clr-namespace:QuestOverlayPlugin.Stub"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <hearthstone_deck_tracker_mercenaries:ProgressBarFillWidthConverter x:Key="ProgressBarFillWidthConverter" />
+        <stub:ProgressBarFillWidthConverterStub x:Key="ProgressBarFillWidthConverter" />
     </UserControl.Resources>
     <Grid Width="478">
         <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3" Margin="50,0,0,0">
             <DockPanel Margin="109,8,8,8" MinWidth="280">
-                <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold" FontSize="18" DockPanel.Dock="Top" />
+                <TextBlock Text="{Binding Title}" d:Text="Weekly" Foreground="White" FontWeight="SemiBold" FontSize="18" DockPanel.Dock="Top" />
                 <Grid DockPanel.Dock="Bottom" Margin="0,4,0,0">
                     <Border Name="ProgressBar" Background="#110C0C" CornerRadius="3">
-                        <Border Background="#6E1E1E" CornerRadius="3" HorizontalAlignment="Left">
+                        <Border Background="#6E1E1E" CornerRadius="3" HorizontalAlignment="Left" d:Width="150">
                             <Border.Width>
                                 <MultiBinding Converter="{StaticResource ProgressBarFillWidthConverter}">
                                     <Binding Path="Progress" />
@@ -24,9 +23,9 @@
                             </Border.Width>
                         </Border>
                     </Border>
-                    <hearthstone_deck_tracker:HearthstoneTextBlock Text="{Binding ProgressText}" Fill="#FFF" FontSize="16" Margin="0,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <stub:HearthstoneTextBlockStub Text="{Binding ProgressText}" d:Text="1 / 5"  Fill="#FFF" FontSize="16" Margin="0,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
-                <TextBlock Text="{Binding Description}" Foreground="White" TextWrapping="Wrap" Margin="0,4" FontSize="14" />
+                <TextBlock Text="{Binding Description}" d:Text="Win 5 games of Tavern Brawl, Arena, Battlegrounds, or Duels." Foreground="White" TextWrapping="Wrap" Margin="0,4" FontSize="14" />
             </DockPanel>
         </Border>
         <Ellipse Width="163" Fill="#221717" Margin="-1,9,0,6" HorizontalAlignment="Left" />
