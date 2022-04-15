@@ -1,13 +1,11 @@
-﻿namespace QuestOverlayPlugin.Stub
+﻿using System;
+using System.Globalization;
+using System.Windows.Data;
+
+namespace QuestOverlayPlugin.Controls
 {
-#if DEBUG
-
-    using System;
-    using System.Globalization;
-    using System.Windows.Data;
-
     #nullable enable
-    public class ProgressBarFillWidthConverterStub : IMultiValueConverter
+    public class ProgressBarFillWidthConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -28,12 +26,4 @@
         }
     }
     #nullable restore
-
-#else
-
-    using Hearthstone_Deck_Tracker.Controls.Overlay.Mercenaries;
-
-    public class ProgressBarFillWidthConverterStub : ProgressBarFillWidthConverter { }
-
-#endif
 }

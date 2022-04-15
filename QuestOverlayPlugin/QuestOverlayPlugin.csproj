@@ -12,7 +12,7 @@
     <TargetFramework>net472</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="Build">
     <ItemGroup>
@@ -43,6 +43,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\HearthstoneTextBlock.xaml.cs">
+      <DependentUpon>HearthstoneTextBlock.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Overlay\QuestListButton.xaml.cs">
       <DependentUpon>QuestListButton.xaml</DependentUpon>
     </Compile>
@@ -65,6 +68,10 @@
     <ProjectReference Include="..\TextureExtractor\TextureExtractor.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\HearthstoneTextBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Overlay\QuestListButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

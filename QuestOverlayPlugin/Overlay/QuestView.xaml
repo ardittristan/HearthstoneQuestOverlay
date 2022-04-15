@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:stub="clr-namespace:QuestOverlayPlugin.Stub"
+             xmlns:controls="clr-namespace:QuestOverlayPlugin.Controls"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <stub:ProgressBarFillWidthConverterStub x:Key="ProgressBarFillWidthConverter" />
+        <controls:ProgressBarFillWidthConverter x:Key="ProgressBarFillWidthConverter" />
     </UserControl.Resources>
     <Grid Width="478">
         <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3" Margin="50,0,0,0">
@@ -23,7 +23,7 @@
                             </Border.Width>
                         </Border>
                     </Border>
-                    <stub:HearthstoneTextBlockStub Text="{Binding ProgressText}" d:Text="1 / 5"  Fill="#FFF" FontSize="16" Margin="0,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <controls:HearthstoneTextBlock Text="{Binding ProgressText}" d:Text="1 / 5"  Fill="#FFF" FontSize="16" Margin="0,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
                 <TextBlock Text="{Binding Description}" d:Text="Win 5 games of Tavern Brawl, Arena, Battlegrounds, or Duels." Foreground="White" TextWrapping="Wrap" Margin="0,4" FontSize="14" />
             </DockPanel>
