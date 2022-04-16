@@ -149,6 +149,7 @@ namespace HSReflection
                     RerollCount = questRecord.QuestPool.RerollAvailableCount,
                     Rewards = questRecord.RewardList, //TODO
                     RewardTrackXp = rewardTrackXp,
+                    RewardTrackBonusXp = rewardTrackBonusXp,
                     ProgressMessage = progressMessage,
                     Status = questState.Status,
                     Abandonable = questRecord.CanAbandon,

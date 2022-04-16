@@ -22,6 +22,7 @@ namespace HSReflection.Objects
         public int RerollCount { get; internal set; }
         public dynamic Rewards { get; internal set; } = null!;
         public int RewardTrackXp { get; internal set; }
+        public int RewardTrackBonusXp { get; internal set; }
         public QuestStatus Status { get; internal set; }
         public string? TimeUntilNextQuest { get; set; }
     }

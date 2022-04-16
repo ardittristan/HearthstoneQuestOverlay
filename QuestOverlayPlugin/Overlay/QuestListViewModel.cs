@@ -55,8 +55,7 @@ namespace QuestOverlayPlugin.Overlay
             {
                 if (quest.Status != QuestStatus.ACTIVE)
                     return null;
-                return new QuestViewModel(quest.Name, quest.Description, quest.Icon, quest.ProgressMessage, quest.Quota,
-                    quest.Progress, quest.PoolType);
+                return new QuestViewModel(quest);
             }).WhereNotNull().OrderBy(q => q.QuestType).ToList();
             ForceNext = false;
             return true;

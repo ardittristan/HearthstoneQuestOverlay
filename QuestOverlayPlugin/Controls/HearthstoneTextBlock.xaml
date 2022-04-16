@@ -4,5 +4,5 @@
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                          xmlns:controls="clr-namespace:QuestOverlayPlugin.Controls"
-                         mc:Ignorable="d" d:DesignWidth="300" TextWrapping="NoWrap"
+                         mc:Ignorable="d" d:DesignWidth="300" TextWrapping="NoWrap" FontWeight="Bold"
                          FontSize="20"/>

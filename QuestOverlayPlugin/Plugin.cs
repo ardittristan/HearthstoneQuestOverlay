@@ -48,8 +48,8 @@ namespace QuestOverlayPlugin
             get
             {
                 if (Core.Game.IsInMenu && ScreenRatio > 0.9)
-                    return Core.OverlayWindow.Height * 0.104;
-                return Core.OverlayWindow.Height * 0.05;
+                    return Core.OverlayWindow.Height * 0.104 + 74;
+                return Core.OverlayWindow.Height * 0.05 + 74;
             }
         }
 
@@ -75,7 +75,7 @@ namespace QuestOverlayPlugin
             {
                 GetRight = () => Core.OverlayWindow.Height * 0.01,
                 GetBottom = () =>
-                    _questListButton.ActualHeight * Core.OverlayWindow.AutoScaling + QuestsButtonOffset + 96,
+                    _questListButton.ActualHeight * Core.OverlayWindow.AutoScaling + QuestsButtonOffset + 22,
                 GetScaling = () => Core.OverlayWindow.AutoScaling,
                 AnchorSide = Side.Right,
                 EntranceAnimation = AnimationType.Slide,
