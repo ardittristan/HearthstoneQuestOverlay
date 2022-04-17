@@ -14,6 +14,7 @@ namespace QuestOverlayPlugin.Overlay
             Canvas.SetBottom(this, 58);
             Canvas.SetRight(this, 16);
             DataContext = questListViewModel;
+            Cursor = Plugin.Instance.DefaultCursor;
         }
     }
 }

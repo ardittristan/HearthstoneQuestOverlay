@@ -26,6 +26,7 @@ namespace QuestOverlayPlugin.Overlay
             HasXpReward = quest.RewardTrackXp > 0;
             XpReward = quest.RewardTrackXp.ToString();
             BonusXpColor = quest.RewardTrackBonusXp > 0 ? "#60FF08" : "#FFF";
+            ShowXpReward = Plugin.Instance.Settings.ShowRewardOverlay;
         }
 
         public string Title { get; }
@@ -34,6 +35,7 @@ namespace QuestOverlayPlugin.Overlay
         public double Progress { get; }
         public string XpReward { get; }
         public bool HasXpReward { get; }
+        public bool ShowXpReward { get; }
         public string BonusXpColor { get; }
         public ImageSource Image { get; }
         public QuestPoolType QuestType { get; }

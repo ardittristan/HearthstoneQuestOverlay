@@ -7,6 +7,7 @@ namespace QuestOverlayPlugin.Overlay
         public QuestView()
         {
             InitializeComponent();
+            Cursor = Plugin.Instance.DefaultCursor;
         }
     }
 }

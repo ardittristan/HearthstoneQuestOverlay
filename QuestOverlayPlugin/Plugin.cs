@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Controls.Overlay.Mercenaries;
@@ -13,7 +15,11 @@ using Hearthstone_Deck_Tracker.Utility;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
+using MahApps.Metro.Controls;
+using Newtonsoft.Json;
+using QuestOverlayPlugin.Controls;
 using QuestOverlayPlugin.Overlay;
+using QuestOverlayPlugin.Util;
 using TextureExtractor;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
@@ -24,15 +30,22 @@ namespace QuestOverlayPlugin
     {
         public const string QUEST_ICONS_LOC = "initial_prog_global-0";
 
+        internal Settings Settings = null!;
+        private Flyout _settingsFlyout = null!;
+        private SettingsControl _settingsControl = null!;
+
+        private static Version _assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
         public string Name => "Hearthstone Quest Overlay";
         public string Description => "Plugin that adds an overlay to show current daily and weekly quests.";
-        public string ButtonText => "";
+        public string ButtonText => "Settings";
         public string Author => "ardittristan";
-        public Version Version => new Version(1, 0, 0);
+        public Version Version => new Version(_assemblyVersion.Major, _assemblyVersion.Minor, _assemblyVersion.Build);
         public MenuItem MenuItem => null!;
 
         internal static Plugin Instance { get; private set; } = null!;
-        internal Extractor Extractor = null!;
+        internal Extractor Extractor { get; private set; } = null!;
+        internal Cursor DefaultCursor { get; private set; } = null!;
 
         internal QuestListViewModel QuestListVM { get; } = new QuestListViewModel();
 
@@ -56,6 +69,12 @@ namespace QuestOverlayPlugin
         public void OnLoad()
         {
             Instance = this;
+            DefaultCursor =
+                new Cursor(
+                    CursorUtils.GetTransformedCur(
+                        Path.Combine(Config.Instance.HearthstoneDirectory, @"Hearthstone_Data\hand.cur"), 20, 2), true);
+
+            InitSettings();
 
             Log.Info("Loaded Hearthstone Quest Overlay.");
 
@@ -102,6 +121,39 @@ namespace QuestOverlayPlugin
             return Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win", bundleName + ".unity3d");
         }
 
+        private void InitSettings()
+        {
+            try
+            {
+                Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(Settings._configLocation));
+            }
+            catch
+            {
+                Settings = new Settings();
+                Settings.Save();
+            }
+
+            _settingsControl = new SettingsControl();
+
+            _settingsFlyout = new Flyout
+            {
+                Name = "QoSettingsFlyout",
+                Position = Position.Left,
+                Header = "Quest Overlay Settings",
+                Content = _settingsControl
+            };
+
+            Panel.SetZIndex(_settingsFlyout, 100);
+            _settingsFlyout.ClosingFinished += (sender, args) =>
+            {
+                Settings.ShowRewardOverlay = (bool)_settingsControl.RewardOverlayToggle.IsChecked!;
+
+                Settings.Save();
+            };
+
+            Core.MainWindow.Flyouts.Items.Add(_settingsFlyout);
+        }
+
         public void OnUnload()
         {
             Watchers.ExperienceWatcher.NewExperienceHandler -= UpdateEventHandler;
@@ -111,6 +163,7 @@ namespace QuestOverlayPlugin
 
         public void OnButtonPress()
         {
+            _settingsFlyout.IsOpen = true;
         }
 
         public void OnUpdate()

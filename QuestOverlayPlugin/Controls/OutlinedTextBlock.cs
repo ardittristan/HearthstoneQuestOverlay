@@ -227,9 +227,11 @@ namespace QuestOverlayPlugin.Controls
 			if (_formattedText != null || Text == null)
 				return;
 
+#pragma warning disable CS0618
 			_formattedText = new FormattedText(Text, CultureInfo.CurrentUICulture, FlowDirection,
-											   new Typeface(FontFamily, FontStyle, FontWeight, FontStretches.Condensed), FontSize, Brushes.Black,
+				new Typeface(FontFamily, FontStyle, FontWeight, FontStretches.Condensed), FontSize, Brushes.Black,
 											   null, TextFormattingMode.Ideal);
+#pragma warning restore CS0618
 
 			UpdateFormattedText();
 		}

@@ -10,14 +10,20 @@
              d:DataContext="{d:DesignInstance {x:Type local:QuestViewModel}}">
     <UserControl.Resources>
         <controls:ProgressBarFillWidthConverter x:Key="ProgressBarFillWidthConverter" />
-        <controls:BoolToVisibleOrHiddenConverter x:Key="BoolToVisibleOrHiddenConverter" />
+        <controls:BoolToVisibleOrHiddenAndConverter x:Key="BoolToVisibleOrHiddenAndConverter" />
     </UserControl.Resources>
     <Grid Width="478">
         <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3" Margin="50,0,0,0">
             <DockPanel Margin="109,8,8,8" MinWidth="280">
                 <Grid DockPanel.Dock="Top">
                     <TextBlock Text="{Binding Title}" d:Text="Weekly" Foreground="White" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Left" />
-                    <DockPanel Height="24" HorizontalAlignment="Right" Visibility="{Binding HasXpReward, Converter={StaticResource BoolToVisibleOrHiddenConverter}}">
+                    <DockPanel Height="24" HorizontalAlignment="Right" d:Visibility="Visible">
+                        <DockPanel.Visibility>
+                            <MultiBinding Converter="{StaticResource BoolToVisibleOrHiddenAndConverter}">
+                                <Binding Path="HasXpReward" />
+                                <Binding Path="ShowXpReward" />
+                            </MultiBinding>
+                        </DockPanel.Visibility>
                         <Image Source="pack://application:,,,/QuestOverlayPlugin;component/Resources/Rewards_Track_-_XP_Boost.png" RenderOptions.BitmapScalingMode="Fant" Height="24" DockPanel.Dock="Right" Width="24" HorizontalAlignment="Right" Margin="0,-2,-2,0" />
                         <controls:HearthstoneTextBlock Text="{Binding XpReward}" d:Text="1100"  Fill="{Binding BonusXpColor}" d:Fill="#60ff08"  FontSize="16" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,-2,0,0" />
                     </DockPanel>

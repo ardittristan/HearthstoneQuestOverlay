@@ -20,6 +20,7 @@ namespace QuestOverlayPlugin.Overlay
             MouseEnter += OnMouseEnter;
             MouseLeave += OnMouseLeave;
             DataContext = questListViewModel;
+            Cursor = Plugin.Instance.DefaultCursor;
         }
 
         private bool _showQuests;
