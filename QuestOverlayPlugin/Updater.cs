@@ -168,7 +168,7 @@ namespace QuestOverlayPlugin
 			}
 			else
 			{
-				mainWindowMenu.Items.Cast<MenuItem>().First(x => (string)x.Header == "Plugin Update Available").Items
+				mainWindowMenu.Items.Cast<MenuItem>().First(x => (string)x.Header == "UPDATE AVAILABLE").Items
 					.Add(_pluginUpdateMenuItem);
 			}
 		}
