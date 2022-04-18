@@ -26,7 +26,7 @@ using Core = Hearthstone_Deck_Tracker.API.Core;
 namespace QuestOverlayPlugin
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class Plugin : IPlugin
+    public class Plugin : IPlugin, Updater.IUpdater
     {
         public const string QUEST_ICONS_LOC = "initial_prog_global-0";
 
@@ -42,6 +42,7 @@ namespace QuestOverlayPlugin
         public string Author => "ardittristan";
         public Version Version => new Version(_assemblyVersion.Major, _assemblyVersion.Minor, _assemblyVersion.Build);
         public MenuItem MenuItem => null!;
+        public string GithubRepo => "ardittristan/HearthstoneQuestOverlay";
 
         internal static Plugin Instance { get; private set; } = null!;
         internal Extractor Extractor { get; private set; } = null!;
@@ -77,6 +78,8 @@ namespace QuestOverlayPlugin
             InitSettings();
 
             Log.Info("Loaded Hearthstone Quest Overlay.");
+
+            (new Updater(this)).CheckUpdate();
 
             _questListButton = new QuestListButton(QuestListVM);
             _questListButtonBehavior = new OverlayElementBehavior(_questListButton)
