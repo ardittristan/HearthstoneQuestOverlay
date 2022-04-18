@@ -55,7 +55,7 @@ jobs:
           zipBall: false
       - name: Cache HSDeckTracker
         id: cache-hdt
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~\AppData\Local\HearthstoneDeckTracker
           key: ${{ runner.os }}-hdt-${{ hashFiles('HDT-Installer.exe') }}
