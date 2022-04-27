@@ -34,13 +34,13 @@ namespace QuestOverlayPlugin
         private Flyout _settingsFlyout = null!;
         private SettingsControl _settingsControl = null!;
 
-        private static Version _assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
         public string Name => "Hearthstone Quest Overlay";
         public string Description => "Plugin that adds an overlay to show current daily and weekly quests.";
         public string ButtonText => "Settings";
         public string Author => "ardittristan";
-        public Version Version => new Version(_assemblyVersion.Major, _assemblyVersion.Minor, _assemblyVersion.Build);
+        public Version Version => new Version(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
         public MenuItem MenuItem => null!;
         public string GithubRepo => "ardittristan/HearthstoneQuestOverlay";
 

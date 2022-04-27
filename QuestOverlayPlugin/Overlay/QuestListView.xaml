@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:QuestOverlayPlugin.Overlay"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance {x:Type local:QuestListViewModel}}"
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
         <ItemsControl ItemsSource="{Binding Quests}">
@@ -13,6 +14,21 @@
                     <local:QuestView Margin="0,4,0,0" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
+            <ItemsControl.Style>
+                <Style TargetType="ItemsControl">
+                    <Style.Triggers>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <local:QuestViewEmpty />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.Style>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel />

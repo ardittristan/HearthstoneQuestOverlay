@@ -24,7 +24,7 @@ using FsPath = System.IO.Path;
 
 #nullable enable
 
-namespace QuestOverlayPlugin
+namespace {{Namespace}}
 {
 	internal class Updater
 	{
@@ -76,11 +76,7 @@ namespace QuestOverlayPlugin
 					FsPath.Combine(FsPath.GetTempPath(), _plugin.Name + ".zip"));
 				while (client.IsBusy) DoEvents();
 			}
-			Directory.EnumerateFiles(_pluginPath, "*.dll").All(f =>
-			{
-				File.Delete(f);
-				return true;
-			});
+			Directory.EnumerateFiles(_pluginPath, "*.dll").AsParallel().ForAll(File.Delete);
 			ZipFile.ExtractToDirectory(FsPath.Combine(FsPath.GetTempPath(), _plugin.Name + ".zip"),
 				new DirectoryInfo(_pluginPath).Parent!.FullName);
 		}

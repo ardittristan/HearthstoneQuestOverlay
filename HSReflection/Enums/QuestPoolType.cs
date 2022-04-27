@@ -3,8 +3,9 @@ namespace HSReflection.Enums
 {
     public enum QuestPoolType
     {
-        NONE,
+        INVALID,
         DAILY,
-        WEEKLY
+        WEEKLY,
+        STATIC_WEEKLY = 4
     }
 }

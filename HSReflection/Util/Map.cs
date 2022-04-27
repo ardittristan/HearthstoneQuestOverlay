@@ -1,4 +1,6 @@
-﻿#nullable enable
+﻿using System.Collections.Generic;
+
+#nullable enable
 
 namespace HSReflection.Util
 {
@@ -15,6 +17,28 @@ namespace HSReflection.Util
             }
 
             return null;
+        }
+
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(dynamic map)
+        {
+
+            Dictionary<TKey, TValue> dictionary = new Dictionary<TKey, TValue>();
+            
+            int i = 0;
+            foreach (dynamic key in map["keySlots"])
+            {
+                TValue value = TypeUtil.CreateClass(map["valueSlots"][i].Class.FullName, map["valueSlots"][i].Fields);
+
+                try
+                {
+                    dictionary.Add((TKey)key, value);
+                } 
+                catch (System.ArgumentException) { }
+
+                i++;
+            }
+
+            return dictionary;
         }
     }
 }

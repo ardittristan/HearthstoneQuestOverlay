@@ -31,7 +31,7 @@ namespace HSReflection
             dynamic? questPoolState = GetService("Hearthstone.Progression.QuestManager")?["m_questPoolState"];
 
             dynamic? quests = GetService("GameDbf")?["Quest"]?["m_recordsById"];
-            dynamic? questPool = GetService("GameDbf")?["QuestPool"]?["m_recordsById"];
+            //dynamic? questPool = GetService("GameDbf")?["QuestPool"]?["m_recordsById"];
 
             if (quests == null) return questRecords;
 
@@ -58,7 +58,7 @@ namespace HSReflection
                     {
                         Id = questPoolId,
                         PoolType = (QuestPoolType)(Map.GetValue(questPoolState, questPoolId)?["_QuestPoolId"] ??
-                                                   QuestPoolType.NONE),
+                                                   QuestPoolType.INVALID),
                         RerollAvailableCount = questPoolState == null
                             ? 0
                             : Map.GetValue(questPoolState, questPoolId)?["_RerollAvailableCount"] ?? 0
@@ -158,6 +158,14 @@ namespace HSReflection
             }
 
             return quests;
+        }
+
+        public static Dictionary<int, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
+        private static Dictionary<int, DateTime>? GetNextQuestTimesInternal()
+        {
+            dynamic? questPoolTimesMap = GetService("Hearthstone.Progression.QuestManager")?["m_questPoolNextQuestTime"];
+
+            return questPoolTimesMap == null ? null : Map.ToDictionary<int, DateTime>(questPoolTimesMap);
         }
 
         public static string? FindGameString(string key) => TryGetInternal(() => FindGameStringInternal(key));

@@ -24,12 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github", "Github", "{3C3BBB
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3CF284B4-64EA-422E-A12D-14E825842CD4}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextureExtractor", "TextureExtractor\TextureExtractor.csproj", "{8788EA49-0808-4875-BD9A-CD86DA7D646A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpdaterGenerator", "UpdaterGenerator\UpdaterGenerator.csproj", "{490A574E-CBFF-4470-A768-CD3D3F21C5A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +50,10 @@ Global
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{490A574E-CBFF-4470-A768-CD3D3F21C5A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{490A574E-CBFF-4470-A768-CD3D3F21C5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{490A574E-CBFF-4470-A768-CD3D3F21C5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{490A574E-CBFF-4470-A768-CD3D3F21C5A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
