@@ -6,14 +6,29 @@ namespace QuestOverlayPlugin
 {
     public class Settings
     {
-        public static readonly string _configLocation =
+        private static readonly string ConfigLocation =
             Path.Combine(Config.Instance.ConfigDir, @"Plugins\HearthstoneQuestOverlay\HearthstoneQuestOverlay.config");
 
         public bool ShowRewardOverlay = true;
 
         public void Save()
         {
-            File.WriteAllText(_configLocation, JsonConvert.SerializeObject(this, Formatting.Indented));
+            Directory.CreateDirectory(Path.GetDirectoryName(ConfigLocation)!);
+            File.WriteAllText(ConfigLocation, JsonConvert.SerializeObject(this, Formatting.Indented));
+        }
+
+        public static Settings Load()
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigLocation));
+            }
+            catch
+            {
+                Settings settings = new();
+                settings.Save();
+                return settings;
+            }
         }
     }
 }

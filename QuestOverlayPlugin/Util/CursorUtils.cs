@@ -12,7 +12,7 @@ namespace QuestOverlayPlugin.Util
 
             s.Read(buffer, 0, (int)s.Length);
 
-            MemoryStream ms = new MemoryStream();
+            MemoryStream ms = new();
 
             buffer[10] = hotspotX;
             buffer[12] = hotspotY;

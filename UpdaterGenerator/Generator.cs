@@ -14,7 +14,7 @@ namespace UpdaterGenerator
 
 		public void Execute(GeneratorExecutionContext context)
 		{
-			Levenshtein lev = new Levenshtein(context.Compilation.AssemblyName);
+			Levenshtein lev = new(context.Compilation.AssemblyName);
 			string namespaceName = context.Compilation.Assembly.NamespaceNames.Select(x => x).Distinct()
 				.ToDictionary(namespaceName => namespaceName, namespaceName => lev.DistanceFrom(namespaceName))
 				.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;

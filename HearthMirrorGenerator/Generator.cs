@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
@@ -13,10 +12,13 @@ namespace HearthMirrorGenerator
     [Generator]
     public class Generator : ISourceGenerator
     {
-        public static readonly string HSDTPath = Directory
-            .GetDirectories(
+        public static readonly string HSDTPath =
+            Directory.GetDirectories(
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "HearthstoneDeckTracker"), "app-*").First();
+                    "HearthstoneDeckTracker"), "app-*")[
+                Directory.GetDirectories(
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "HearthstoneDeckTracker"), "app-*").Length - 1];
 
         public void Execute(GeneratorExecutionContext context)
         {
@@ -27,6 +29,36 @@ namespace HearthMirrorGenerator
                     NullableReferenceTypes = true
                 });
 
+            ExecuteReflection(context, decompiler);
+            ExecuteMirror(context, decompiler);
+        }
+
+        private static void ExecuteMirror(GeneratorExecutionContext context, CSharpDecompiler decompiler)
+        {
+            FullTypeName mirrorClassName = new FullTypeName("HearthMirror.Mirror");
+
+            ITypeDefinition typeInfo =
+                decompiler.TypeSystem.MainModule.Compilation.FindType(mirrorClassName).GetDefinition();
+
+            if (typeInfo == null) return;
+
+            foreach (IProperty property in typeInfo.Properties)
+            {
+                switch (property.Name)
+                {
+                    case "Root":
+                        AddMirrorSource(context, "BgsClient",
+                            decompiler.DecompileAsString(property.MetadataToken)
+                                .Replace("Root", "BgsClient")
+                                .RegexReplace("_root([^_])", "_bgsClient$1")
+                                .Replace("Assembly-CSharp", "blizzard.bgsclient"));
+                        break;
+                }
+            }
+        }
+
+        private static void ExecuteReflection(GeneratorExecutionContext context, CSharpDecompiler decompiler)
+        {
             FullTypeName reflectionClassName = new FullTypeName("HearthMirror.Reflection");
 
             ITypeDefinition typeInfo = decompiler.TypeSystem.MainModule.Compilation.FindType(reflectionClassName)
@@ -39,22 +71,39 @@ namespace HearthMirrorGenerator
                 switch (method.Name)
                 {
                     case "TryGetInternal":
-                        AddSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken)
-                                .Replace("HearthMirror.Reflection.", ""));
+                        AddReflectionSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken)
+                            .Replace("HearthMirror.Reflection.", ""));
                         break;
                     case "GetService":
-                        AddSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken));
-                        break;
                     case "Reinitialize":
-                        AddSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken));
+                    case "GetLocalization":
+                        AddReflectionSource(context, method.Name,
+                            decompiler.DecompileAsString(method.MetadataToken));
                         break;
                 }
             }
         }
 
-        private static void AddSource(GeneratorExecutionContext context, string name, string code)
+        private static void AddMirrorSource(GeneratorExecutionContext context, string name, string code)
         {
-            context.AddSource($"HearthMirror.{name}.cs", SourceText.From($@"
+            context.AddSource($"HearthMirror.Mirror.{name}.cs", SourceText.From($@"
+#nullable disable
+
+namespace HSReflection
+{{
+internal partial class CustomMirror
+{{
+{code}
+}}
+}}
+
+#nullable restore
+", Encoding.UTF8));
+        }
+
+        private static void AddReflectionSource(GeneratorExecutionContext context, string name, string code)
+        {
+            context.AddSource($"HearthMirror.Reflection.{name}.cs", SourceText.From($@"
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

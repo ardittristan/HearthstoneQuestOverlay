@@ -24,10 +24,10 @@ namespace QuestOverlayPlugin.Overlay
             TimeSpan timeLeft = nextQuestTime - DateTime.Now;
             NextQuest = "New quest in " + timeLeft switch
             {
-                var t when t.Days > 0 => t.Days + " days",
-                var t when t.Hours > 0 => t.Hours + " hours",
-                var t when t.Minutes > 0 => t.Minutes + " minutes",
-                var t when t.Seconds > 0 => t.Seconds + " seconds",
+                { Days: > 0 } t => t.Days + " days",
+                { Hours: > 0 } t => t.Hours + " hours",
+                { Minutes: > 0 } t => t.Minutes + " minutes",
+                { Seconds: > 0 } t => t.Seconds + " seconds",
                 _ => "unknown"
             };
 

@@ -16,7 +16,6 @@ using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
 using MahApps.Metro.Controls;
-using Newtonsoft.Json;
 using QuestOverlayPlugin.Controls;
 using QuestOverlayPlugin.Overlay;
 using QuestOverlayPlugin.Util;
@@ -40,7 +39,7 @@ namespace QuestOverlayPlugin
         public string Description => "Plugin that adds an overlay to show current daily and weekly quests.";
         public string ButtonText => "Settings";
         public string Author => "ardittristan";
-        public Version Version => new Version(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
+        public Version Version => new(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
         public MenuItem MenuItem => null!;
         public string GithubRepo => "ardittristan/HearthstoneQuestOverlay";
 
@@ -48,7 +47,7 @@ namespace QuestOverlayPlugin
         internal Extractor Extractor { get; private set; } = null!;
         internal Cursor DefaultCursor { get; private set; } = null!;
 
-        internal QuestListViewModel QuestListVM { get; } = new QuestListViewModel();
+        internal QuestListViewModel QuestListVM { get; } = new();
 
         private OverlayElementBehavior _questListBehavior = null!;
         private OverlayElementBehavior _questListButtonBehavior = null!;
@@ -126,15 +125,7 @@ namespace QuestOverlayPlugin
 
         private void InitSettings()
         {
-            try
-            {
-                Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(Settings._configLocation));
-            }
-            catch
-            {
-                Settings = new Settings();
-                Settings.Save();
-            }
+            Settings = Settings.Load();
 
             _settingsControl = new SettingsControl();
 

@@ -34,7 +34,7 @@ namespace TextureExtractor
 
 		public async Task ExtractAsync(string bundlePath, bool force = false)
 		{
-			Task t = new Task(() => Extract(bundlePath, force));
+			Task t = new(() => Extract(bundlePath, force));
 			t.Start();
 			await Task.WhenAll(t);
 		}
@@ -45,7 +45,7 @@ namespace TextureExtractor
 
 			string bundleName = Path.GetFileNameWithoutExtension(bundlePath);
 
-			AssetsManager assetsManager = new AssetsManager();
+			AssetsManager assetsManager = new();
 
 			BundleFileInstance bundleFile = assetsManager.LoadBundleFile(bundlePath);
 			AssetsFileInstance instance = assetsManager.LoadAssetsFileFromBundle(bundleFile, 0);
@@ -64,7 +64,7 @@ namespace TextureExtractor
 					string name = baseField.Get("m_Name").GetValue().AsString();
 
 					byte[] texDat = textureField.GetTextureData(Path.GetDirectoryName(instance.path), bundleFile.file);
-					Bitmap canvas = new Bitmap(textureField.m_Width, textureField.m_Height, textureField.m_Width * 4,
+					Bitmap canvas = new(textureField.m_Width, textureField.m_Height, textureField.m_Width * 4,
 						PixelFormat.Format32bppArgb,
 						Marshal.UnsafeAddrOfPinnedArrayElement(texDat, 0));
 					canvas.RotateFlip(RotateFlipType.RotateNoneFlipY);

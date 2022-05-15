@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HearthMirror;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using HSReflection.Enums;
 using HSReflection.Objects;
@@ -14,22 +13,23 @@ namespace HSReflection
 {
     public static partial class Reflection
     {
-        private static readonly Lazy<Mirror> LazyMirror = new Lazy<Mirror>(() => new Mirror
+        private static readonly Lazy<CustomMirror> LazyMirror = new(() => new CustomMirror
         {
             ImageName = "Hearthstone"
         });
 
-        private static Mirror Mirror => LazyMirror.Value;
+        internal static CustomMirror Mirror => LazyMirror.Value;
 
         public static event Action<Exception> Exception = null!;
 
         public static Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsInternal);
         private static Dictionary<int, QuestRecord> GetQuestRecordsInternal()
         {
-            Dictionary<int, QuestRecord> questRecords = new Dictionary<int, QuestRecord>();
-            
-            dynamic? questPoolState = GetService("Hearthstone.Progression.QuestManager")?["m_questPoolState"];
+            Dictionary<int, QuestRecord> questRecords = new();
 
+            dynamic? questManager = GetService("Hearthstone.Progression.QuestManager");
+            dynamic? questPoolState = questManager?["m_questPoolState"];
+            
             dynamic? quests = GetService("GameDbf")?["Quest"]?["m_recordsById"];
             //dynamic? questPool = GetService("GameDbf")?["QuestPool"]?["m_recordsById"];
 
@@ -46,22 +46,25 @@ namespace HSReflection
 
                 int questPoolId = quest["m_questPoolId"];
 
+                dynamic? questPoolStateEntry = questPoolState == null
+                    ? null
+                    : MonoUtil.ToMonoObject(
+                        DynamicUtil.TryCast<uint?>(Map.GetValue(questPoolState, questPoolId)) ?? 0
+                    );
+
                 questRecords.Add(questKey, new QuestRecord()
                 {
                     CanAbandon = quest["m_canAbandon"],
-                    Description = Locale.Get(quest["m_description"]),
+                    Description = GetLocalization(quest["m_description"]),
                     Icon = quest["m_icon"],
-                    Name = Locale.Get(quest["m_name"]),
+                    Name = GetLocalization(quest["m_name"]),
                     NextInChain = quest["m_nextInChainId"],
                     PoolGuaranteed = quest["m_poolGuaranteed"],
                     QuestPool = new QuestPool()
                     {
                         Id = questPoolId,
-                        PoolType = (QuestPoolType)(Map.GetValue(questPoolState, questPoolId)?["_QuestPoolId"] ??
-                                                   QuestPoolType.INVALID),
-                        RerollAvailableCount = questPoolState == null
-                            ? 0
-                            : Map.GetValue(questPoolState, questPoolId)?["_RerollAvailableCount"] ?? 0
+                        PoolType = (QuestPoolType?)questPoolStateEntry?["_QuestPoolId"] ?? QuestPoolType.INVALID,
+                        RerollAvailableCount = questPoolStateEntry?["_RerollAvailableCount"] ?? 0
                     },
                     Quota = quest["m_quota"],
                     RewardList = quest["m_rewardListId"],
@@ -75,9 +78,10 @@ namespace HSReflection
         public static List<PlayerQuestState> GetQuestStates() => TryGetInternal(GetQuestStatesInternal);
         private static List<PlayerQuestState> GetQuestStatesInternal()
         {
-            List<PlayerQuestState> quests = new List<PlayerQuestState>();
+            List<PlayerQuestState> quests = new();
 
-            dynamic? currentQuestValues = GetService("Hearthstone.Progression.QuestManager")?["m_questState"]["valueSlots"];
+            dynamic? questState = GetService("Hearthstone.Progression.QuestManager")?["m_questState"];
+            dynamic? currentQuestValues = GetService("Hearthstone.Progression.QuestManager")?["m_questState"]["entries"];
 
             if (currentQuestValues == null) return quests;
 
@@ -85,11 +89,14 @@ namespace HSReflection
             {
                 if (val == null) continue;
 
+                dynamic? curVal = MonoUtil.ToMonoObject(DynamicUtil.TryCast<uint>(val["value"]));
+                if (curVal == null) continue;
+
                 quests.Add(new PlayerQuestState()
                 {
-                    Progress = (int)val["_Progress"],
-                    QuestId = (int)val["_QuestId"],
-                    Status = (QuestStatus)(int)val["_Status"],
+                    Progress = (int)curVal["_Progress"],
+                    QuestId = (int)curVal["_QuestId"],
+                    Status = (QuestStatus)(int)curVal["_Status"],
                 });
             }
 
@@ -99,7 +106,7 @@ namespace HSReflection
         public static List<Quest> GetQuests() => TryGetInternal(GetQuestsInternal);
         private static List<Quest> GetQuestsInternal()
         {
-            List<Quest> quests = new List<Quest>();
+            List<Quest> quests = new();
 
             int rewardTrackBonusXp =
                 GetService("Hearthstone.Progression.RewardTrackManager")?["<TrackDataModel>k__BackingField"]["m_XpBonusPercent"] ?? 0;
@@ -111,7 +118,7 @@ namespace HSReflection
             {
                 if (!questRecords.TryGetValue(questState.QuestId, out QuestRecord questRecord)) continue;
 
-                List<string> dataModelList = new List<string>();
+                List<string> dataModelList = new();
                 string? icon = questRecord.Icon;
                 icon?.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).Aggregate(dataModelList,
                     delegate(List<string> list, string element)

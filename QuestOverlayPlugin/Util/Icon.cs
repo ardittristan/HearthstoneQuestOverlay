@@ -50,7 +50,7 @@ namespace QuestOverlayPlugin.Util
                         .Where(s => !string.IsNullOrEmpty(s))
                         .ToList();
 
-                BitmapImage background = new BitmapImage(GetImageUri(GetBackground(dataModelList.First())));
+                BitmapImage background = new(GetImageUri(GetBackground(dataModelList.First())));
                 dataModelList.RemoveAt(0);
 
                 List<BitmapImage> icons = dataModelList
@@ -63,7 +63,7 @@ namespace QuestOverlayPlugin.Util
 
         private static ImageSource GenerateTripleIcon(BitmapSource background, IReadOnlyList<BitmapImage> icons)
         {
-            WriteableBitmap wb = new WriteableBitmap(background);
+            WriteableBitmap wb = new(background);
 
             using (wb.GetBitmapContext())
             {
@@ -102,8 +102,8 @@ namespace QuestOverlayPlugin.Util
         {
             get
             {
-                BitmapImage image = new BitmapImage(GetImageUri(IconNameFilter(Name!) + "-icon.png"));
-                WriteableBitmap wb = new WriteableBitmap(image);
+                BitmapImage image = new(GetImageUri(IconNameFilter(Name!) + "-icon.png"));
+                WriteableBitmap wb = new(image);
 
                 using (wb.GetBitmapContext())
                 {
@@ -119,7 +119,8 @@ namespace QuestOverlayPlugin.Util
             switch (name)
             {
                 case "Generic":
-                    return name + "2";
+                case "Damage": // TODO: Figure out if this is correct
+                    return "Generic2";
 
                 case "Damage_Heroes":
                     return "DmgHeroes";
@@ -138,9 +139,6 @@ namespace QuestOverlayPlugin.Util
                 case "Adventure":
                     return "GameMode_" + name + "3";
 
-                case "Damage":
-                    return "Generic2"; // TODO: Figure out if this is correct
-
                 case "Social":
                     return "Friend"; // TODO: Figure out if this is correct
 
@@ -152,7 +150,7 @@ namespace QuestOverlayPlugin.Util
         private ImageSource BrokenIcon => new BitmapImage(GetImageUri("testt.png"));
 
         private Uri GetImageUri(string fileName) =>
-            new Uri(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName), UriKind.Absolute);
+            new(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName), UriKind.Absolute);
     }
 }
 
