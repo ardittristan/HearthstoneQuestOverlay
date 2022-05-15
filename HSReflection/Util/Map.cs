@@ -30,51 +30,6 @@ namespace HSReflection.Util
 
             return null;
         }
-
-        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(dynamic map)
-        {
-
-            Dictionary<TKey, TValue> dictionary = new();
-
-            if (map["keySlots"] == null)
-            {
-                foreach (dynamic curEntry in map["entries"])
-                {
-                    if (curEntry == null) continue;
-                    TValue value = TypeUtil.CreateClass(curEntry["value"].Class.FullName, curEntry["value"].Fields);
-
-                    try
-                    {
-                        dictionary.Add((TKey)curEntry["key"], value);
-                    }
-                    catch (System.ArgumentException)
-                    {
-                    }
-                }
-            }
-            else
-            {
-                int i = 0;
-                foreach (dynamic key in map["keySlots"])
-                {
-                    if (key == null) continue;
-                    TValue value =
-                        TypeUtil.CreateClass(map["valueSlots"][i].Class.FullName, map["valueSlots"][i].Fields);
-
-                    try
-                    {
-                        dictionary.Add((TKey)key, value);
-                    }
-                    catch (System.ArgumentException)
-                    {
-                    }
-
-                    i++;
-                }
-            }
-
-            return dictionary;
-        }
     }
 }
 

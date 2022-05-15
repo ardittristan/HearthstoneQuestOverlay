@@ -27,11 +27,9 @@ namespace HSReflection
         {
             Dictionary<int, QuestRecord> questRecords = new();
 
-            dynamic? questManager = GetService("Hearthstone.Progression.QuestManager");
-            dynamic? questPoolState = questManager?["m_questPoolState"];
+            dynamic? questPoolState = GetService("Hearthstone.Progression.QuestManager")?["m_questPoolState"];
             
             dynamic? quests = GetService("GameDbf")?["Quest"]?["m_recordsById"];
-            //dynamic? questPool = GetService("GameDbf")?["QuestPool"]?["m_recordsById"];
 
             if (quests == null) return questRecords;
 
@@ -79,8 +77,7 @@ namespace HSReflection
         private static List<PlayerQuestState> GetQuestStatesInternal()
         {
             List<PlayerQuestState> quests = new();
-
-            dynamic? questState = GetService("Hearthstone.Progression.QuestManager")?["m_questState"];
+            
             dynamic? currentQuestValues = GetService("Hearthstone.Progression.QuestManager")?["m_questState"]["entries"];
 
             if (currentQuestValues == null) return quests;
@@ -170,9 +167,29 @@ namespace HSReflection
         public static Dictionary<int, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
         private static Dictionary<int, DateTime>? GetNextQuestTimesInternal()
         {
-            dynamic? questPoolTimesMap = GetService("Hearthstone.Progression.QuestManager")?["m_questPoolNextQuestTime"];
+            dynamic? questPoolState = GetService("Hearthstone.Progression.QuestManager")?["m_questPoolState"];
 
-            return questPoolTimesMap == null ? null : Map.ToDictionary<int, DateTime>(questPoolTimesMap);
+            if (questPoolState == null) return null;
+
+            Dictionary<int, DateTime> questPools = new();
+
+            foreach (dynamic? curEntry in questPoolState["entries"])
+            {
+                double secondsUntilNextGrant = DynamicUtil.TryCast<double>(
+                    MonoUtil.ToMonoObject(DynamicUtil.TryCast<uint?>(curEntry["value"]) ?? 0)?
+                        ["_SecondsUntilNextGrant"]);
+
+                try
+                {
+                    if (secondsUntilNextGrant != 0)
+                        questPools.Add((int)curEntry["key"], DateTime.Now.AddSeconds(secondsUntilNextGrant));
+                }
+                catch (System.ArgumentException)
+                {
+                }
+            }
+
+            return questPools;
         }
 
         public static string? FindGameString(string key) => TryGetInternal(() => FindGameStringInternal(key));
