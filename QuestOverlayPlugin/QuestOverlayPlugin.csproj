@@ -19,6 +19,7 @@
     <CompilerGeneratedFilesOutputPath>obj\Generated</CompilerGeneratedFilesOutputPath>
     <UseWPF>true</UseWPF>
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="Build">
