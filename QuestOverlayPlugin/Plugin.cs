@@ -12,6 +12,7 @@ using Hearthstone_Deck_Tracker.Enums.Hearthstone;
 using Hearthstone_Deck_Tracker.Hearthstone;
 using Hearthstone_Deck_Tracker.Plugins;
 using Hearthstone_Deck_Tracker.Utility;
+using Hearthstone_Deck_Tracker.Utility.Extensions;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
@@ -78,7 +79,7 @@ namespace QuestOverlayPlugin
 
             Log.Info("Loaded Hearthstone Quest Overlay.");
 
-            (new Updater(this)).CheckUpdate();
+            new Updater(this).CheckUpdate();
 
             _questListButton = new QuestListButton(QuestListVM);
             _questListButtonBehavior = new OverlayElementBehavior(_questListButton)
@@ -241,13 +242,8 @@ namespace QuestOverlayPlugin
         {
             Instance.ShowQuestsButton();
             Instance.ForceNextQuestUpdate();
-#if DEBUG
-            System.Collections.Generic.List<HSReflection.Objects.Quest> quests = HSReflection.Reflection.GetQuests();
-            foreach (HSReflection.Objects.Quest quest in quests)
-            {
-                Log.Info(quest.Icon ?? "");
-            }
-#endif
+            OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, false);
+            OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, true);
         }
     }
 }
