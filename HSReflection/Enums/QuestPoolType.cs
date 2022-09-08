@@ -1,11 +1,10 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace HSReflection.Enums
+namespace HSReflection.Enums;
+
+public enum QuestPoolType
 {
-    public enum QuestPoolType
-    {
-        INVALID,
-        DAILY,
-        WEEKLY,
-        STATIC_WEEKLY = 4
-    }
+    INVALID,
+    DAILY,
+    WEEKLY,
+    STATIC_WEEKLY = 4
 }

@@ -1,8 +1,9 @@
 ﻿// ReSharper disable InconsistentNaming
 namespace HSReflection.Enums;
 
-public enum QuestTileDisplayMode
+public enum RewardTrackType
 {
-    DEFAULT,
-    NEXT_QUEST_TIME
+    NONE,
+    GLOBAL,
+    BATTLEGROUNDS
 }

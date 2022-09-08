@@ -1,13 +1,12 @@
 ﻿using System.Windows.Controls;
 
-namespace QuestOverlayPlugin.Overlay
+namespace QuestOverlayPlugin.Overlay;
+
+public partial class QuestView : UserControl
 {
-    public partial class QuestView : UserControl
+    public QuestView()
     {
-        public QuestView()
-        {
-            InitializeComponent();
-            Cursor = Plugin.Instance.DefaultCursor;
-        }
+        InitializeComponent();
+        Cursor = Plugin.Instance.DefaultCursor;
     }
 }

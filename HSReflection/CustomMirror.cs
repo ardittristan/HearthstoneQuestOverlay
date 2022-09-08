@@ -2,17 +2,16 @@
 
 #nullable disable
 
-namespace HSReflection
-{
-    internal partial class CustomMirror : Mirror
-    {
-        private dynamic _bgsClient;
+namespace HSReflection;
 
-        internal new void Clean()
-        {
-            _bgsClient = null;
-            base.Clean();
-        }
+internal partial class CustomMirror : Mirror
+{
+    private dynamic _bgsClient;
+
+    internal new void Clean()
+    {
+        _bgsClient = null;
+        base.Clean();
     }
 }
 

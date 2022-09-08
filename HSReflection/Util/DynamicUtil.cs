@@ -1,20 +1,19 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace HSReflection.Util
+namespace HSReflection.Util;
+
+internal static class DynamicUtil
 {
-    internal static class DynamicUtil
+    [return: MaybeNull]
+    public static T TryCast<T>(dynamic obj)
     {
-        [return: MaybeNull]
-        public static T TryCast<T>(dynamic obj)
+        try
         {
-            try
-            {
-                return (T)obj;
-            }
-            catch
-            {
-                return default;
-            }
+            return (T)obj;
+        }
+        catch
+        {
+            return default;
         }
     }
 }

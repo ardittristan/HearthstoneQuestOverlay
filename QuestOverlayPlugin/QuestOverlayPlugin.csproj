@@ -20,11 +20,16 @@
     <UseWPF>true</UseWPF>
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="Build">
     <ItemGroup>
-      <FilesToCopy Include="$(TargetDir)**\*.dll" />
+      <FilesToCopy Include="$(TargetDir)**\HearthMirror.Scripts.dll" />
+      <FilesToCopy Include="$(TargetDir)**\QuestOverlayPlugin.dll" />
+      <FilesToCopy Include="$(TargetDir)**\TextureExtractor.dll" />
+      <FilesToCopy Include="$(TargetDir)**\WriteableBitmapEx.Wpf.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(CI)' != 'true' " SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)..\..\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(Configuration)' == 'Release' " SkipUnchangedFiles="true" />
@@ -37,27 +42,22 @@
   <ItemGroup>
     <Reference Include="HearthMirror">
       <HintPath>$(HSDTPath)\HearthMirror.dll</HintPath>
-      <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="HearthWatcher">
       <HintPath>$(HSDTPath)\HearthWatcher.dll</HintPath>
-      <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="HearthstoneDeckTracker">
       <HintPath>$(HSDTPath)\HearthstoneDeckTracker.exe</HintPath>
-      <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>$(HSDTPath)\MahApps.Metro.dll</HintPath>
-      <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(HSDTPath)\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -67,9 +67,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Controls\HearthstoneTextBlock.xaml.cs">
-      <DependentUpon>HearthstoneTextBlock.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Controls\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>

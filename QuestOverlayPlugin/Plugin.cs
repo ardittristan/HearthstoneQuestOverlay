@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,227 +21,226 @@ using QuestOverlayPlugin.Util;
 using TextureExtractor;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
-namespace QuestOverlayPlugin
+namespace QuestOverlayPlugin;
+
+// ReSharper disable once ClassNeverInstantiated.Global
+public class Plugin : IPlugin, Updater.IUpdater
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class Plugin : IPlugin, Updater.IUpdater
+    public const string QUEST_ICONS_LOC = "initial_base_global-69";
+
+    internal Settings Settings = null!;
+    private Flyout _settingsFlyout = null!;
+    private SettingsControl _settingsControl = null!;
+
+    private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+    public string Name => "Hearthstone Quest Overlay";
+    public string Description => "Plugin that adds an overlay to show current daily and weekly quests.";
+    public string ButtonText => "Settings";
+    public string Author => "ardittristan";
+    public Version Version => new(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
+    public MenuItem MenuItem => null!;
+    public string GithubRepo => "ardittristan/HearthstoneQuestOverlay";
+
+    internal static Plugin Instance { get; private set; } = null!;
+    internal Extractor Extractor { get; private set; } = null!;
+    internal Cursor DefaultCursor { get; private set; } = null!;
+
+    internal QuestListViewModel QuestListVM { get; } = new();
+
+    private OverlayElementBehavior _questListBehavior = null!;
+    private OverlayElementBehavior _questListButtonBehavior = null!;
+
+    private QuestListButton _questListButton = null!;
+    private QuestListView _questListView = null!;
+
+    private static double ScreenRatio => (4.0 / 3.0) / (Core.OverlayWindow.Width / Core.OverlayWindow.Height);
+    private static double QuestsButtonOffset
     {
-        public const string QUEST_ICONS_LOC = "initial_prog_global-0";
-
-        internal Settings Settings = null!;
-        private Flyout _settingsFlyout = null!;
-        private SettingsControl _settingsControl = null!;
-
-        private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-
-        public string Name => "Hearthstone Quest Overlay";
-        public string Description => "Plugin that adds an overlay to show current daily and weekly quests.";
-        public string ButtonText => "Settings";
-        public string Author => "ardittristan";
-        public Version Version => new(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
-        public MenuItem MenuItem => null!;
-        public string GithubRepo => "ardittristan/HearthstoneQuestOverlay";
-
-        internal static Plugin Instance { get; private set; } = null!;
-        internal Extractor Extractor { get; private set; } = null!;
-        internal Cursor DefaultCursor { get; private set; } = null!;
-
-        internal QuestListViewModel QuestListVM { get; } = new();
-
-        private OverlayElementBehavior _questListBehavior = null!;
-        private OverlayElementBehavior _questListButtonBehavior = null!;
-
-        private QuestListButton _questListButton = null!;
-        private QuestListView _questListView = null!;
-
-        private static double ScreenRatio => (4.0 / 3.0) / (Core.OverlayWindow.Width / Core.OverlayWindow.Height);
-        private static double QuestsButtonOffset
+        get
         {
-            get
-            {
-                if (Core.Game.IsInMenu && ScreenRatio > 0.9)
-                    return Core.OverlayWindow.Height * 0.104 + 74;
-                return Core.OverlayWindow.Height * 0.05 + 74;
-            }
+            if (Core.Game.IsInMenu && ScreenRatio > 0.9)
+                return Core.OverlayWindow.Height * 0.104 + 74;
+            return Core.OverlayWindow.Height * 0.05 + 74;
         }
+    }
 
-        public void OnLoad()
+    public void OnLoad()
+    {
+        Instance = this;
+        DefaultCursor =
+            new Cursor(
+                CursorUtils.GetTransformedCur(
+                    Path.Combine(Config.Instance.HearthstoneDirectory, @"Hearthstone_Data\hand.cur"), 20, 2), true);
+
+        InitSettings();
+
+        Log.Info("Loaded Hearthstone Quest Overlay.");
+
+        new Updater(this).CheckUpdate();
+
+        _questListButton = new QuestListButton(QuestListVM);
+        _questListButtonBehavior = new OverlayElementBehavior(_questListButton)
         {
-            Instance = this;
-            DefaultCursor =
-                new Cursor(
-                    CursorUtils.GetTransformedCur(
-                        Path.Combine(Config.Instance.HearthstoneDirectory, @"Hearthstone_Data\hand.cur"), 20, 2), true);
+            GetRight = () => Core.OverlayWindow.Height * 0.01,
+            GetBottom = () => QuestsButtonOffset,
+            GetScaling = () => Core.OverlayWindow.AutoScaling,
+            AnchorSide = Side.Right,
+            EntranceAnimation = AnimationType.Slide,
+            ExitAnimation = AnimationType.Slide
+        };
 
-            InitSettings();
+        _questListView = new QuestListView(QuestListVM);
+        _questListBehavior = new OverlayElementBehavior(_questListView)
+        {
+            GetRight = () => Core.OverlayWindow.Height * 0.01,
+            GetBottom = () =>
+                _questListButton.ActualHeight * Core.OverlayWindow.AutoScaling + QuestsButtonOffset + 22,
+            GetScaling = () => Core.OverlayWindow.AutoScaling,
+            AnchorSide = Side.Right,
+            EntranceAnimation = AnimationType.Slide,
+            ExitAnimation = AnimationType.Slide
+        };
 
-            Log.Info("Loaded Hearthstone Quest Overlay.");
+        GameEvents.OnInMenu.Add(Update);
+        GameEvents.OnGameEnd.Add(Update);
+        GameEvents.OnModeChanged.Add(Update);
+        Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
+        if (Core.Game.IsRunning) Update();
 
-            new Updater(this).CheckUpdate();
-
-            _questListButton = new QuestListButton(QuestListVM);
-            _questListButtonBehavior = new OverlayElementBehavior(_questListButton)
-            {
-                GetRight = () => Core.OverlayWindow.Height * 0.01,
-                GetBottom = () => QuestsButtonOffset,
-                GetScaling = () => Core.OverlayWindow.AutoScaling,
-                AnchorSide = Side.Right,
-                EntranceAnimation = AnimationType.Slide,
-                ExitAnimation = AnimationType.Slide
-            };
-
-            _questListView = new QuestListView(QuestListVM);
-            _questListBehavior = new OverlayElementBehavior(_questListView)
-            {
-                GetRight = () => Core.OverlayWindow.Height * 0.01,
-                GetBottom = () =>
-                    _questListButton.ActualHeight * Core.OverlayWindow.AutoScaling + QuestsButtonOffset + 22,
-                GetScaling = () => Core.OverlayWindow.AutoScaling,
-                AnchorSide = Side.Right,
-                EntranceAnimation = AnimationType.Slide,
-                ExitAnimation = AnimationType.Slide
-            };
-
-            GameEvents.OnInMenu.Add(Update);
-            GameEvents.OnGameEnd.Add(Update);
-            GameEvents.OnModeChanged.Add(Update);
-            Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
-            if (Core.Game.IsRunning) Update();
-
-            Extractor = new Extractor(
-                Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "TextureExtractor"),
-                Core.Game.MetaData.HearthstoneBuild.ToString());
+        Extractor = new Extractor(
+            Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "TextureExtractor"),
+            Core.Game.MetaData.HearthstoneBuild.ToString());
 
 #pragma warning disable CS4014
-            Extractor.ExtractAsync(CreateBundlePath(QUEST_ICONS_LOC));
+        Extractor.ExtractAsync(CreateBundlePath(QUEST_ICONS_LOC));
 #pragma warning restore CS4014
-        }
+    }
 
-        public static string CreateBundlePath(string bundleName)
+    public static string CreateBundlePath(string bundleName)
+    {
+        return Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win", bundleName + ".unity3d");
+    }
+
+    private void InitSettings()
+    {
+        Settings = Settings.Load();
+
+        _settingsControl = new SettingsControl();
+
+        _settingsFlyout = new Flyout
         {
-            return Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win", bundleName + ".unity3d");
-        }
+            Name = "QoSettingsFlyout",
+            Position = Position.Left,
+            Header = "Quest Overlay Settings",
+            Content = _settingsControl
+        };
 
-        private void InitSettings()
+        Panel.SetZIndex(_settingsFlyout, 100);
+        _settingsFlyout.ClosingFinished += (_, _) =>
         {
-            Settings = Settings.Load();
+            Settings.ShowRewardOverlay = (bool)_settingsControl.RewardOverlayToggle.IsChecked!;
 
-            _settingsControl = new SettingsControl();
+            Settings.Save();
+        };
 
-            _settingsFlyout = new Flyout
-            {
-                Name = "QoSettingsFlyout",
-                Position = Position.Left,
-                Header = "Quest Overlay Settings",
-                Content = _settingsControl
-            };
+        Core.MainWindow.Flyouts.Items.Add(_settingsFlyout);
+    }
 
-            Panel.SetZIndex(_settingsFlyout, 100);
-            _settingsFlyout.ClosingFinished += (sender, args) =>
-            {
-                Settings.ShowRewardOverlay = (bool)_settingsControl.RewardOverlayToggle.IsChecked!;
+    public void OnUnload()
+    {
+        Watchers.ExperienceWatcher.NewExperienceHandler -= UpdateEventHandler;
 
-                Settings.Save();
-            };
+        RemoveOverlay();
+    }
 
-            Core.MainWindow.Flyouts.Items.Add(_settingsFlyout);
-        }
+    public void OnButtonPress()
+    {
+        _settingsFlyout.IsOpen = true;
+    }
 
-        public void OnUnload()
-        {
-            Watchers.ExperienceWatcher.NewExperienceHandler -= UpdateEventHandler;
+    public void OnUpdate()
+    {
+        AddOrRemoveOverlay();
+    }
 
+    private void AddOrRemoveOverlay()
+    {
+        if (Core.Game.IsRunning)
+            AddOverlay();
+        else
             RemoveOverlay();
-        }
+    }
 
-        public void OnButtonPress()
-        {
-            _settingsFlyout.IsOpen = true;
-        }
+    private void AddOverlay()
+    {
+        int index = 1;
+        if (Core.OverlayCanvas.Children.OfType<MercenariesTaskListButton>().Any())
+            index = Core.OverlayCanvas.Children.OfType<UIElement>()
+                .Select((c, i) => new { I = i, C = c })
+                .Single(item => item.C.GetType() == typeof(MercenariesTaskListButton)).I;
 
-        public void OnUpdate()
-        {
-            AddOrRemoveOverlay();
-        }
+        if (!Core.OverlayCanvas.Children.Contains(_questListButton))
+            Core.OverlayCanvas.Children.Insert(index, _questListButton);
 
-        private void AddOrRemoveOverlay()
-        {
-            if (Core.Game.IsRunning)
-                AddOverlay();
-            else
-                RemoveOverlay();
-        }
+        if (!Core.OverlayCanvas.Children.Contains(_questListView))
+            Core.OverlayCanvas.Children.Insert(index + 1, _questListView);
+    }
 
-        private void AddOverlay()
-        {
-            int index = 1;
-            if (Core.OverlayCanvas.Children.OfType<MercenariesTaskListButton>().Any())
-                index = Core.OverlayCanvas.Children.OfType<UIElement>()
-                    .Select((c, i) => new { I = i, C = c })
-                    .Single(item => item.C.GetType() == typeof(MercenariesTaskListButton)).I;
+    private void RemoveOverlay()
+    {
+        if (Core.OverlayCanvas.Children.Contains(_questListButton))
+            Core.OverlayCanvas.Children.Remove(_questListButton);
 
-            if (!Core.OverlayCanvas.Children.Contains(_questListButton))
-                Core.OverlayCanvas.Children.Insert(index, _questListButton);
+        if (Core.OverlayCanvas.Children.Contains(_questListView))
+            Core.OverlayCanvas.Children.Remove(_questListView);
+    }
 
-            if (!Core.OverlayCanvas.Children.Contains(_questListView))
-                Core.OverlayCanvas.Children.Insert(index + 1, _questListView);
-        }
+    internal void ShowQuestsButton()
+    {
+        _questListButtonBehavior.Show();
+    }
 
-        private void RemoveOverlay()
-        {
-            if (Core.OverlayCanvas.Children.Contains(_questListButton))
-                Core.OverlayCanvas.Children.Remove(_questListButton);
+    internal void HideQuestsButton()
+    {
+        HideQuests();
+        _questListButtonBehavior.Hide();
+    }
 
-            if (Core.OverlayCanvas.Children.Contains(_questListView))
-                Core.OverlayCanvas.Children.Remove(_questListView);
-        }
+    internal void UpdateQuestList(bool force = false)
+    {
+        ((QuestListViewModel)_questListView.DataContext).Update(force);
+    }
 
-        internal void ShowQuestsButton()
-        {
-            _questListButtonBehavior.Show();
-        }
+    internal void ForceNextQuestUpdate()
+    {
+        ((QuestListViewModel)_questListView.DataContext).ForceNext = true;
+    }
 
-        internal void HideQuestsButton()
-        {
-            HideQuests();
-            _questListButtonBehavior.Hide();
-        }
+    internal void ShowQuests()
+    {
+        ShowQuestsButton();
+        if (QuestListVM.Update())
+            _questListBehavior.Show();
+    }
 
-        internal void UpdateQuestList(bool force = false)
-        {
-            ((QuestListViewModel)_questListView.DataContext).Update(force);
-        }
+    internal void HideQuests()
+    {
+        _questListBehavior.Hide();
+    }
 
-        internal void ForceNextQuestUpdate()
-        {
-            ((QuestListViewModel)_questListView.DataContext).ForceNext = true;
-        }
+    public static void UpdateEventHandler(object sender, ExperienceEventArgs args)
+    {
+        if (args.IsChanged) Update();
+    }
 
-        internal void ShowQuests()
-        {
-            ShowQuestsButton();
-            if (QuestListVM.Update())
-                _questListBehavior.Show();
-        }
+    internal static void Update(Mode mode) => Update();
 
-        internal void HideQuests()
-        {
-            _questListBehavior.Hide();
-        }
-
-        public static void UpdateEventHandler(object sender, ExperienceEventArgs args)
-        {
-            if (args.IsChanged) Update();
-        }
-
-        internal static void Update(Mode mode) => Update();
-
-        internal static void Update()
-        {
-            Instance.ShowQuestsButton();
-            Instance.ForceNextQuestUpdate();
-            OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, false);
-            OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, true);
-        }
+    internal static void Update()
+    {
+        Instance.ShowQuestsButton();
+        Instance.ForceNextQuestUpdate();
+        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, false);
+        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, true);
     }
 }

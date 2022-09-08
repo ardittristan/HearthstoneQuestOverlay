@@ -2,33 +2,32 @@
 using Hearthstone_Deck_Tracker;
 using Newtonsoft.Json;
 
-namespace QuestOverlayPlugin
+namespace QuestOverlayPlugin;
+
+public class Settings
 {
-    public class Settings
+    private static readonly string ConfigLocation =
+        Path.Combine(Config.Instance.ConfigDir, @"Plugins\HearthstoneQuestOverlay\HearthstoneQuestOverlay.config");
+
+    public bool ShowRewardOverlay = true;
+
+    public void Save()
     {
-        private static readonly string ConfigLocation =
-            Path.Combine(Config.Instance.ConfigDir, @"Plugins\HearthstoneQuestOverlay\HearthstoneQuestOverlay.config");
+        Directory.CreateDirectory(Path.GetDirectoryName(ConfigLocation)!);
+        File.WriteAllText(ConfigLocation, JsonConvert.SerializeObject(this, Formatting.Indented));
+    }
 
-        public bool ShowRewardOverlay = true;
-
-        public void Save()
+    public static Settings Load()
+    {
+        try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(ConfigLocation)!);
-            File.WriteAllText(ConfigLocation, JsonConvert.SerializeObject(this, Formatting.Indented));
+            return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigLocation));
         }
-
-        public static Settings Load()
+        catch
         {
-            try
-            {
-                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigLocation));
-            }
-            catch
-            {
-                Settings settings = new();
-                settings.Save();
-                return settings;
-            }
+            Settings settings = new();
+            settings.Save();
+            return settings;
         }
     }
 }

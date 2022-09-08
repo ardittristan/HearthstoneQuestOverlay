@@ -1,20 +1,19 @@
 ﻿using System.Configuration;
 
-namespace TextureExtractor.Properties
-{
-    internal sealed class Settings : ApplicationSettingsBase
-    {
-        public static Settings Default { get; } = (Settings)Synchronized(new Settings());
+namespace TextureExtractor.Properties;
 
-        [UserScopedSetting]
-        [SettingsSerializeAs(SettingsSerializeAs.Xml)]
-        public SerializableStringDictionary VersionStore
+internal sealed class Settings : ApplicationSettingsBase
+{
+    public static Settings Default { get; } = (Settings)Synchronized(new Settings());
+
+    [UserScopedSetting]
+    [SettingsSerializeAs(SettingsSerializeAs.Xml)]
+    public SerializableStringDictionary VersionStore
+    {
+        get
         {
-            get
-            {
-                this[nameof(VersionStore)] = this[nameof(VersionStore)] ?? new SerializableStringDictionary();
-                return (SerializableStringDictionary)this[nameof(VersionStore)];
-            }
+            this[nameof(VersionStore)] = this[nameof(VersionStore)] ?? new SerializableStringDictionary();
+            return (SerializableStringDictionary)this[nameof(VersionStore)];
         }
     }
 }

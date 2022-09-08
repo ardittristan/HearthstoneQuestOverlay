@@ -3,13 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:controls="clr-namespace:QuestOverlayPlugin.Controls" 
+             xmlns:mercenariescontrols="clr-namespace:Hearthstone_Deck_Tracker.Controls.Overlay.Mercenaries;assembly=HearthstoneDeckTracker"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:QuestOverlayPlugin.Overlay"
+             xmlns:hearthstoneDeckTracker="clr-namespace:Hearthstone_Deck_Tracker;assembly=HearthstoneDeckTracker"
              x:Class="QuestOverlayPlugin.Overlay.QuestView" 
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type local:QuestViewModel}}">
     <UserControl.Resources>
-        <controls:ProgressBarFillWidthConverter x:Key="ProgressBarFillWidthConverter" />
+        <mercenariescontrols:ProgressBarFillWidthConverter x:Key="ProgressBarFillWidthConverter" />
         <controls:BoolToVisibleOrHiddenAndConverter x:Key="BoolToVisibleOrHiddenAndConverter" />
     </UserControl.Resources>
     <Grid Width="478">
@@ -25,7 +27,7 @@
                             </MultiBinding>
                         </DockPanel.Visibility>
                         <Image Source="pack://application:,,,/QuestOverlayPlugin;component/Resources/Rewards_Track_-_XP_Boost.png" RenderOptions.BitmapScalingMode="Fant" Height="24" DockPanel.Dock="Right" Width="24" HorizontalAlignment="Right" Margin="0,-2,-2,0" />
-                        <controls:HearthstoneTextBlock Text="{Binding XpReward}" d:Text="1100"  Fill="{Binding BonusXpColor}" d:Fill="#60ff08"  FontSize="16" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,-2,0,0" />
+                        <hearthstoneDeckTracker:HearthstoneTextBlock Text="{Binding XpReward}" d:Text="1100"  Fill="{Binding BonusXpColor}" d:Fill="#60ff08"  FontSize="16" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,-2,0,0" />
                     </DockPanel>
                 </Grid>
                 <Grid DockPanel.Dock="Bottom" Margin="0,4,0,0">
@@ -39,7 +41,7 @@
                             </Border.Width>
                         </Border>
                     </Border>
-                    <controls:HearthstoneTextBlock Text="{Binding ProgressText}" d:Text="1 / 5"  Fill="#FFF" FontSize="16" Margin="0,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <hearthstoneDeckTracker:HearthstoneTextBlock Text="{Binding ProgressText}" d:Text="1 / 5"  Fill="#FFF" FontSize="16" Margin="0,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
                 <TextBlock Text="{Binding Description}" d:Text="Win 5 games of Tavern Brawl, Arena, Battlegrounds, or Duels." Foreground="White" TextWrapping="Wrap" Margin="0,4" FontSize="14" />
             </DockPanel>

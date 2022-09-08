@@ -1,16 +1,15 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace HSReflection.Enums
+namespace HSReflection.Enums;
+
+public enum QuestStatus
 {
-    public enum QuestStatus
-    {
-        UNKNOWN,
-        NEW,
-        ACTIVE,
-        COMPLETED,
-        REWARD_GRANTED,
-        REWARD_ACKED,
-        REROLLED,
-        RESET,
-        ABANDONED
-    }
+    UNKNOWN,
+    NEW,
+    ACTIVE,
+    COMPLETED,
+    REWARD_GRANTED,
+    REWARD_ACKED,
+    REROLLED,
+    RESET,
+    ABANDONED
 }
