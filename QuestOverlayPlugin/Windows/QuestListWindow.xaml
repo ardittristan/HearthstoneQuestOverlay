@@ -1,0 +1,67 @@
+﻿<controls:MetroWindow x:Class="QuestOverlayPlugin.Windows.QuestListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:overlay="clr-namespace:QuestOverlayPlugin.Overlay"
+        xmlns:window="clr-namespace:QuestOverlayPlugin.Windows"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance {x:Type overlay:QuestListViewModel}}"
+        Title="Quests"
+        SizeToContent="WidthAndHeight"
+        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+        MaxWidth="400"
+        Loaded="QuestListWindow_OnLoaded"
+        Activated="QuestListWindow_OnActivated"
+        Deactivated="QuestListWindow_OnDeactivated"
+        d:DesignHeight="450" d:DesignWidth="400">
+    <controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HearthstoneDeckTracker;component/resources/icons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </controls:MetroWindow.Resources>
+    <controls:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Rectangle Margin="2" Opacity="0.7">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource hdticon}" />
+                </Rectangle.Fill>
+            </Rectangle>
+        </DataTemplate>
+    </controls:MetroWindow.IconTemplate>
+    <StackPanel>
+        <ItemsControl ItemsSource="{Binding Quests}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <window:QuestWindow Margin="0,4,0,0" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.Style>
+                <Style TargetType="ItemsControl">
+                    <Style.Triggers>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <window:QuestWindowEmpty />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.Style>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3" Margin="55,4,0,0" Visibility="{Binding GameNoticeVisibility}">
+            <TextBlock Text="GameNotice" Foreground="White" Opacity="0.7" TextAlignment="Center" Margin="8" FontSize="14" />
+        </Border>
+    </StackPanel>
+</controls:MetroWindow>

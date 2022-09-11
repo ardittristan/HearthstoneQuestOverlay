@@ -1,16 +1,22 @@
 ﻿using System.Windows;
 using Hearthstone_Deck_Tracker.Utility.Extensions;
 using Hearthstone_Deck_Tracker.Utility.MVVM;
-using HSReflection;
 using HSReflection.Enums;
-using HSReflection.Objects;
-
-#nullable enable
+using static QuestOverlayPlugin.Util.QuestDataUtil;
 
 namespace QuestOverlayPlugin.Overlay;
 
 public class QuestListViewModel : ViewModel
 {
+    public bool IsBattlegrounds { get; }
+    public bool IsWindow { get; }
+
+    public QuestListViewModel(bool isBattlegrounds = false, bool isWindow = false)
+    {
+        IsBattlegrounds = isBattlegrounds;
+        IsWindow = isWindow;
+    }
+
     private string _buttonText = "Show Quests";
     public string ButtonText
     {
@@ -39,25 +45,18 @@ public class QuestListViewModel : ViewModel
     }
 
     public bool ForceNext;
-
-    private List<Quest>? _questData;
+    
     public bool Update(bool force = false)
     {
-        if (_questData == null || force || ForceNext)
-            _questData = Reflection.GetQuests();
-
-        if (_questData == null)
+        if (!UpdateQuestData(force || ForceNext))
             return false;
 
-        Quests = _questData.Select(quest =>
-        {
-            if (quest.Status != QuestStatus.ACTIVE)
-                return null;
-            return new QuestViewModel(quest);
-        }).WhereNotNull().OrderBy(q => q.QuestType).ToList();
+        Quests = QuestData!.Select(quest => 
+                quest.Status == QuestStatus.ACTIVE && (quest.RewardTrackType == RewardTrackType.BATTLEGROUNDS == IsBattlegrounds || IsWindow)
+                ? new QuestViewModel(quest)
+                : null
+            ).WhereNotNull().OrderBy(q => q.QuestType).ToList();
         ForceNext = false;
         return true;
     }
 }
-
-#nullable restore

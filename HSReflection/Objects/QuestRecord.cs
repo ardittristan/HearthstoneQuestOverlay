@@ -1,19 +1,18 @@
-﻿#nullable enable
+﻿using HSReflection.Enums;
 
 namespace HSReflection.Objects;
 
 public class QuestRecord
 {
-    public bool CanAbandon { get; internal set; }
-    public string Description { get; internal set; } = null!;
-    public string? Icon { get; internal set; }
-    public string Name { get; internal set; } = null!;
-    public int NextInChain { get; internal set; }
-    public bool PoolGuaranteed { get; internal set; }
-    public QuestPool QuestPool { get; internal set; } = null!;
-    public int Quota { get; internal set; }
-    public int RewardList { get; internal set; }
-    public int RewardTrackXp { get; internal set; }
+    public bool CanAbandon { get; init; }
+    public string Description { get; init; } = null!;
+    public string? Icon { get; init; }
+    public string Name { get; init; } = null!;
+    public int NextInChain { get; init; }
+    public bool PoolGuaranteed { get; init; }
+    public QuestPool QuestPool { get; init; } = null!;
+    public int Quota { get; init; }
+    public int RewardList { get; init; }
+    public int RewardTrackXp { get; init; }
+    public RewardTrackType RewardTrackType { get; init; }
 }
-
-#nullable restore

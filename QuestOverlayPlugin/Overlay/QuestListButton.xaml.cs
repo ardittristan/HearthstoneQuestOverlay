@@ -7,13 +7,21 @@ namespace QuestOverlayPlugin.Overlay;
 
 public partial class QuestListButton : UserControl
 {
-    public QuestListButton(QuestListViewModel questListViewModel)
+    public bool IsBattlegrounds { get; }
+
+    public QuestListButton(QuestListViewModel questListViewModel, bool isBattlegrounds = false)
     {
         InitializeComponent();
 
+        IsBattlegrounds = isBattlegrounds;
+
         Name = "QuestListButton";
+
+        if (IsBattlegrounds)
+            Name = "Battlegrounds" + Name;
+
         Visibility = Visibility.Collapsed;
-        Canvas.SetBottom(this, 128);
+        Canvas.SetBottom(this, 128 + (IsBattlegrounds ? 74 : 0));
         Canvas.SetRight(this, 16);
         OverlayExtensions.SetIsOverlayHitTestVisible(this, true);
         MouseEnter += OnMouseEnter;
@@ -29,13 +37,24 @@ public partial class QuestListButton : UserControl
         await Task.Delay(150);
         if (!_showQuests)
             return;
-        Plugin.Instance.UpdateQuestList();
-        Plugin.Instance.ShowQuests();
+        if (IsBattlegrounds)
+        {
+            Plugin.Instance.UpdateBattlegroundsQuestList();
+            Plugin.Instance.ShowBattlegroundsQuests();
+        }
+        else
+        {
+            Plugin.Instance.UpdateQuestList();
+            Plugin.Instance.ShowQuests();
+        }
     }
 
     private void OnMouseLeave(object sender, MouseEventArgs e)
     {
         _showQuests = false;
-        Plugin.Instance.HideQuests();
+        if (IsBattlegrounds)
+            Plugin.Instance.HideBattlegroundsQuests();
+        else
+            Plugin.Instance.HideQuests();
     }
 }

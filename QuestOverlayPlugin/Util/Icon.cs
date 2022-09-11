@@ -4,8 +4,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 
-#nullable enable
-
 namespace QuestOverlayPlugin.Util;
 
 public class Icon
@@ -149,5 +147,3 @@ public class Icon
     private Uri GetImageUri(string fileName) =>
         new(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName), UriKind.Absolute);
 }
-
-#nullable restore

@@ -5,8 +5,6 @@ using HSReflection.Objects;
 using QuestOverlayPlugin.Util;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-#nullable enable
-
 namespace QuestOverlayPlugin.Overlay;
 
 public class QuestViewModel : ViewModel
@@ -22,7 +20,7 @@ public class QuestViewModel : ViewModel
         Progress = 1.0 * quest.Progress / quest.Quota;
         Image = new Icon(quest.Icon).ImageSource;
         QuestType = quest.PoolType;
-        HasXpReward = quest.RewardTrackXp > 0;
+        HasXpReward = quest.RewardTrackXp > 0 && quest.RewardTrackType != RewardTrackType.BATTLEGROUNDS;
         XpReward = quest.RewardTrackXp.ToString();
         BonusXpColor = quest.RewardTrackBonusXp > 0 ? "#60FF08" : "#FFF";
         ShowXpReward = Plugin.Instance.Settings.ShowRewardOverlay;
@@ -39,5 +37,3 @@ public class QuestViewModel : ViewModel
     public ImageSource Image { get; }
     public QuestPoolType QuestType { get; }
 }
-
-#nullable restore

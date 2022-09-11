@@ -5,13 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:b="clr-namespace:QuestOverlayPlugin.Behaviors"
-             xmlns:local="clr-namespace:QuestOverlayPlugin.Overlay"
-             x:Class="QuestOverlayPlugin.Overlay.QuestViewEmpty" 
+             xmlns:local="clr-namespace:QuestOverlayPlugin.Windows"
+             x:Class="QuestOverlayPlugin.Windows.QuestWindowEmpty" 
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance {x:Type local:QuestViewEmpty}}">
-    <Grid Width="278">
+             d:DataContext="{d:DesignInstance {x:Type local:QuestWindowEmpty}}">
+    <Grid Width="400">
         <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3">
-            <DockPanel Margin="50,8,8,8" MinWidth="200">
+            <DockPanel Margin="8,8,8,8">
                 <Grid DockPanel.Dock="Top">
                     <TextBlock Text="All quests completed" Foreground="White" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Left" />
                 </Grid>

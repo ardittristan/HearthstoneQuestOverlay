@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +19,7 @@ using MahApps.Metro.Controls;
 using QuestOverlayPlugin.Controls;
 using QuestOverlayPlugin.Overlay;
 using QuestOverlayPlugin.Util;
+using QuestOverlayPlugin.Windows;
 using TextureExtractor;
 using Core = Hearthstone_Deck_Tracker.API.Core;
 
@@ -31,6 +33,8 @@ public class Plugin : IPlugin, Updater.IUpdater
     internal Settings Settings = null!;
     private Flyout _settingsFlyout = null!;
     private SettingsControl _settingsControl = null!;
+
+    private static bool _gameRunning = false;
 
     private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -54,6 +58,18 @@ public class Plugin : IPlugin, Updater.IUpdater
     private QuestListButton _questListButton = null!;
     private QuestListView _questListView = null!;
 
+    internal QuestListViewModel BattlegroundsQuestListVM { get; } = new(true);
+
+    private OverlayElementBehavior _battlegroundsQuestListBehavior = null!;
+    private OverlayElementBehavior _battlegroundsQuestListButtonBehavior = null!;
+
+    private QuestListButton _battlegroundsQuestListButton = null!;
+    private QuestListView _battlegroundsQuestListView = null!;
+
+    internal QuestListViewModel QuestListWindowVM { get; } = new(false, true);
+    private QuestListWindow _questListWindow = null!;
+    private RecurringTask? _questListWindowRT;
+
     private static double ScreenRatio => (4.0 / 3.0) / (Core.OverlayWindow.Width / Core.OverlayWindow.Height);
     private static double QuestsButtonOffset
     {
@@ -62,6 +78,15 @@ public class Plugin : IPlugin, Updater.IUpdater
             if (Core.Game.IsInMenu && ScreenRatio > 0.9)
                 return Core.OverlayWindow.Height * 0.104 + 74;
             return Core.OverlayWindow.Height * 0.05 + 74;
+        }
+    }
+    private static double BattlegroundsQuestsButtonOffset
+    {
+        get
+        {
+            if (Core.Game.IsInMenu && ScreenRatio > 0.9)
+                return Core.OverlayWindow.Height * 0.104 + 74 + 74;
+            return Core.OverlayWindow.Height * 0.05 + 74 + 74;
         }
     }
 
@@ -102,11 +127,40 @@ public class Plugin : IPlugin, Updater.IUpdater
             ExitAnimation = AnimationType.Slide
         };
 
+        _battlegroundsQuestListButton = new QuestListButton(BattlegroundsQuestListVM, true);
+        _battlegroundsQuestListButtonBehavior = new OverlayElementBehavior(_battlegroundsQuestListButton)
+        {
+            GetRight = () => Core.OverlayWindow.Height * 0.01,
+            GetBottom = () => BattlegroundsQuestsButtonOffset,
+            GetScaling = () => Core.OverlayWindow.AutoScaling,
+            AnchorSide = Side.Right,
+            EntranceAnimation = AnimationType.Slide,
+            ExitAnimation = AnimationType.Slide
+        };
+
+        _battlegroundsQuestListView = new QuestListView(BattlegroundsQuestListVM);
+        _battlegroundsQuestListBehavior = new OverlayElementBehavior(_battlegroundsQuestListView)
+        {
+            GetRight = () => Core.OverlayWindow.Height * 0.01,
+            GetBottom = () =>
+                _battlegroundsQuestListButton.ActualHeight * Core.OverlayWindow.AutoScaling +
+                BattlegroundsQuestsButtonOffset + 22,
+            GetScaling = () => Core.OverlayWindow.AutoScaling,
+            AnchorSide = Side.Right,
+            EntranceAnimation = AnimationType.Slide,
+            ExitAnimation = AnimationType.Slide
+        };
+
+        _questListWindow = new QuestListWindow(QuestListWindowVM);
+
         GameEvents.OnInMenu.Add(Update);
+        GameEvents.OnInMenu.Add(OnGameStart);
         GameEvents.OnGameEnd.Add(Update);
         GameEvents.OnModeChanged.Add(Update);
+        GameEvents.OnModeChanged.Add(OnGameStart);
         Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
         if (Core.Game.IsRunning) Update();
+        if (Core.Game.IsRunning) OnGameStart();
 
         Extractor = new Extractor(
             Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "TextureExtractor"),
@@ -115,6 +169,34 @@ public class Plugin : IPlugin, Updater.IUpdater
 #pragma warning disable CS4014
         Extractor.ExtractAsync(CreateBundlePath(QUEST_ICONS_LOC));
 #pragma warning restore CS4014
+    }
+
+    private void OnGameStart(Mode mode) => OnGameStart();
+    private void OnGameStart()
+    {
+        if (_gameRunning)
+            return;
+        _gameRunning = true;
+
+        Process hearthstoneProcess = User32.GetHearthstoneProc()!;
+        hearthstoneProcess.EnableRaisingEvents = true;
+        hearthstoneProcess.Exited += OnGameExit;
+
+        if (Settings.ShowPopupWindow)
+        {
+            _questListWindow.Dispatcher.Invoke(() => _questListWindow.Show());
+            _questListWindowRT = new RecurringTask(ForceNextQuestWindowUpdate, 5, RecurringTask.TimeSpanType.Minutes);
+        }
+    }
+
+    private void OnGameExit(object sender, EventArgs e)
+    {
+        _gameRunning = false;
+        if (Settings.ShowPopupWindow)
+        {
+            _questListWindow.Dispatcher.Invoke(() => _questListWindow.Hide());
+            _questListWindowRT?.Dispose();
+        }
     }
 
     public static string CreateBundlePath(string bundleName)
@@ -140,8 +222,24 @@ public class Plugin : IPlugin, Updater.IUpdater
         _settingsFlyout.ClosingFinished += (_, _) =>
         {
             Settings.ShowRewardOverlay = (bool)_settingsControl.RewardOverlayToggle.IsChecked!;
+            Settings.ShowQuestOverlay = (bool)_settingsControl.QuestOverlayToggle.IsChecked!;
+            Settings.ShowBattlegroundsQuestOverlay = (bool)_settingsControl.BattlegroundsQuestOverlayToggle.IsChecked!;
+            Settings.ShowPopupWindow = (bool)_settingsControl.PopupWindowToggle.IsChecked!;
 
             Settings.Save();
+
+            if (Core.Game.IsRunning && Settings.ShowPopupWindow)
+            {
+                _questListWindow.Dispatcher.Invoke(() => _questListWindow.Show());
+                _questListWindowRT =
+                    new RecurringTask(ForceNextQuestWindowUpdate, 5, RecurringTask.TimeSpanType.Minutes);
+            }
+
+            if (Core.Game.IsRunning && !Settings.ShowPopupWindow)
+            {
+                _questListWindow.Dispatcher.Invoke(() => _questListWindow.Hide());
+                _questListWindowRT?.Dispose();
+            }
         };
 
         Core.MainWindow.Flyouts.Items.Add(_settingsFlyout);
@@ -183,8 +281,14 @@ public class Plugin : IPlugin, Updater.IUpdater
         if (!Core.OverlayCanvas.Children.Contains(_questListButton))
             Core.OverlayCanvas.Children.Insert(index, _questListButton);
 
+        if (!Core.OverlayCanvas.Children.Contains(_battlegroundsQuestListButton))
+            Core.OverlayCanvas.Children.Insert(index + 1, _battlegroundsQuestListButton);
+
         if (!Core.OverlayCanvas.Children.Contains(_questListView))
-            Core.OverlayCanvas.Children.Insert(index + 1, _questListView);
+            Core.OverlayCanvas.Children.Insert(index + 2, _questListView);
+
+        if (!Core.OverlayCanvas.Children.Contains(_battlegroundsQuestListView))
+            Core.OverlayCanvas.Children.Insert(index + 3, _battlegroundsQuestListView);
     }
 
     private void RemoveOverlay()
@@ -194,6 +298,12 @@ public class Plugin : IPlugin, Updater.IUpdater
 
         if (Core.OverlayCanvas.Children.Contains(_questListView))
             Core.OverlayCanvas.Children.Remove(_questListView);
+
+        if (Core.OverlayCanvas.Children.Contains(_battlegroundsQuestListButton))
+            Core.OverlayCanvas.Children.Remove(_battlegroundsQuestListButton);
+
+        if (Core.OverlayCanvas.Children.Contains(_battlegroundsQuestListView))
+            Core.OverlayCanvas.Children.Remove(_battlegroundsQuestListView);
     }
 
     internal void ShowQuestsButton()
@@ -207,14 +317,40 @@ public class Plugin : IPlugin, Updater.IUpdater
         _questListButtonBehavior.Hide();
     }
 
+    internal void ShowBattlegroundsQuestsButton()
+    {
+        _battlegroundsQuestListButtonBehavior.Show();
+    }
+
+    internal void HideBattlegroundsQuestsButton()
+    {
+        HideBattlegroundsQuests();
+        _battlegroundsQuestListButtonBehavior.Hide();
+    }
+
     internal void UpdateQuestList(bool force = false)
     {
         ((QuestListViewModel)_questListView.DataContext).Update(force);
     }
 
+    internal void UpdateBattlegroundsQuestList(bool force = false)
+    {
+        ((QuestListViewModel)_battlegroundsQuestListView.DataContext).Update(force);
+    }
+
     internal void ForceNextQuestUpdate()
     {
         ((QuestListViewModel)_questListView.DataContext).ForceNext = true;
+    }
+
+    internal void ForceNextBattlegroundsQuestUpdate()
+    {
+        ((QuestListViewModel)_battlegroundsQuestListView.DataContext).ForceNext = true;
+    }
+
+    internal void ForceNextQuestWindowUpdate()
+    {
+        ((QuestListViewModel)_questListWindow.DataContext).ForceNext = true;
     }
 
     internal void ShowQuests()
@@ -224,9 +360,21 @@ public class Plugin : IPlugin, Updater.IUpdater
             _questListBehavior.Show();
     }
 
+    internal void ShowBattlegroundsQuests()
+    {
+        ShowBattlegroundsQuestsButton();
+        if (BattlegroundsQuestListVM.Update())
+            _battlegroundsQuestListBehavior.Show();
+    }
+
     internal void HideQuests()
     {
         _questListBehavior.Hide();
+    }
+
+    internal void HideBattlegroundsQuests()
+    {
+        _battlegroundsQuestListBehavior.Hide();
     }
 
     public static void UpdateEventHandler(object sender, ExperienceEventArgs args)
@@ -239,8 +387,13 @@ public class Plugin : IPlugin, Updater.IUpdater
     internal static void Update()
     {
         Instance.ShowQuestsButton();
+        Instance.ShowBattlegroundsQuestsButton();
         Instance.ForceNextQuestUpdate();
+        Instance.ForceNextBattlegroundsQuestUpdate();
+        Instance.ForceNextQuestWindowUpdate();
         OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, false);
+        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._battlegroundsQuestListButton, false);
         OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, true);
+        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._battlegroundsQuestListButton, true);
     }
 }

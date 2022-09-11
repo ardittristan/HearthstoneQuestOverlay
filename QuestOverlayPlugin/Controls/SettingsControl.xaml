@@ -12,5 +12,17 @@
             <Label Content="Enable quest reward visibility" FontSize="16" />
             <controls:ToggleSwitch d:Height="14" d:Width="32" Name="RewardOverlayToggle" HorizontalAlignment="Right" OnLabel="" OffLabel="" />
         </DockPanel>
+        <DockPanel Margin="10,10,10,0">
+            <Label Content="Enable popup window" FontSize="16" />
+            <controls:ToggleSwitch d:Height="14" d:Width="32" Name="PopupWindowToggle" HorizontalAlignment="Right" OnLabel="" OffLabel="" />
+        </DockPanel>
+        <DockPanel Margin="10,10,10,0">
+            <Label Content="Enable quest overlay" FontSize="16" />
+            <controls:ToggleSwitch d:Height="14" d:Width="32" Name="QuestOverlayToggle" HorizontalAlignment="Right" OnLabel="" OffLabel="" />
+        </DockPanel>
+        <DockPanel Margin="10,10,10,0">
+            <Label Content="Enable battlegrounds quest overlay" FontSize="16" />
+            <controls:ToggleSwitch d:Height="14" d:Width="32" Name="BattlegroundsQuestOverlayToggle" HorizontalAlignment="Right" OnLabel="" OffLabel="" />
+        </DockPanel>
     </StackPanel>
 </UserControl>

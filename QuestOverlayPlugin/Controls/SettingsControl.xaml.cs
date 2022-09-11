@@ -9,5 +9,8 @@ public sealed partial class SettingsControl : UserControl
         InitializeComponent();
 
         RewardOverlayToggle.IsChecked = Plugin.Instance.Settings.ShowRewardOverlay;
+        PopupWindowToggle.IsChecked = Plugin.Instance.Settings.ShowPopupWindow;
+        QuestOverlayToggle.IsChecked = Plugin.Instance.Settings.ShowQuestOverlay;
+        BattlegroundsQuestOverlayToggle.IsChecked = Plugin.Instance.Settings.ShowBattlegroundsQuestOverlay;
     }
 }

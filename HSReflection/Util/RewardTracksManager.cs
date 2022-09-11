@@ -5,7 +5,7 @@ namespace HSReflection.Util;
 
 internal static class RewardTracksManager
 {
-    private static Dictionary<RewardTrackType, int> _typeIndex = new()
+    private static readonly Dictionary<RewardTrackType, int> _typeIndex = new()
     {
         { RewardTrackType.BATTLEGROUNDS, -1 },
         { RewardTrackType.GLOBAL, -1 },

@@ -10,6 +10,9 @@ public class Settings
         Path.Combine(Config.Instance.ConfigDir, @"Plugins\HearthstoneQuestOverlay\HearthstoneQuestOverlay.config");
 
     public bool ShowRewardOverlay = true;
+    public bool ShowQuestOverlay = true;
+    public bool ShowPopupWindow = false;
+    public bool ShowBattlegroundsQuestOverlay = true;
 
     public void Save()
     {

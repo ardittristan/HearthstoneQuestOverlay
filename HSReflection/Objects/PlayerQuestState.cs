@@ -4,7 +4,7 @@ namespace HSReflection.Objects;
 
 public class PlayerQuestState
 {
-    public int Progress { get; internal set; }
-    public int QuestId { get; internal set; }
-    public QuestStatus Status { get; internal set; }
+    public int Progress { get; init; }
+    public int QuestId { get; init; }
+    public QuestStatus Status { get; init; }
 }

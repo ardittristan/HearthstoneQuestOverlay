@@ -21,7 +21,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <local:QuestViewEmpty />
+                                        <local:QuestViewEmpty IsBattlegrounds="{Binding IsBattlegrounds}" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>

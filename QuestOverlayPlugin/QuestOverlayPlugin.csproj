@@ -60,6 +60,10 @@
       <HintPath>$(HSDTPath)\Newtonsoft.Json.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>$(HSDTPath)\System.Windows.Interactivity.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Xaml" />
@@ -76,11 +80,20 @@
     <Compile Update="Overlay\QuestListView.xaml.cs">
       <DependentUpon>QuestListView.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Windows\QuestListWindow.xaml.cs">
+      <DependentUpon>QuestListWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Overlay\QuestViewEmpty.xaml.cs">
       <DependentUpon>QuestViewEmpty.xaml</DependentUpon>
     </Compile>
     <Compile Update="Overlay\QuestView.xaml.cs">
       <DependentUpon>QuestView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\QuestWindow.xaml.cs">
+      <DependentUpon>QuestWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\QuestWindowEmpty.xaml.cs">
+      <DependentUpon>QuestWindowEmpty.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -99,6 +112,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\Frame.png" />
+    <Resource Include="Resources\FSG_Icon_FX.png" />
     <Resource Include="Resources\QuestIcon.png" />
     <Resource Include="Resources\Rewards_Track_-_XP_Boost.png" />
   </ItemGroup>

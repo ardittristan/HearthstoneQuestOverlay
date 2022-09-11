@@ -5,8 +5,6 @@ using HSReflection.Enums;
 using HSReflection.Objects;
 using HSReflection.Util;
 
-#nullable enable
-
 namespace HSReflection;
 
 public static partial class Reflection
@@ -59,12 +57,13 @@ public static partial class Reflection
                 QuestPool = new QuestPool()
                 {
                     Id = questPoolId,
-                    PoolType = (QuestPoolType?)questPoolStateEntry?["_QuestPoolId"] ?? QuestPoolType.INVALID,
+                    PoolType = (QuestPoolType)(questPoolStateEntry?["_QuestPoolId"] ?? QuestPoolType.INVALID),
                     RerollAvailableCount = questPoolStateEntry?["_RerollAvailableCount"] ?? 0
                 },
                 Quota = quest["m_quota"],
                 RewardList = quest["m_rewardListId"],
-                RewardTrackXp = quest["m_rewardTrackXp"]
+                RewardTrackXp = quest["m_rewardTrackXp"],
+                RewardTrackType = (RewardTrackType)(quest["m_rewardTrackType"] ?? RewardTrackType.NONE)
             });
         }
 
@@ -153,6 +152,7 @@ public static partial class Reflection
                 Rewards = questRecord.RewardList, //TODO
                 RewardTrackXp = rewardTrackXp,
                 RewardTrackBonusXp = rewardTrackBonusXp,
+                RewardTrackType = questRecord.RewardTrackType,
                 ProgressMessage = progressMessage,
                 Status = questState.Status,
                 Abandonable = questRecord.CanAbandon,
@@ -163,27 +163,27 @@ public static partial class Reflection
         return quests;
     }
 
-    public static Dictionary<int, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
-    private static Dictionary<int, DateTime>? GetNextQuestTimesInternal()
+    public static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
+    private static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimesInternal()
     {
         dynamic? questPoolState = Services.QuestManager["m_questPoolState"];
 
         if (questPoolState == null) return null;
 
-        Dictionary<int, DateTime> questPools = new();
+        Dictionary<QuestPoolType, DateTime> questPools = new();
 
         foreach (dynamic? curEntry in questPoolState["entries"])
         {
-            double secondsUntilNextGrant = DynamicUtil.TryCast<double>(
-                MonoUtil.ToMonoObject(DynamicUtil.TryCast<uint?>(curEntry["value"]) ?? 0)?
-                    ["_SecondsUntilNextGrant"]);
+            dynamic? questPoolEntry = MonoUtil.ToMonoObject(DynamicUtil.TryCast<uint?>(curEntry["value"]) ?? 0);
+            double secondsUntilNextGrant = DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]);
 
             try
             {
                 if (secondsUntilNextGrant != 0)
-                    questPools.Add((int)curEntry["key"], DateTime.Now.AddSeconds(secondsUntilNextGrant));
+                    questPools.Add((QuestPoolType)questPoolEntry!["_QuestPoolId"],
+                        DateTime.Now.AddSeconds(secondsUntilNextGrant));
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
             }
         }
@@ -206,5 +206,3 @@ public static partial class Reflection
         return null;
     }
 }
-
-#nullable restore

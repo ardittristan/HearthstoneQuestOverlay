@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace HSReflection.Util;
+﻿namespace HSReflection.Util;
 
 public static class Map
 {
@@ -29,5 +27,3 @@ public static class Map
         return null;
     }
 }
-
-#nullable restore

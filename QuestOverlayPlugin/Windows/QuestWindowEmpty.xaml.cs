@@ -1,11 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using HSReflection;
 using HSReflection.Enums;
 
-namespace QuestOverlayPlugin.Overlay;
+namespace QuestOverlayPlugin.Windows;
 
-public partial class QuestViewEmpty : UserControl
+public partial class QuestWindowEmpty : UserControl
 {
     public string NextQuest
     {
@@ -13,9 +12,7 @@ public partial class QuestViewEmpty : UserControl
         {
             DateTime nextQuestTime = NextQuestTimes == null
                 ? DateTime.Now
-                : NextQuestTimes.Where(qt =>
-                        qt.Value >= DateTime.Now && IsBattlegrounds == (qt.Key == QuestPoolType.BATTLEGROUNDS))
-                    .Min(qt => qt.Value);
+                : NextQuestTimes.Values.Where(dt => dt >= DateTime.Now).Min();
             TimeSpan timeLeft = nextQuestTime - DateTime.Now;
             return "New quest in " + timeLeft switch
             {
@@ -30,18 +27,9 @@ public partial class QuestViewEmpty : UserControl
 
     public Dictionary<QuestPoolType, DateTime>? NextQuestTimes { get; }
 
-    public static readonly DependencyProperty IsBattlegroundsProperty = DependencyProperty.Register("IsBattlegrounds",
-        typeof(bool), typeof(QuestViewEmpty), new FrameworkPropertyMetadata(false));
-    public bool IsBattlegrounds
-    {
-        get => (bool)GetValue(IsBattlegroundsProperty);
-        set => SetValue(IsBattlegroundsProperty, value);
-    }
-
-    public QuestViewEmpty()
+    public QuestWindowEmpty()
     {
         InitializeComponent();
-        Cursor = Plugin.Instance.DefaultCursor;
 
         NextQuestTimes = Reflection.GetNextQuestTimes();
 

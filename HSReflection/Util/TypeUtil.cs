@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
 
-#nullable enable
-
 namespace HSReflection.Util;
 
 public static class TypeUtil
@@ -30,5 +28,3 @@ public static class TypeUtil
         };
     }
 }
-
-#nullable restore

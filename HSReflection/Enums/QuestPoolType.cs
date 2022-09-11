@@ -6,5 +6,5 @@ public enum QuestPoolType
     INVALID,
     DAILY,
     WEEKLY,
-    STATIC_WEEKLY = 4
+    BATTLEGROUNDS = 18
 }

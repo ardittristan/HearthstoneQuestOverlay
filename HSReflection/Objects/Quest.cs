@@ -1,30 +1,27 @@
 ﻿using HSReflection.Enums;
 
-#nullable enable
-
 namespace HSReflection.Objects;
 
 public class Quest
 {
-    public bool Abandonable { get; internal set; }
-    public string Description { get; internal set; } = null!;
-    public QuestTileDisplayMode DisplayMode { get; internal set; }
-    public string? Icon { get; internal set; }
-    public string Name { get; internal set; } = null!;
-    public int NextInChain { get; internal set; }
-    public int PoolId { get; internal set; }
-    public QuestPoolType PoolType { get; internal set; }
-    public int Progress { get; internal set; }
-    public string ProgressMessage { get; internal set; } = null!;
+    public bool Abandonable { get; init; }
+    public string Description { get; init; } = null!;
+    public QuestTileDisplayMode DisplayMode { get; init; }
+    public string? Icon { get; init; }
+    public string Name { get; init; } = null!;
+    public int NextInChain { get; init; }
+    public int PoolId { get; init; }
+    public QuestPoolType PoolType { get; init; }
+    public int Progress { get; init; }
+    public string ProgressMessage { get; init; } = null!;
     public dynamic? Properties { get; set; }
-    public int QuestId { get; internal set; }
-    public int Quota { get; internal set; }
-    public int RerollCount { get; internal set; }
-    public dynamic Rewards { get; internal set; } = null!;
-    public int RewardTrackXp { get; internal set; }
-    public int RewardTrackBonusXp { get; internal set; }
-    public QuestStatus Status { get; internal set; }
+    public int QuestId { get; init; }
+    public int Quota { get; init; }
+    public int RerollCount { get; init; }
+    public dynamic Rewards { get; init; } = null!;
+    public int RewardTrackXp { get; init; }
+    public int RewardTrackBonusXp { get; init; }
+    public RewardTrackType RewardTrackType { get; init; }
+    public QuestStatus Status { get; init; }
     public string? TimeUntilNextQuest { get; set; }
 }
-
-#nullable restore
