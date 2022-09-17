@@ -33,9 +33,9 @@ public partial class QuestListWindow : MetroWindow
         Close();
     }
 
-    private void QuestListWindow_OnActivated(object sender, EventArgs e)
+    private async void QuestListWindow_OnActivated(object sender, EventArgs e)
     {
-        QuestListViewModelVM.Update();
+        await QuestListViewModelVM.UpdateAsync();
         Topmost = true;
     }
 
@@ -45,9 +45,9 @@ public partial class QuestListWindow : MetroWindow
             Topmost = false;
     }
 
-    private void QuestListWindow_OnLoaded(object sender, RoutedEventArgs e)
+    private async void QuestListWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        QuestListViewModelVM.Update();
+        await QuestListViewModelVM.UpdateAsync();
         UpdateScaling();
     }
 

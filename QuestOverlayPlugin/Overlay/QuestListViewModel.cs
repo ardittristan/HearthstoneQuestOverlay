@@ -51,6 +51,20 @@ public class QuestListViewModel : ViewModel
         if (!UpdateQuestData(force || ForceNext))
             return false;
 
+        Quests = QuestData!.Select(quest =>
+            quest.Status == QuestStatus.ACTIVE && (quest.RewardTrackType == RewardTrackType.BATTLEGROUNDS == IsBattlegrounds || IsWindow)
+                ? new QuestViewModel(quest)
+                : null
+        ).WhereNotNull().OrderBy(q => q.QuestType).ToList();
+        ForceNext = false;
+        return true;
+    }
+    
+    public async Task<bool> UpdateAsync(bool force = false)
+    {
+        if (!await UpdateQuestDataAsync(force || ForceNext))
+            return false;
+
         Quests = QuestData!.Select(quest => 
                 quest.Status == QuestStatus.ACTIVE && (quest.RewardTrackType == RewardTrackType.BATTLEGROUNDS == IsBattlegrounds || IsWindow)
                 ? new QuestViewModel(quest)

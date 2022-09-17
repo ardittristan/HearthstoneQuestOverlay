@@ -228,18 +228,22 @@ public class Plugin : IPlugin, Updater.IUpdater
 
             Settings.Save();
 
-            if (Core.Game.IsRunning && Settings.ShowPopupWindow)
+            if (Core.Game.IsRunning && Settings.ShowPopupWindow &&
+                !Application.Current.Windows.OfType<QuestListWindow>().Any())
             {
                 _questListWindow.Dispatcher.Invoke(() => _questListWindow.Show());
                 _questListWindowRT =
                     new RecurringTask(ForceNextQuestWindowUpdate, 5, RecurringTask.TimeSpanType.Minutes);
             }
 
-            if (Core.Game.IsRunning && !Settings.ShowPopupWindow)
+            if (Core.Game.IsRunning && !Settings.ShowPopupWindow &&
+                Application.Current.Windows.OfType<QuestListWindow>().Any())
             {
                 _questListWindow.Dispatcher.Invoke(() => _questListWindow.Hide());
                 _questListWindowRT?.Dispose();
             }
+
+            Update();
         };
 
         Core.MainWindow.Flyouts.Items.Add(_settingsFlyout);
@@ -306,9 +310,19 @@ public class Plugin : IPlugin, Updater.IUpdater
             Core.OverlayCanvas.Children.Remove(_battlegroundsQuestListView);
     }
 
+    internal void ShowOrHideQuestsButton()
+    {
+        if (Settings.ShowQuestOverlay)
+            ShowQuestsButton();
+        else
+            HideQuestsButton();
+    }
+
     internal void ShowQuestsButton()
     {
         _questListButtonBehavior.Show();
+        OverlayExtensions.SetIsOverlayHitTestVisible(_questListButton, false);
+        OverlayExtensions.SetIsOverlayHitTestVisible(_questListButton, true);
     }
 
     internal void HideQuestsButton()
@@ -317,9 +331,19 @@ public class Plugin : IPlugin, Updater.IUpdater
         _questListButtonBehavior.Hide();
     }
 
+    internal void ShowOrHideBattlegroundsQuestsButton()
+    {
+        if (Settings.ShowBattlegroundsQuestOverlay)
+            ShowBattlegroundsQuestsButton();
+        else
+            HideBattlegroundsQuestsButton();
+    }
+
     internal void ShowBattlegroundsQuestsButton()
     {
         _battlegroundsQuestListButtonBehavior.Show();
+        OverlayExtensions.SetIsOverlayHitTestVisible(_battlegroundsQuestListButton, false);
+        OverlayExtensions.SetIsOverlayHitTestVisible(_battlegroundsQuestListButton, true);
     }
 
     internal void HideBattlegroundsQuestsButton()
@@ -386,14 +410,10 @@ public class Plugin : IPlugin, Updater.IUpdater
 
     internal static void Update()
     {
-        Instance.ShowQuestsButton();
-        Instance.ShowBattlegroundsQuestsButton();
+        Instance.ShowOrHideQuestsButton();
+        Instance.ShowOrHideBattlegroundsQuestsButton();
         Instance.ForceNextQuestUpdate();
         Instance.ForceNextBattlegroundsQuestUpdate();
         Instance.ForceNextQuestWindowUpdate();
-        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, false);
-        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._battlegroundsQuestListButton, false);
-        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._questListButton, true);
-        OverlayExtensions.SetIsOverlayHitTestVisible(Instance._battlegroundsQuestListButton, true);
     }
 }

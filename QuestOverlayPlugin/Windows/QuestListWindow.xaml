@@ -11,7 +11,7 @@
         Title="Quests"
         SizeToContent="WidthAndHeight"
         Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-        MaxWidth="400"
+        MaxWidth="420"
         Loaded="QuestListWindow_OnLoaded"
         Activated="QuestListWindow_OnActivated"
         Deactivated="QuestListWindow_OnDeactivated"
@@ -32,36 +32,38 @@
             </Rectangle>
         </DataTemplate>
     </controls:MetroWindow.IconTemplate>
-    <StackPanel>
-        <ItemsControl ItemsSource="{Binding Quests}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <window:QuestWindow Margin="0,4,0,0" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.Style>
-                <Style TargetType="ItemsControl">
-                    <Style.Triggers>
-                        <Trigger Property="HasItems" Value="False">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <window:QuestWindowEmpty />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ItemsControl.Style>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-        <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3" Margin="55,4,0,0" Visibility="{Binding GameNoticeVisibility}">
-            <TextBlock Text="GameNotice" Foreground="White" Opacity="0.7" TextAlignment="Center" Margin="8" FontSize="14" />
-        </Border>
-    </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel MaxWidth="400">
+            <ItemsControl ItemsSource="{Binding Quests}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <window:QuestWindow Margin="0,4,0,0" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.Style>
+                    <Style TargetType="ItemsControl">
+                        <Style.Triggers>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <window:QuestWindowEmpty />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3" Margin="55,4,0,0" Visibility="{Binding GameNoticeVisibility}">
+                <TextBlock Text="GameNotice" Foreground="White" Opacity="0.7" TextAlignment="Center" Margin="8" FontSize="14" />
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </controls:MetroWindow>
