@@ -25,19 +25,14 @@ public static partial class Reflection
 
         dynamic? questPoolState = Services.QuestManager["m_questPoolState"];
             
-        dynamic? quests = Services.GameDbf["Quest"]?["m_recordsById"];
+        dynamic? quests = Services.GameDbf["Quest"]?["m_records"];
 
         if (quests == null) return questRecords;
 
-        dynamic questKeys = quests["keySlots"];
+        dynamic questEntries = quests["_items"];
 
-        foreach (dynamic? questKey in questKeys)
+        foreach (dynamic quest in questEntries)
         {
-            if (questKey == null) continue;
-                    
-            dynamic? quest = Map.GetValue(quests, questKey);
-            if (quest == null) continue;
-
             int questPoolId = quest["m_questPoolId"];
 
             dynamic? questPoolStateEntry = questPoolState == null
@@ -46,7 +41,7 @@ public static partial class Reflection
                     DynamicUtil.TryCast<uint>(Map.GetValue(questPoolState, questPoolId) ?? 0) ?? 0
                 );
 
-            questRecords.Add(questKey, new QuestRecord()
+            questRecords.Add(quest["m_ID"], new QuestRecord()
             {
                 CanAbandon = quest["m_canAbandon"],
                 Description = GetLocalization(quest["m_description"]),

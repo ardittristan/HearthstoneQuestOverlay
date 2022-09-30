@@ -155,9 +155,12 @@ public class Plugin : IPlugin, Updater.IUpdater
 
         GameEvents.OnInMenu.Add(Update);
         GameEvents.OnInMenu.Add(OnGameStart);
+        GameEvents.OnInMenu.Add(UpdateQuestWindow);
         GameEvents.OnGameEnd.Add(Update);
+        GameEvents.OnGameEnd.Add(UpdateQuestWindow);
         GameEvents.OnModeChanged.Add(Update);
         GameEvents.OnModeChanged.Add(OnGameStart);
+        GameEvents.OnModeChanged.Add(UpdateQuestWindow);
         Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
         if (Core.Game.IsRunning) Update();
         if (Core.Game.IsRunning) OnGameStart();
@@ -165,10 +168,14 @@ public class Plugin : IPlugin, Updater.IUpdater
         Extractor = new Extractor(
             Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "TextureExtractor"),
             Core.Game.MetaData.HearthstoneBuild.ToString());
-
-#pragma warning disable CS4014
+        
         Extractor.ExtractAsync(CreateBundlePath(QUEST_ICONS_LOC));
-#pragma warning restore CS4014
+    }
+
+    private void UpdateQuestWindow(Mode mode) => UpdateQuestWindow();
+    private void UpdateQuestWindow()
+    {
+        if (Settings.ShowPopupWindow) QuestListWindowVM.UpdateAsync();
     }
 
     private void OnGameStart(Mode mode) => OnGameStart();
@@ -199,10 +206,8 @@ public class Plugin : IPlugin, Updater.IUpdater
         }
     }
 
-    public static string CreateBundlePath(string bundleName)
-    {
-        return Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win", bundleName + ".unity3d");
-    }
+    public static string CreateBundlePath(string bundleName) =>
+        Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win", bundleName + ".unity3d");
 
     private void InitSettings()
     {
@@ -254,6 +259,8 @@ public class Plugin : IPlugin, Updater.IUpdater
         Watchers.ExperienceWatcher.NewExperienceHandler -= UpdateEventHandler;
 
         RemoveOverlay();
+        _questListWindow.Shutdown();
+        _questListWindowRT?.Dispose();
     }
 
     public void OnButtonPress()
@@ -352,30 +359,7 @@ public class Plugin : IPlugin, Updater.IUpdater
         _battlegroundsQuestListButtonBehavior.Hide();
     }
 
-    internal void UpdateQuestList(bool force = false)
-    {
-        ((QuestListViewModel)_questListView.DataContext).Update(force);
-    }
-
-    internal void UpdateBattlegroundsQuestList(bool force = false)
-    {
-        ((QuestListViewModel)_battlegroundsQuestListView.DataContext).Update(force);
-    }
-
-    internal void ForceNextQuestUpdate()
-    {
-        ((QuestListViewModel)_questListView.DataContext).ForceNext = true;
-    }
-
-    internal void ForceNextBattlegroundsQuestUpdate()
-    {
-        ((QuestListViewModel)_battlegroundsQuestListView.DataContext).ForceNext = true;
-    }
-
-    internal void ForceNextQuestWindowUpdate()
-    {
-        ((QuestListViewModel)_questListWindow.DataContext).ForceNext = true;
-    }
+    internal void ForceNextQuestWindowUpdate() => QuestListWindowVM.ForceNext = true;
 
     internal void ShowQuests()
     {
@@ -412,8 +396,8 @@ public class Plugin : IPlugin, Updater.IUpdater
     {
         Instance.ShowOrHideQuestsButton();
         Instance.ShowOrHideBattlegroundsQuestsButton();
-        Instance.ForceNextQuestUpdate();
-        Instance.ForceNextBattlegroundsQuestUpdate();
-        Instance.ForceNextQuestWindowUpdate();
+        Instance.QuestListVM.ForceNext = true;
+        Instance.BattlegroundsQuestListVM.ForceNext = true;
+        Instance.QuestListWindowVM.ForceNext = true;
     }
 }

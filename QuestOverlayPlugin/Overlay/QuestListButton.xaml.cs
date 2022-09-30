@@ -39,12 +39,12 @@ public partial class QuestListButton : UserControl
             return;
         if (IsBattlegrounds)
         {
-            Plugin.Instance.UpdateBattlegroundsQuestList();
+            Plugin.Instance.BattlegroundsQuestListVM.UpdateAsync();
             Plugin.Instance.ShowBattlegroundsQuests();
         }
         else
         {
-            Plugin.Instance.UpdateQuestList();
+            Plugin.Instance.QuestListVM.UpdateAsync();
             Plugin.Instance.ShowQuests();
         }
     }

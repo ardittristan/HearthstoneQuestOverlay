@@ -9,14 +9,12 @@ namespace QuestOverlayPlugin.Windows;
 public partial class QuestListWindow : MetroWindow
 {
     private bool _appIsClosing;
-    public QuestListViewModel QuestListViewModelVM;
 
     public QuestListWindow(QuestListViewModel questListViewModel)
     {
         InitializeComponent();
 
         DataContext = questListViewModel;
-        QuestListViewModelVM = questListViewModel;
     }
 
     protected override void OnClosing(CancelEventArgs e)
@@ -35,7 +33,7 @@ public partial class QuestListWindow : MetroWindow
 
     private async void QuestListWindow_OnActivated(object sender, EventArgs e)
     {
-        await QuestListViewModelVM.UpdateAsync();
+        await Plugin.Instance.QuestListWindowVM.UpdateAsync();
         Topmost = true;
     }
 
@@ -47,7 +45,7 @@ public partial class QuestListWindow : MetroWindow
 
     private async void QuestListWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        await QuestListViewModelVM.UpdateAsync();
+        await Plugin.Instance.QuestListWindowVM.UpdateAsync();
         UpdateScaling();
     }
 

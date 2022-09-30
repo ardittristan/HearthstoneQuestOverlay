@@ -22,6 +22,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <NoWarn>1701;1702;4014</NoWarn>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="Build">
