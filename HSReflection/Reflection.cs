@@ -37,9 +37,7 @@ public static partial class Reflection
 
             dynamic? questPoolStateEntry = questPoolState == null
                 ? null
-                : MonoUtil.ToMonoObject(
-                    DynamicUtil.TryCast<uint>(Map.GetValue(questPoolState, questPoolId) ?? 0) ?? 0
-                );
+                : Map.GetValue(questPoolState, questPoolId);
 
             questRecords.Add(quest["m_ID"], new QuestRecord()
             {
@@ -77,9 +75,8 @@ public static partial class Reflection
         foreach (dynamic? val in currentQuestValues)
         {
             if (val == null) continue;
-
-            uint? value = DynamicUtil.TryCast<uint>(val["value"]);
-            dynamic? curVal = (value ?? 0).ToMonoObject();
+            
+            dynamic? curVal = val["value"];
             if (curVal == null) continue;
 
             quests.Add(new PlayerQuestState()
@@ -154,7 +151,7 @@ public static partial class Reflection
                 NextInChain = questRecord.NextInChain
             });
         }
-
+        
         return quests;
     }
 
@@ -169,7 +166,7 @@ public static partial class Reflection
 
         foreach (dynamic? curEntry in questPoolState["entries"])
         {
-            dynamic? questPoolEntry = MonoUtil.ToMonoObject(DynamicUtil.TryCast<uint?>(curEntry["value"]) ?? 0);
+            dynamic? questPoolEntry = curEntry["value"];
             double secondsUntilNextGrant = DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]);
 
             try

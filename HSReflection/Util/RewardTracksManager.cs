@@ -12,7 +12,7 @@ internal static class RewardTracksManager
         { RewardTrackType.NONE, -1 }
     };
 
-    private static object[] Entries => Services.RewardTrackManager["m_rewardTrackEntries"]["entries"];
+    private static dynamic[] Entries => Services.RewardTrackManager["m_rewardTrackEntries"]["entries"];
 
     public static MonoObject? Global => GetRewardTrack(RewardTrackType.GLOBAL);
 
@@ -23,10 +23,10 @@ internal static class RewardTracksManager
         if (_typeIndex[type] == -1)
             _typeIndex[type] = Entries
                 .Select((entry, index) => (
-                    (int?)GetPointer((MonoStruct)entry).ToMonoObject()?["<TrackDataModel>k__BackingField"]?[
+                    (int?)entry["value"]?["<TrackDataModel>k__BackingField"]?[
                         "m_RewardTrackType"], index)).First(tuple => tuple.Item1 == (int)type).index;
 
-        return GetPointer((MonoStruct)Entries[_typeIndex[type]]).ToMonoObject();
+        return Entries[_typeIndex[type]]["value"];
     }
 
     private static uint GetPointer(MonoStruct @struct) =>
