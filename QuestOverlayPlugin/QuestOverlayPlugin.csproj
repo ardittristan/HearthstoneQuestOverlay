@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\Version.props" />
+  <Import Project="..\HSDT.props" />
 
   <PropertyGroup>
-    <HSDTPathLength>$([MSBUILD]::Subtract($([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`).Length), 1))</HSDTPathLength>
-    <HSDTPath>$([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`)[$(HSDTPathLength)])</HSDTPath>
     <AssemblyTitle>QuestOverlayPlugin</AssemblyTitle>
     <Company>ardittristan</Company>
     <Product>QuestOverlayPlugin</Product>
@@ -13,7 +12,7 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <ProjectGuid>{48EAC139-5942-437D-BFD1-01823ACA9930}</ProjectGuid>
     <TargetFramework>net472</TargetFramework>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>obj\Generated</CompilerGeneratedFilesOutputPath>

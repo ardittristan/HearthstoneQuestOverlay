@@ -20,7 +20,7 @@ public class QuestViewModel : ViewModel
         Progress = 1.0 * quest.Progress / quest.Quota;
         Image = new Icon(quest.Icon).ImageSource;
         QuestType = quest.PoolType;
-        HasXpReward = quest.RewardTrackXp > 0 && quest.RewardTrackType != RewardTrackType.BATTLEGROUNDS;
+        HasXpReward = quest is { RewardTrackXp: > 0, RewardTrackType: RewardTrackType.GLOBAL };
         XpReward = quest.RewardTrackXp.ToString();
         BonusXpColor = quest.RewardTrackBonusXp > 0 ? "#60FF08" : "#FFF";
         ShowXpReward = Plugin.Instance.Settings.ShowRewardOverlay;

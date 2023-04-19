@@ -5,9 +5,10 @@ namespace HSReflection.Util;
 
 internal static class RewardTracksManager
 {
-    private static readonly Dictionary<RewardTrackType, int> _typeIndex = new()
+    private static readonly Dictionary<RewardTrackType, int> TypeIndex = new()
     {
         { RewardTrackType.BATTLEGROUNDS, -1 },
+        { RewardTrackType.EVENT, -1},
         { RewardTrackType.GLOBAL, -1 },
         { RewardTrackType.NONE, -1 }
     };
@@ -18,18 +19,16 @@ internal static class RewardTracksManager
 
     public static MonoObject? BattleGrounds => GetRewardTrack(RewardTrackType.BATTLEGROUNDS);
 
+    public static MonoObject? Event => GetRewardTrack(RewardTrackType.EVENT);
+
     public static MonoObject? GetRewardTrack(RewardTrackType type)
     {
-        if (_typeIndex[type] == -1)
-            _typeIndex[type] = Entries
+        if (TypeIndex[type] == -1)
+            TypeIndex[type] = Entries
                 .Select((entry, index) => (
                     (int?)entry["value"]?["<TrackDataModel>k__BackingField"]?[
                         "m_RewardTrackType"], index)).First(tuple => tuple.Item1 == (int)type).index;
 
-        return Entries[_typeIndex[type]]["value"];
+        return Entries[TypeIndex[type]]["value"];
     }
-
-    private static uint GetPointer(MonoStruct @struct) =>
-        (uint)Reflection.Mirror.View.ReadInt(@struct.PStruct - 8 +
-                                             @struct.Class.Fields.First(f => f.Name == "value").Offset);
 }

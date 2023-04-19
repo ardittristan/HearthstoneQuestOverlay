@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\Version.props" />
+  <Import Project="..\HSDT.props" />
 
   <PropertyGroup>
-    <HSDTPathLength>$([MSBUILD]::Subtract($([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`).Length), 1))</HSDTPathLength>
-    <HSDTPath>$([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`)[$(HSDTPathLength)])</HSDTPath>
     <AssemblyTitle>HSReflection</AssemblyTitle>
     <Product>HSReflection</Product>
     <Copyright>Copyright ©  2022</Copyright>
@@ -13,7 +12,7 @@
     <ProjectGuid>{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}</ProjectGuid>
     <AssemblyName>HearthMirror.Scripts</AssemblyName>
     <TargetFramework>net472</TargetFramework>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

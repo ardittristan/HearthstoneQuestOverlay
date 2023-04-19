@@ -29,6 +29,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{908298F3-C30E-4CE6-A64A-09A9F6F9FCD7}"
 	ProjectSection(SolutionItems) = preProject
 		Version.props = Version.props
+		HSDT.props = HSDT.props
 	EndProjectSection
 EndProject
 Global

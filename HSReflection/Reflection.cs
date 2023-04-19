@@ -1,6 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-// ReSharper disable once RedundantUsingDirective
-using Hearthstone_Deck_Tracker.Utility.Logging;
 using HSReflection.Enums;
 using HSReflection.Objects;
 using HSReflection.Util;
@@ -24,7 +22,7 @@ public static partial class Reflection
         Dictionary<int, QuestRecord> questRecords = new();
 
         dynamic? questPoolState = Services.QuestManager["m_questPoolState"];
-            
+
         dynamic? quests = Services.GameDbf["Quest"]?["m_records"];
 
         if (quests == null) return questRecords;
@@ -64,10 +62,11 @@ public static partial class Reflection
     }
 
     public static List<PlayerQuestState> GetQuestStates() => TryGetInternal(GetQuestStatesInternal);
+
     private static List<PlayerQuestState> GetQuestStatesInternal()
     {
         List<PlayerQuestState> quests = new();
-            
+
         dynamic? currentQuestValues = Services.QuestManager["m_questState"]["entries"];
 
         if (currentQuestValues == null) return quests;
@@ -75,7 +74,7 @@ public static partial class Reflection
         foreach (dynamic? val in currentQuestValues)
         {
             if (val == null) continue;
-            
+
             dynamic? curVal = val["value"];
             if (curVal == null) continue;
 
@@ -94,7 +93,7 @@ public static partial class Reflection
     private static List<Quest> GetQuestsInternal()
     {
         List<Quest> quests = new();
-        
+
         int rewardTrackBonusXp =
             RewardTracksManager.Global?["<TrackDataModel>k__BackingField"]?["m_XpBonusPercent"] ?? 0;
 
@@ -126,8 +125,10 @@ public static partial class Reflection
                 new object[] { questState.Progress, questRecord.Quota }
             );
 
-            int rewardTrackXp = 
-                (int)Math.Round(questRecord.RewardTrackXp * (1f + rewardTrackBonusXp / 100f), MidpointRounding.AwayFromZero);
+            int rewardTrackXp = questRecord.RewardTrackType == RewardTrackType.GLOBAL
+                ? (int)Math.Round(questRecord.RewardTrackXp * (1f + rewardTrackBonusXp / 100f),
+                    MidpointRounding.AwayFromZero)
+                : questRecord.RewardTrackXp;
 
             quests.Add(new Quest()
             {
@@ -151,7 +152,7 @@ public static partial class Reflection
                 NextInChain = questRecord.NextInChain
             });
         }
-        
+
         return quests;
     }
 

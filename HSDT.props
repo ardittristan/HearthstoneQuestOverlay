@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <HSDTPathLength>$([MSBUILD]::Subtract($([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`).Length), 1))</HSDTPathLength>
+    <HSDTPath>$([System.IO.Directory]::GetDirectories(`$(LocalAppData)\HearthstoneDeckTracker`, `app-*`)[$(HSDTPathLength)])</HSDTPath>
+  </PropertyGroup>
+</Project>

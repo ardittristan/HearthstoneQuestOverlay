@@ -5,5 +5,6 @@ public enum RewardTrackType
 {
     NONE,
     GLOBAL,
-    BATTLEGROUNDS
+    BATTLEGROUNDS,
+    EVENT = 7
 }
