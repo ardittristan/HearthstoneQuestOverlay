@@ -78,7 +78,7 @@ public class Icon
                 (int)(background.PixelHeight * (yPercent / 100) - (double)icon.PixelHeight / 2),
                 icon.PixelWidth,
                 icon.PixelHeight
-            ), 
+            ),
             new WriteableBitmap(icon),
             new Rect(0, 0, icon.PixelWidth, icon.PixelHeight),
             WriteableBitmapExtensions.BlendMode.Alpha
@@ -104,7 +104,7 @@ public class Icon
             {
                 wb = wb.Crop(0, 0, image.PixelWidth, image.PixelHeight / 2);
             }
-                
+
             return wb;
         }
     }
@@ -145,5 +145,11 @@ public class Icon
     private ImageSource BrokenIcon => new BitmapImage(GetImageUri("testt.png"));
 
     private Uri GetImageUri(string fileName) =>
-        new(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName), UriKind.Absolute);
+        fileName switch
+        {
+            "class_deathknight-icon.png" => new Uri(
+                Path.Combine(Plugin.Instance.Extractor.OutputPath, Plugin.DEATH_KNIGHT_ICON_LOC, fileName),
+                UriKind.Absolute),
+            _ => new Uri(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName), UriKind.Absolute)
+        };
 }

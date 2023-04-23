@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Brokenevent.ILStrip" Version="1.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="BrokenEvent.ILStrip" />
+    <Using Remove="System.Net.Http" />
+  </ItemGroup>
+
+</Project>

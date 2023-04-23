@@ -11,12 +11,15 @@
 
     <ItemGroup>
       <InputAssemblies Include="$(OutputPath)$(AssemblyName).dll" />
+      <InputAssemblies Include="$(OutputPath)\AssetRipper.TextureDecoder.dll" />
       <InputAssemblies Include="$(OutputPath)\AssetsTools.NET.dll" />
-      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.dll" />
-      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.Mdb.dll" />
-      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.Pdb.dll" />
-      <InputAssemblies Include="$(OutputPath)\Mono.Cecil.Rocks.dll" />
+      <InputAssemblies Include="$(OutputPath)\AssetsTools.NET.Texture.dll" />
       <InputAssemblies Include="$(OutputPath)\PortableSettingsProvider.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Half.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Buffers.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Memory.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Numerics.Vectors.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Runtime.CompilerServices.Unsafe.dll" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,7 +29,7 @@
     <!-- ReSharper disable once UnknownTask -->
     <ILRepack
       Parallel="true"
-      Internalize="true"
+      Internalize="false"
       InternalizeExclude="@(DoNotInternalizeAssemblies)"
       InputAssemblies="@(InputAssemblies)"
       TargetKind="Dll"
@@ -40,5 +43,8 @@
       <FilesToDelete Include="$(OutputPath)*.pdb" Exclude="$(OutputPath)$(AssemblyName).pdb" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
+  </Target>
+  <Target Name="ILStripper" AfterTargets="ILRepackerCleanup">
+    <Exec Command="ILStripper.exe &quot;$(MSBuildThisFileDirectory)bin\$(Configuration)\net472\TextureExtractor.dll&quot; TextureExtractor.Extractor" WorkingDirectory="$(MSBuildThisFileDirectory)..\ILStripper\bin\$(Configuration)\net472\" />
   </Target>
 </Project>

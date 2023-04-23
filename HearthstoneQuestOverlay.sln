@@ -28,9 +28,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextureExtractor", "Texture
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{908298F3-C30E-4CE6-A64A-09A9F6F9FCD7}"
 	ProjectSection(SolutionItems) = preProject
-		Version.props = Version.props
 		HSDT.props = HSDT.props
+		Version.props = Version.props
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ILStripper", "ILStripper\ILStripper.csproj", "{F28557F1-E669-41E7-956D-1CFF54BE8AA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractAllTexturesFromHS", "ExtractAllTexturesFromHS\ExtractAllTexturesFromHS.csproj", "{EE3C37FF-241B-4EB0-A7FB-662E795FFB01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +58,14 @@ Global
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F28557F1-E669-41E7-956D-1CFF54BE8AA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F28557F1-E669-41E7-956D-1CFF54BE8AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F28557F1-E669-41E7-956D-1CFF54BE8AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F28557F1-E669-41E7-956D-1CFF54BE8AA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE3C37FF-241B-4EB0-A7FB-662E795FFB01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE3C37FF-241B-4EB0-A7FB-662E795FFB01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE3C37FF-241B-4EB0-A7FB-662E795FFB01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE3C37FF-241B-4EB0-A7FB-662E795FFB01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <mercenariescontrols:ProgressBarFillWidthConverter x:Key="ProgressBarFillWidthConverter" />
         <controls:BoolToVisibleOrHiddenAndConverter x:Key="BoolToVisibleOrHiddenAndConverter" />
+        <controls:BoolToVisibleOrHiddenConverter x:Key="BoolToVisibleOrHiddenConverter" />
     </UserControl.Resources>
     <Grid Width="400">
         <Border Background="#221717" BorderBrush="#110C0C" BorderThickness="2" CornerRadius="3">
@@ -26,7 +27,8 @@
                                 <Binding Path="ShowXpReward" />
                             </MultiBinding>
                         </DockPanel.Visibility>
-                        <Image Source="pack://application:,,,/QuestOverlayPlugin;component/Resources/Rewards_Track_-_XP_Boost.png" RenderOptions.BitmapScalingMode="Fant" Height="24" DockPanel.Dock="Right" Width="24" HorizontalAlignment="Right" Margin="0,-2,-2,0" />
+                        <Image Source="pack://application:,,,/QuestOverlayPlugin;component/Resources/Event_Track_-_XP.png" RenderOptions.BitmapScalingMode="Fant" Height="24" DockPanel.Dock="Right" Width="24" HorizontalAlignment="Right" Margin="-24,-2,-2,0" Visibility="{Binding IsEvent, Converter={StaticResource BoolToVisibleOrHiddenConverter}}" d:Visibility="Hidden" />
+                        <Image Source="pack://application:,,,/QuestOverlayPlugin;component/Resources/Rewards_Track_-_XP_Boost.png" RenderOptions.BitmapScalingMode="Fant" Height="24" DockPanel.Dock="Right" Width="24" HorizontalAlignment="Right" Margin="0,-2,-2,0" Visibility="{Binding IsGlobal, Converter={StaticResource BoolToVisibleOrHiddenConverter}}" />
                         <hearthstoneDeckTracker:HearthstoneTextBlock Text="{Binding XpReward}" d:Text="1100"  Fill="{Binding BonusXpColor}" d:Fill="#60ff08"  FontSize="16" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,-2,0,0" />
                     </DockPanel>
                 </Grid>
