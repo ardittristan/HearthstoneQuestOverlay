@@ -9,6 +9,9 @@ on:
       - "**.csproj"
       - "**.sln"
       - "**.pubxml"
+      - "**.yml"
+      - "**.targets"
+      - "**.props"
       - "**/Resources/**.*"
   workflow_dispatch:
     inputs:
