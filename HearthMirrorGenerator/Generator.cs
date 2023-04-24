@@ -9,14 +9,10 @@ namespace HearthMirrorGenerator;
 
 [Generator]
 public class Generator : ISourceGenerator
-{
-    public static readonly string HSDTPath =
+{public static readonly string HSDTPath =
         Directory.GetDirectories(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "HearthstoneDeckTracker"), "app-*")[
-            Directory.GetDirectories(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "HearthstoneDeckTracker"), "app-*").Length - 1];
+                "HearthstoneDeckTracker"), "app-*").Last();
 
     public void Execute(GeneratorExecutionContext context)
     {

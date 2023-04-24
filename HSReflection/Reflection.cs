@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using HearthMirror.Mono;
 using HSReflection.Enums;
 using HSReflection.Objects;
 using HSReflection.Util;
@@ -21,19 +22,19 @@ public static partial class Reflection
     {
         Dictionary<int, QuestRecord> questRecords = new();
 
-        dynamic? questPoolState = Services.QuestManager["m_questPoolState"];
+        MonoObject? questPoolState = Services.QuestManager["m_questPoolState"];
 
-        dynamic? quests = Services.GameDbf["Quest"]?["m_records"];
+        MonoObject? quests = Services.GameDbf["Quest"]?["m_records"];
 
         if (quests == null) return questRecords;
 
-        dynamic questEntries = quests["_items"];
+        object[] questEntries = quests["_items"];
 
-        foreach (dynamic quest in questEntries)
+        foreach (MonoObject quest in questEntries.Cast<MonoObject>())
         {
             int questPoolId = quest["m_questPoolId"];
 
-            dynamic? questPoolStateEntry = questPoolState == null
+            MonoObject? questPoolStateEntry = questPoolState == null
                 ? null
                 : Map.GetValue(questPoolState, questPoolId);
 
@@ -67,15 +68,13 @@ public static partial class Reflection
     {
         List<PlayerQuestState> quests = new();
 
-        dynamic? currentQuestValues = Services.QuestManager["m_questState"]["entries"];
+        object[]? currentQuestValues = Services.QuestManager["m_questState"]["entries"];
 
         if (currentQuestValues == null) return quests;
 
-        foreach (dynamic? val in currentQuestValues)
+        foreach (MonoStruct? val in currentQuestValues.Cast<MonoStruct?>())
         {
-            if (val == null) continue;
-
-            dynamic? curVal = val["value"];
+            MonoObject? curVal = val?["value"];
             if (curVal == null) continue;
 
             quests.Add(new PlayerQuestState()
@@ -159,15 +158,15 @@ public static partial class Reflection
     public static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
     private static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimesInternal()
     {
-        dynamic? questPoolState = Services.QuestManager["m_questPoolState"];
+        MonoObject? questPoolState = Services.QuestManager["m_questPoolState"];
 
         if (questPoolState == null) return null;
 
         Dictionary<QuestPoolType, DateTime> questPools = new();
 
-        foreach (dynamic? curEntry in questPoolState["entries"])
+        foreach (MonoStruct? curEntry in questPoolState["entries"])
         {
-            dynamic? questPoolEntry = curEntry["value"];
+            MonoObject? questPoolEntry = curEntry?["value"];
             double secondsUntilNextGrant = DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]);
 
             try
@@ -187,12 +186,12 @@ public static partial class Reflection
     public static string? FindGameString(string key) => TryGetInternal(() => FindGameStringInternal(key));
     private static string? FindGameStringInternal(string key)
     {
-        dynamic? gameStrings = Mirror.Root?["GameStrings"]["s_tables"]["valueSlots"];
+        object[]? gameStrings = Mirror.Root?["GameStrings"]["s_tables"]["valueSlots"];
         if (gameStrings == null) return null;
 
-        foreach (dynamic? gameStringTable in gameStrings)
+        foreach (MonoObject? gameStringTable in gameStrings.Cast<MonoObject?>())
         {
-            string text = Map.GetValue(gameStringTable["m_table"], key);
+            string? text = Map.GetValue(gameStringTable?["m_table"], key);
             if (text != null) return text;
         }
 

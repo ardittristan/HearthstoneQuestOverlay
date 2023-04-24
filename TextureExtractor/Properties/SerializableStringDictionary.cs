@@ -15,10 +15,7 @@ public class SerializableStringDictionary : StringDictionary, IXmlSerializable
         while (reader.Read() &&
                !(reader.NodeType == XmlNodeType.EndElement && reader.LocalName == GetType().Name))
         {
-            var name = reader["Name"];
-            if (name == null)
-                throw new FormatException();
-
+            var name = reader["Name"] ?? throw new FormatException();
             var value = reader["Value"];
             this[name] = value;
         }

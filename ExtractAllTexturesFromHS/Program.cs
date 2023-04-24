@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TextureExtractor;
 
 string productDb = File.ReadAllText(@"C:\ProgramData\Battle.net\Agent\product.db");
@@ -14,5 +13,3 @@ Extractor extractor = new(Path.Combine(ThisAssembly.Project.ProjectPath, @"obj\h
 
 IEnumerable<Task> tasks = assetBundles.Select(bundle => extractor.ExtractAsync(bundle));
 await Task.WhenAll(tasks);
-
-string test = hsPath;

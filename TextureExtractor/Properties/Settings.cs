@@ -12,7 +12,7 @@ internal sealed class Settings : ApplicationSettingsBase
     {
         get
         {
-            this[nameof(VersionStore)] = this[nameof(VersionStore)] ?? new SerializableStringDictionary();
+            this[nameof(VersionStore)] ??= new SerializableStringDictionary();
             return (SerializableStringDictionary)this[nameof(VersionStore)];
         }
     }

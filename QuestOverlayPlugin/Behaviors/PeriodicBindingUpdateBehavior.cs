@@ -13,26 +13,31 @@ public class PeriodicBindingUpdateBehavior : Behavior<DependencyObject>
     public PeriodicBindingUpdateMode Mode { get; set; } = PeriodicBindingUpdateMode.UPDATE_TARGET;
     private WeakTimer _timer = null!;
     private TimerCallback? _timerCallback;
+
     protected override void OnAttached()
     {
         if (Interval == null) throw new ArgumentNullException(nameof(Interval));
         if (Property == null) throw new ArgumentNullException(nameof(Property));
-        //Save a reference to the callback of the timer so this object will keep the timer alive but not vice versa.
         _timerCallback = s =>
         {
             try
             {
+                // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
                 switch (Mode)
                 {
                     case PeriodicBindingUpdateMode.UPDATE_TARGET:
-                        Dispatcher.Invoke(() => BindingOperations.GetBindingExpression(AssociatedObject, Property)?.UpdateTarget());
+                        Dispatcher.Invoke(() =>
+                            BindingOperations.GetBindingExpression(AssociatedObject, Property)?.UpdateTarget());
                         break;
                     case PeriodicBindingUpdateMode.UPDATE_SOURCE:
-                        Dispatcher.Invoke(() => BindingOperations.GetBindingExpression(AssociatedObject, Property)?.UpdateSource());
+                        Dispatcher.Invoke(() =>
+                            BindingOperations.GetBindingExpression(AssociatedObject, Property)?.UpdateSource());
                         break;
                 }
             }
-            catch (TaskCanceledException) { }//This exception will be thrown when application is shutting down.
+            catch (TaskCanceledException)
+            {
+            }
         };
         _timer = new WeakTimer(_timerCallback, null, Interval, Interval);
 
@@ -49,7 +54,8 @@ public class PeriodicBindingUpdateBehavior : Behavior<DependencyObject>
 
 public enum PeriodicBindingUpdateMode
 {
-    UPDATE_TARGET, UPDATE_SOURCE
+    UPDATE_TARGET,
+    UPDATE_SOURCE
 }
 
 /// <summary>
@@ -60,6 +66,7 @@ public class WeakTimer : IDisposable
 {
     private readonly Timer _timer;
     private readonly WeakReference<TimerCallback> _weakCallback;
+
     public WeakTimer(TimerCallback callback)
     {
         _timer = new Timer(OnTimerCallback);
@@ -102,6 +109,7 @@ public class WeakTimer : IDisposable
     {
         return _timer.Change(dueTime, period);
     }
+
     public bool Change(TimeSpan dueTime, TimeSpan period)
     {
         return _timer.Change(dueTime, period);
@@ -121,6 +129,7 @@ public class WeakTimer : IDisposable
     {
         return _timer.Dispose(notifyObject);
     }
+
     public void Dispose()
     {
         _timer.Dispose();

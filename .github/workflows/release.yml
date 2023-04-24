@@ -36,9 +36,8 @@ jobs:
         id: get-tag
         uses: WyriHaximus/github-action-get-previous-tag@v1
       - name: Get version
-        shell: bash
         id: get-version
-        run: echo "::set-output name=version::$(node ./.github/workflows/get-version.js)"
+        run: node ./.github/workflows/get-version.js
         
   release:
     name: Release

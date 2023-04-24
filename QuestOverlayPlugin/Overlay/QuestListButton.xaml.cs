@@ -2,26 +2,36 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using Hearthstone_Deck_Tracker.Utility.Extensions;
+using HSReflection.Enums;
 
 namespace QuestOverlayPlugin.Overlay;
 
 public partial class QuestListButton : UserControl
 {
-    public bool IsBattlegrounds { get; }
+    public bool IsBattlegrounds => ButtonType == RewardTrackType.BATTLEGROUNDS;
+    private RewardTrackType ButtonType { get; }
 
-    public QuestListButton(QuestListViewModel questListViewModel, bool isBattlegrounds = false)
+    public QuestListButton(QuestListViewModel questListViewModel, RewardTrackType buttonType = RewardTrackType.GLOBAL)
     {
         InitializeComponent();
 
-        IsBattlegrounds = isBattlegrounds;
+        ButtonType = buttonType;
+        
+        Name = ButtonType switch
+        {
+            RewardTrackType.BATTLEGROUNDS => "BattlegroundsQuestListButton",
+            _ => "QuestListButton"
+        };
 
-        Name = "QuestListButton";
-
-        if (IsBattlegrounds)
-            Name = "Battlegrounds" + Name;
+        int offsetMultiplier = ButtonType switch
+        {
+            RewardTrackType.GLOBAL => 0,
+            RewardTrackType.BATTLEGROUNDS => 1,
+            _ => 2
+        };
 
         Visibility = Visibility.Collapsed;
-        Canvas.SetBottom(this, 128 + (IsBattlegrounds ? 74 : 0));
+        Canvas.SetBottom(this, 128 + offsetMultiplier * 74);
         Canvas.SetRight(this, 16);
         OverlayExtensions.SetIsOverlayHitTestVisible(this, true);
         MouseEnter += OnMouseEnter;
@@ -37,24 +47,32 @@ public partial class QuestListButton : UserControl
         await Task.Delay(150);
         if (!_showQuests)
             return;
-        if (IsBattlegrounds)
+        switch (ButtonType)
         {
-            Plugin.Instance.BattlegroundsQuestListVM.UpdateAsync();
-            Plugin.Instance.ShowBattlegroundsQuests();
-        }
-        else
-        {
-            Plugin.Instance.QuestListVM.UpdateAsync();
-            Plugin.Instance.ShowQuests();
+            case RewardTrackType.BATTLEGROUNDS:
+                Plugin.Instance.BattlegroundsQuestListVM.UpdateAsync();
+                Plugin.Instance.ShowBattlegroundsQuests();
+                break;
+            case RewardTrackType.GLOBAL:
+            default:
+                Plugin.Instance.QuestListVM.UpdateAsync();
+                Plugin.Instance.ShowQuests();
+                break;
         }
     }
 
     private void OnMouseLeave(object sender, MouseEventArgs e)
     {
         _showQuests = false;
-        if (IsBattlegrounds)
-            Plugin.Instance.HideBattlegroundsQuests();
-        else
-            Plugin.Instance.HideQuests();
+        switch (ButtonType)
+        {
+            case RewardTrackType.BATTLEGROUNDS:
+                Plugin.Instance.HideBattlegroundsQuests();
+                break;
+            case RewardTrackType.GLOBAL:
+            default:
+                Plugin.Instance.HideQuests();
+                break;
+        }
     }
 }

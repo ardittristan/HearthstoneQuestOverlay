@@ -15,6 +15,7 @@ using Hearthstone_Deck_Tracker.Utility.Extensions;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
+using HSReflection.Enums;
 using MahApps.Metro.Controls;
 using QuestOverlayPlugin.Controls;
 using QuestOverlayPlugin.Overlay;
@@ -128,7 +129,7 @@ public class Plugin : IPlugin, Updater.IUpdater
             ExitAnimation = AnimationType.Slide
         };
 
-        _battlegroundsQuestListButton = new QuestListButton(BattlegroundsQuestListVM, true);
+        _battlegroundsQuestListButton = new QuestListButton(BattlegroundsQuestListVM, RewardTrackType.BATTLEGROUNDS);
         _battlegroundsQuestListButtonBehavior = new OverlayElementBehavior(_battlegroundsQuestListButton)
         {
             GetRight = () => Core.OverlayWindow.Height * 0.01,
