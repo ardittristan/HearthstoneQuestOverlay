@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ILStripper": {
-      "commandName": "Project",
-      "commandLineArgs": "$(SolutionDir)TextureExtractor\\bin\\Debug\\net472\\TextureExtractor.dll TextureExtractor.Extractor"
-    }
-  }
-}

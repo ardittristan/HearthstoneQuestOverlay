@@ -44,7 +44,4 @@
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
   </Target>
-  <Target Name="ILStripper" AfterTargets="ILRepackerCleanup">
-    <Exec Command="ILStripper.exe &quot;$(MSBuildThisFileDirectory)bin\$(Configuration)\net472\TextureExtractor.dll&quot; TextureExtractor.Extractor" WorkingDirectory="$(MSBuildThisFileDirectory)..\ILStripper\bin\$(Configuration)\net472\" />
-  </Target>
 </Project>

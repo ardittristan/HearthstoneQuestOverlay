@@ -84,7 +84,7 @@ public class Generator : ISourceGenerator
 
     private static void AddMirrorSource(GeneratorExecutionContext context, string name, string code)
     {
-        context.AddSource($"HearthMirror.Mirror.{name}.cs", SourceText.From($@"
+        context.AddSource($"HearthMirror.Mirror.{name}.g.cs", SourceText.From($@"
 #nullable disable
 
 namespace HSReflection
@@ -101,7 +101,7 @@ internal partial class CustomMirror
 
     private static void AddReflectionSource(GeneratorExecutionContext context, string name, string code)
     {
-        context.AddSource($"HearthMirror.Reflection.{name}.cs", SourceText.From($@"
+        context.AddSource($"HearthMirror.Reflection.{name}.g.cs", SourceText.From($@"
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

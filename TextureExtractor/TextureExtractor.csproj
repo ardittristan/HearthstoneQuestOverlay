@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AssetsTools.NET" Version="3.0.0-preview3">
-    </PackageReference>
+    <PackageReference Include="AssetsTools.NET" Version="3.0.0-preview3" />
     <PackageReference Include="AssetsTools.NET.Texture" Version="1.0.0-preview2" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2">
       <PrivateAssets>all</PrivateAssets>
@@ -22,12 +21,6 @@
     <PackageReference Include="PortableSettingsProvider" Version="0.2.4">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ILStripper\ILStripper.csproj">
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
 
 </Project>
