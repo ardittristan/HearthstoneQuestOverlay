@@ -13,7 +13,7 @@ internal static class RewardTracksManager
         { RewardTrackType.NONE, -1 }
     };
 
-    private static dynamic[] Entries => Services.RewardTrackManager["m_rewardTrackEntries"]["entries"];
+    private static dynamic[] Entries => Services.RewardTrackManager["m_rewardTrackEntries"]["_entries"];
 
     public static MonoObject? Global => GetRewardTrack(RewardTrackType.GLOBAL);
 

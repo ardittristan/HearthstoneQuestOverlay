@@ -7,9 +7,35 @@ string hsPath = Regex.Match(productDb, @"[ -~]+Hearthstone").Value.Replace('/', 
 
 string assetBundleDir = Path.Combine(hsPath, @"Data\Win");
 
-List<string> assetBundles = Directory.EnumerateFiles(assetBundleDir, "*.unity3d").ToList();
+string extractDir = Path.Combine(ThisAssembly.Project.ProjectPath, @"obj\hs");
 
-Extractor extractor = new(Path.Combine(ThisAssembly.Project.ProjectPath, @"obj\hs"), "1");
+IEnumerable<string> assetBundles = Directory.EnumerateFiles(assetBundleDir, "*.unity3d");
 
-IEnumerable<Task> tasks = assetBundles.Select(bundle => extractor.ExtractAsync(bundle));
-await Task.WhenAll(tasks);
+Extractor extractor = new(extractDir, "1");
+
+Task[] tasks = assetBundles.Select(bundle => extractor.ExtractAsync(bundle, true)).ToArray();
+
+Task whenAll = Task.WhenAll(tasks);
+
+Console.WriteLine();
+
+while (true)
+{
+    await Task.WhenAny(tasks);
+
+    Console.Write("\r{0:D}/{1:D} completed", tasks.Count(t => t.IsCompleted), tasks.Length);
+
+    if (whenAll.IsCompleted)
+        break;
+}
+
+string iconBundle =
+    new DirectoryInfo(
+            Path.GetDirectoryName(
+                Directory.GetFiles(extractDir, "class_druid-icon.png", SearchOption.AllDirectories).FirstOrDefault()) ??
+            "")
+        .Name;
+
+Console.WriteLine();
+
+Console.WriteLine("Found quest icons in '{0}'", iconBundle);

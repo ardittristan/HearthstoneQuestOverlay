@@ -29,8 +29,7 @@ namespace QuestOverlayPlugin;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Plugin : IPlugin, Updater.IUpdater
 {
-    public const string QUEST_ICONS_LOC = "initial_base_global-69";
-    public const string DEATH_KNIGHT_ICON_LOC = "initial_base_global-85";
+    public const string QUEST_ICONS_LOC = "initial_base_global-07ca451d-texture-0";
 
     internal Settings Settings = null!;
     private Flyout _settingsFlyout = null!;
@@ -172,7 +171,6 @@ public class Plugin : IPlugin, Updater.IUpdater
             Core.Game.MetaData.HearthstoneBuild.ToString());
         
         Extractor.ExtractAsync(CreateBundlePath(QUEST_ICONS_LOC));
-        Extractor.ExtractAsync(CreateBundlePath(DEATH_KNIGHT_ICON_LOC));
     }
 
     private void UpdateQuestWindow(Mode mode) => UpdateQuestWindow();

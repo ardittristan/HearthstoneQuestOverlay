@@ -12,7 +12,7 @@ internal static class Services
     public static MonoObject GameDownloadManager => GetService("Hearthstone.Streaming.GameDownloadManager");
     public static MonoObject Network => GetService("Network");
     public static MonoObject DownloadableDbfCache => GetService("DownloadableDbfCache");
-    public static MonoObject SpecialEventManager => GetService("SpecialEventManager");
+    public static MonoObject EventTimingManager => GetService("EventTimingManager");
     public static MonoObject GameMgr => GetService("GameMgr");
     public static MonoObject DraftManager => GetService("DraftManager");
     public static MonoObject AdventureProgressMgr => GetService("AdventureProgressMgr");
@@ -20,10 +20,12 @@ internal static class Services
     public static MonoObject AchievementManager => GetService("Hearthstone.Progression.AchievementManager");
     public static MonoObject QuestManager => GetService("Hearthstone.Progression.QuestManager");
     public static MonoObject RewardTrackManager => GetService("Hearthstone.Progression.RewardTrackManager");
+    public static MonoObject SpecialEventManager => GetService("Hearthstone.Progression.SpecialEventManager");
     public static MonoObject GenericRewardChestNoticeManager => GetService("GenericRewardChestNoticeManager");
     public static MonoObject AccountLicenseMgr => GetService("AccountLicenseMgr");
     public static MonoObject FixedRewardsMgr => GetService("FixedRewardsMgr");
     public static MonoObject ReturningPlayerMgr => GetService("ReturningPlayerMgr");
+    public static MonoObject FreeDeckMgr => GetService("FreeDeckMgr");
     public static MonoObject DemoMgr => GetService("DemoMgr");
     public static MonoObject NetCache => GetService("NetCache");
     public static MonoObject GameDbf => GetService("GameDbf");
@@ -65,10 +67,11 @@ internal static class Services
     public static MonoObject Cinematic => GetService("Cinematic");
     public static MonoObject WidgetRunner => GetService("Hearthstone.UI.WidgetRunner");
     public static MonoObject SpriteAtlasProvider => GetService("Hearthstone.UI.SpriteAtlasProvider");
+    public static MonoObject IProductDataService => GetService("Hearthstone.Store.IProductDataService");
     public static MonoObject HearthstoneCheckout => GetService("HearthstoneCheckout");
     public static MonoObject NetworkReachabilityManager => GetService("NetworkReachabilityManager");
     public static MonoObject VersionConfigurationService => GetService("Hearthstone.Core.Streaming.VersionConfigurationService");
-    public static MonoObject DeeplinkService => GetService("Hearthstone.Core.Deeplinking.DeeplinkService");
+    [Obsolete] public static MonoObject DeeplinkService => throw new NotSupportedException("Hearthstone.Core.Deeplinking.DeeplinkService");
     public static MonoObject ILoginService => GetService("Hearthstone.Login.ILoginService");
     public static MonoObject PartyManager => GetService("PartyManager");
     public static MonoObject PlayerMigrationManager => GetService("PlayerMigrationManager");
@@ -86,6 +89,9 @@ internal static class Services
     public static MonoObject APIGatewayService => GetService("Hearthstone.APIGateway.APIGatewayService");
     public static MonoObject BreakingNews => GetService("Hearthstone.BreakingNews.BreakingNews");
     public static MonoObject IGameStringsService => GetService("IGameStringsService");
+    public static MonoObject LuckyDrawManager => GetService("LuckyDrawManager");
     public static MonoObject CameraManager => GetService("CameraManager");
+    public static MonoObject LegendaryHeroRenderToTextureService => GetService("LegendaryHeroRenderToTextureService");
+    public static MonoObject ActorNames => GetService("ActorNames");
     public static MonoObject ITouchScreenService => GetService("ITouchScreenService");
 }

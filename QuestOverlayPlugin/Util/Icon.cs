@@ -142,14 +142,9 @@ public class Icon
         }
     }
 
-    private ImageSource BrokenIcon => new BitmapImage(GetImageUri("testt.png"));
+    private ImageSource BrokenIcon => new BitmapImage(GetImageUri("3Class_Background-icon.png"));
 
     private Uri GetImageUri(string fileName) =>
-        fileName switch
-        {
-            "class_deathknight-icon.png" => new Uri(
-                Path.Combine(Plugin.Instance.Extractor.OutputPath, Plugin.DEATH_KNIGHT_ICON_LOC, fileName),
-                UriKind.Absolute),
-            _ => new Uri(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName), UriKind.Absolute)
-        };
+        new(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName),
+            UriKind.Absolute);
 }

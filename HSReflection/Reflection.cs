@@ -68,7 +68,7 @@ public static partial class Reflection
     {
         List<PlayerQuestState> quests = new();
 
-        object[]? currentQuestValues = Services.QuestManager["m_questState"]["entries"];
+        object[]? currentQuestValues = Services.QuestManager["m_questState"]["_entries"];
 
         if (currentQuestValues == null) return quests;
 
@@ -164,7 +164,7 @@ public static partial class Reflection
 
         Dictionary<QuestPoolType, DateTime> questPools = new();
 
-        foreach (MonoStruct? curEntry in questPoolState["entries"])
+        foreach (MonoStruct? curEntry in questPoolState["_entries"])
         {
             MonoObject? questPoolEntry = curEntry?["value"];
             double secondsUntilNextGrant = DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]);

@@ -7,7 +7,7 @@ public static class Map
         if (map == null) return null;
 
         if (map["keySlots"] == null)
-            foreach (dynamic? curEntry in map["entries"])
+            foreach (dynamic? curEntry in map["_entries"])
             {
                 if (curEntry == null) continue;
                 if (key == curEntry["key"]) return curEntry["value"];
