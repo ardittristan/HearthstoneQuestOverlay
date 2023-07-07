@@ -13,8 +13,9 @@ public class Icon
 
     public ImageSource ImageSource { get; }
 
-    public Icon(string? name, string assetBundle = Plugin.QUEST_ICONS_LOC)
+    public Icon(string? name, string? assetBundle = null)
     {
+        assetBundle ??= Plugin.QUEST_ICONS_LOC;
         Name = name;
         AssetBundle = assetBundle;
         try
@@ -101,9 +102,7 @@ public class Icon
             WriteableBitmap wb = new(image);
 
             using (wb.GetBitmapContext())
-            {
                 wb = wb.Crop(0, 0, image.PixelWidth, image.PixelHeight / 2);
-            }
 
             return wb;
         }
@@ -142,9 +141,21 @@ public class Icon
         }
     }
 
-    private ImageSource BrokenIcon => new BitmapImage(GetImageUri("3Class_Background-icon.png"));
+    private ImageSource BrokenIcon
+    {
+        get
+        {
+            BitmapImage image = new(GetImageUri("3Class_Background-icon.png"));
+            WriteableBitmap wb = new(image);
+
+            using (wb.GetBitmapContext())
+                wb = wb.Crop(0, 0, image.PixelWidth, image.PixelHeight / 2);
+
+            return wb;
+        }
+    }
 
     private Uri GetImageUri(string fileName) =>
         new(Path.Combine(Plugin.Instance.Extractor.OutputPath, AssetBundle, fileName),
-            UriKind.Absolute);
+            UriKind.RelativeOrAbsolute);
 }

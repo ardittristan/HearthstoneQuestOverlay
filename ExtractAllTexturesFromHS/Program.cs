@@ -9,9 +9,16 @@ string assetBundleDir = Path.Combine(hsPath, @"Data\Win");
 
 string extractDir = Path.Combine(ThisAssembly.Project.ProjectPath, @"obj\hs");
 
-IEnumerable<string> assetBundles = Directory.EnumerateFiles(assetBundleDir, "*.unity3d");
+string searchPattern = "*.unity3d";
+
+if (args.Length > 0 && args[0].Length > 0)
+    searchPattern = args[0];
+
+IEnumerable<string> assetBundles = Directory.EnumerateFiles(assetBundleDir, searchPattern);
 
 Extractor extractor = new(extractDir, "1");
+
+Console.WriteLine(extractor.FindBundle(assetBundleDir, "initial_base_global-*-texture-*.unity3d", "class_druid-icon", true));
 
 Task[] tasks = assetBundles.Select(bundle => extractor.ExtractAsync(bundle, true)).ToArray();
 

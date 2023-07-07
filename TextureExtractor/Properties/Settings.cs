@@ -16,4 +16,15 @@ internal sealed class Settings : ApplicationSettingsBase
             return (SerializableStringDictionary)this[nameof(VersionStore)];
         }
     }
+
+    [UserScopedSetting]
+    [SettingsSerializeAs(SettingsSerializeAs.Xml)]
+    public SerializableStringDictionary AssetNameStore
+    {
+        get
+        {
+            this[nameof(AssetNameStore)] ??= new SerializableStringDictionary();
+            return (SerializableStringDictionary)this[nameof(AssetNameStore)];
+        }
+    }
 }

@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Extract[initial_base_global]TexturesFromHS": {
+      "commandName": "Project",
+      "commandLineArgs": "\"initial_base_global-*-texture-*.unity3d\""
+    },
+    "ExtractAllFromHS": {
+      "commandName": "Project"
+    },
+    "ExtractAllTexturesFromHS": {
+      "commandName": "Project",
+      "commandLineArgs": "\"*-texture-*.unity3d\""
+    }
+  }
+}

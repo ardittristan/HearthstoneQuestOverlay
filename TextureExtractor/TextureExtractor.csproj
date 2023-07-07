@@ -19,7 +19,7 @@
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="PortableSettingsProvider" Version="0.2.4">
+    <PackageReference Include="PortableSettingsProvider" Version="0.2.5">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

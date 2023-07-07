@@ -35,6 +35,57 @@ public class Extractor
         await Task.WhenAll(t);
     }
 
+    public async Task<string> FindBundleAsync(string bundleFolderPath, string bundleFileFilter, string assetName,
+        bool force = false)
+    {
+        Task<string> t = new(() => FindBundle(bundleFolderPath, bundleFileFilter, assetName, force));
+        t.Start();
+        return (await Task.WhenAll(t))[0];
+    }
+
+    public string FindBundle(string bundleFolderPath, string bundleFileFilter, string assetName, bool force = false)
+    {
+        if (!Validate(bundleFolderPath, bundleFileFilter, assetName, force))
+            return Properties.Settings.Default.AssetNameStore[bundleFileFilter + assetName];
+
+        IEnumerable<string> bundleFiles = Directory.GetFiles(bundleFolderPath, bundleFileFilter);
+
+        AssetsManager manager = new();
+
+        string foundBundle = null;
+
+        Directory.CreateDirectory(OutputPath);
+
+        foreach (string bundlePath in bundleFiles)
+        {
+            BundleFileInstance bundleInst = manager.LoadBundleFile(bundlePath);
+            AssetsFileInstance assetsFileInst = manager.LoadAssetsFileFromBundle(bundleInst, 0);
+
+            foreach (AssetFileInfo assetFile in assetsFileInst.file.GetAssetsOfType(AssetClassID.Texture2D))
+            {
+                AssetTypeValueField baseField = manager.GetBaseField(assetsFileInst, assetFile);
+                TextureFile textureField = TextureFile.ReadTextureFile(baseField);
+
+                if (textureField.m_Name != assetName)
+                    continue;
+
+                foundBundle = bundlePath;
+                goto Break;
+            }
+
+            manager.UnloadAssetsFile(assetsFileInst);
+        }
+        Break:
+
+        manager.UnloadAll(true);
+
+        Properties.Settings.Default.VersionStore[bundleFileFilter + assetName] = HearthstoneBuild;
+        Properties.Settings.Default.AssetNameStore[bundleFileFilter + assetName] = foundBundle;
+        Properties.Settings.Default.Save();
+
+        return foundBundle;
+    }
+
     public void Extract(string bundlePath, bool force = false)
     {
         if (!Validate(bundlePath, force)) return;
@@ -73,6 +124,21 @@ public class Extractor
 
         Properties.Settings.Default.VersionStore[bundleName] = HearthstoneBuild;
         Properties.Settings.Default.Save();
+    }
+
+    private bool Validate(string bundleFolderPath, string bundleFileFilter, string assetName, bool forced)
+    {
+        if (!Directory.EnumerateFiles(bundleFolderPath, bundleFileFilter).Any())
+            throw new FileDoesNotExitException();
+
+        bool hasUpdated = HasUpdated(bundleFileFilter + assetName, HearthstoneBuild);
+
+#if DEBUG
+        System.Diagnostics.Debug.WriteLine("Validate: " + !(forced || hasUpdated));
+        return true;
+#else
+			return !(forced || hasUpdated);
+#endif
     }
 
     private bool Validate(string bundlePath, bool forced)

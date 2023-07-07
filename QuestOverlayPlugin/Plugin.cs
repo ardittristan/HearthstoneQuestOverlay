@@ -15,6 +15,7 @@ using Hearthstone_Deck_Tracker.Utility.Extensions;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
+using HSReflection;
 using HSReflection.Enums;
 using MahApps.Metro.Controls;
 using QuestOverlayPlugin.Controls;
@@ -29,7 +30,7 @@ namespace QuestOverlayPlugin;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Plugin : IPlugin, Updater.IUpdater
 {
-    public const string QUEST_ICONS_LOC = "initial_base_global-07ca451d-texture-0";
+    public static string QUEST_ICONS_LOC { private set; get; } = string.Empty;
 
     internal Settings Settings = null!;
     private Flyout _settingsFlyout = null!;
@@ -72,6 +73,7 @@ public class Plugin : IPlugin, Updater.IUpdater
     private RecurringTask? _questListWindowRT;
 
     private static double ScreenRatio => (4.0 / 3.0) / (Core.OverlayWindow.Width / Core.OverlayWindow.Height);
+
     private static double QuestsButtonOffset
     {
         get
@@ -81,6 +83,7 @@ public class Plugin : IPlugin, Updater.IUpdater
             return Core.OverlayWindow.Height * 0.05 + 74;
         }
     }
+
     private static double BattlegroundsQuestsButtonOffset
     {
         get
@@ -104,6 +107,14 @@ public class Plugin : IPlugin, Updater.IUpdater
         Log.Info("Loaded Hearthstone Quest Overlay.");
 
         new Updater(this).CheckUpdate();
+
+        Extractor = new Extractor(
+            Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "TextureExtractor"),
+            Core.Game.MetaData.HearthstoneBuild.ToString());
+
+        QUEST_ICONS_LOC = Path.GetFileNameWithoutExtension(Extractor.FindBundle(
+            Path.Combine(Config.Instance.HearthstoneDirectory, @"Data\Win"),
+            "initial_base_global-*-texture-*.unity3d", "class_druid-icon"));
 
         _questListButton = new QuestListButton(QuestListVM);
         _questListButtonBehavior = new OverlayElementBehavior(_questListButton)
@@ -163,23 +174,30 @@ public class Plugin : IPlugin, Updater.IUpdater
         GameEvents.OnModeChanged.Add(OnGameStart);
         GameEvents.OnModeChanged.Add(UpdateQuestWindow);
         Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
+        Watchers.BaconWatcher.Change += UpdateEventHandler;
         if (Core.Game.IsRunning) Update();
         if (Core.Game.IsRunning) OnGameStart();
 
-        Extractor = new Extractor(
-            Path.Combine(Config.Instance.ConfigDir, "Plugins", "HearthstoneQuestOverlay", "TextureExtractor"),
-            Core.Game.MetaData.HearthstoneBuild.ToString());
-        
         Extractor.ExtractAsync(CreateBundlePath(QUEST_ICONS_LOC));
+
+        Reflection.Exception += Reflection_Exception;
+    }
+
+    private void Reflection_Exception(Exception obj)
+    {
+        // ReSharper disable once ExplicitCallerInfoArgument
+        Log.Error(obj, sourceFilePath: "HSReflection/Reflection.cs");
     }
 
     private void UpdateQuestWindow(Mode mode) => UpdateQuestWindow();
+
     private void UpdateQuestWindow()
     {
         if (Settings.ShowPopupWindow) QuestListWindowVM.UpdateAsync();
     }
 
     private void OnGameStart(Mode mode) => OnGameStart();
+
     private void OnGameStart()
     {
         if (_gameRunning)
@@ -258,6 +276,7 @@ public class Plugin : IPlugin, Updater.IUpdater
     public void OnUnload()
     {
         Watchers.ExperienceWatcher.NewExperienceHandler -= UpdateEventHandler;
+        Watchers.BaconWatcher.Change -= UpdateEventHandler;
 
         RemoveOverlay();
         _questListWindow.Shutdown();
@@ -389,6 +408,11 @@ public class Plugin : IPlugin, Updater.IUpdater
     public static void UpdateEventHandler(object sender, ExperienceEventArgs args)
     {
         if (args.IsChanged) Update();
+    }
+
+    public static void UpdateEventHandler(object sender, BaconEventArgs args)
+    {
+        if (args.IsJournalOpen) Update();
     }
 
     internal static void Update(Mode mode) => Update();
