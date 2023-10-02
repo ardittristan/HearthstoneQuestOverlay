@@ -1,21 +1,25 @@
 ﻿using System.Text.RegularExpressions;
-using HearthMirror.Mono;
+using Fasterflect;
+using HearthMirror;
 using HSReflection.Enums;
 using HSReflection.Objects;
 using HSReflection.Util;
+using ScryDotNet;
 
 namespace HSReflection;
 
 public static partial class Reflection
 {
-    private static readonly Lazy<CustomMirror> LazyMirror = new(() => new CustomMirror
-    {
-        ImageName = "Hearthstone"
-    });
+    private static readonly MemberGetter MirrorGetter =
+        Reflect.PropertyGetter(typeof(HearthMirror.Reflection), "Mirror", FasterflectFlags.StaticPrivate);
 
-    internal static CustomMirror Mirror => LazyMirror.Value;
+    internal static Mirror Mirror => (Mirror)MirrorGetter(null);
 
+#pragma warning disable CS0067 // Event is never used
     public static event Action<Exception> Exception = null!;
+#pragma warning restore CS0067 // Event is never used
+
+    internal static dynamic GetService(string name) => HearthMirror.Reflection.GetService(name);
 
     public static Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsInternal);
     private static Dictionary<int, QuestRecord> GetQuestRecordsInternal()

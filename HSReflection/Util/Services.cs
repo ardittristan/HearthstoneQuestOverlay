@@ -1,12 +1,12 @@
 ﻿// ReSharper disable InconsistentNaming
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
-using HearthMirror.Mono;
+using ScryDotNet;
 using static HSReflection.Reflection;
 
 namespace HSReflection.Util;
 
-internal static class Services
+public static class Services
 {
     public static MonoObject IErrorService => GetService("IErrorService");
     public static MonoObject GameDownloadManager => GetService("Hearthstone.Streaming.GameDownloadManager");

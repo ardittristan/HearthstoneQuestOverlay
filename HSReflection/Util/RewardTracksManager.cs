@@ -1,5 +1,5 @@
-﻿using HearthMirror.Mono;
-using HSReflection.Enums;
+﻿using HSReflection.Enums;
+using ScryDotNet;
 
 namespace HSReflection.Util;
 

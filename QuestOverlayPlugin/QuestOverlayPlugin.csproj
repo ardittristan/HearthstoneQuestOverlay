@@ -30,6 +30,7 @@
       <FilesToCopy Include="$(TargetDir)**\QuestOverlayPlugin.dll" />
       <FilesToCopy Include="$(TargetDir)**\TextureExtractor.dll" />
       <FilesToCopy Include="$(TargetDir)**\WriteableBitmapEx.Wpf.dll" />
+      <FilesToCopy Include="$(TargetDir)**\Fasterflect.Reflect.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(CI)' != 'true' " SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)..\..\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(Configuration)' == 'Release' " SkipUnchangedFiles="true" />
@@ -43,6 +44,10 @@
   <ItemGroup>
     <Reference Include="HearthMirror">
       <HintPath>$(HSDTPath)\HearthMirror.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="untapped-scry-dotnet">
+      <HintPath>$(HSDTPath)\untapped-scry-dotnet.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="HearthWatcher">

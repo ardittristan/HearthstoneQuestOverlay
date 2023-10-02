@@ -24,31 +24,6 @@ public class Generator : ISourceGenerator
             });
 
         ExecuteReflection(context, decompiler);
-        ExecuteMirror(context, decompiler);
-    }
-
-    private static void ExecuteMirror(GeneratorExecutionContext context, CSharpDecompiler decompiler)
-    {
-        FullTypeName mirrorClassName = new("HearthMirror.Mirror");
-
-        ITypeDefinition typeInfo =
-            decompiler.TypeSystem.MainModule.Compilation.FindType(mirrorClassName).GetDefinition();
-
-        if (typeInfo == null) return;
-
-        foreach (IProperty property in typeInfo.Properties)
-        {
-            switch (property.Name)
-            {
-                case "Root":
-                    AddMirrorSource(context, "BgsClient",
-                        decompiler.DecompileAsString(property.MetadataToken)
-                            .Replace("Root", "BgsClient")
-                            .RegexReplace("_root([^_])", "_bgsClient$1")
-                            .Replace("Assembly-CSharp", "blizzard.bgsclient"));
-                    break;
-            }
-        }
     }
 
     private static void ExecuteReflection(GeneratorExecutionContext context, CSharpDecompiler decompiler)
@@ -68,7 +43,6 @@ public class Generator : ISourceGenerator
                     AddReflectionSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken)
                         .Replace("HearthMirror.Reflection.", ""));
                     break;
-                case "GetService":
                 case "Reinitialize":
                 case "GetLocalization":
                     AddReflectionSource(context, method.Name,
@@ -76,23 +50,6 @@ public class Generator : ISourceGenerator
                     break;
             }
         }
-    }
-
-    private static void AddMirrorSource(GeneratorExecutionContext context, string name, string code)
-    {
-        context.AddSource($"HearthMirror.Mirror.{name}.g.cs", SourceText.From($@"
-#nullable disable
-
-namespace HSReflection
-{{
-internal partial class CustomMirror
-{{
-{code}
-}}
-}}
-
-#nullable restore
-", Encoding.UTF8));
     }
 
     private static void AddReflectionSource(GeneratorExecutionContext context, string name, string code)
@@ -108,7 +65,7 @@ using HearthMirror;
 
 namespace HSReflection
 {{
-public static partial class Reflection
+public partial class Reflection
 {{
 {code}
 }}
