@@ -10,16 +10,21 @@ namespace HSReflection;
 
 public static partial class Reflection
 {
+    internal static Mirror Mirror => (Mirror)MirrorGetter(null);
     private static readonly MemberGetter MirrorGetter =
         Reflect.PropertyGetter(typeof(HearthMirror.Reflection), "Mirror", FasterflectFlags.StaticPrivate);
 
-    internal static Mirror Mirror => (Mirror)MirrorGetter(null);
+    public static string GetLocalization(dynamic obj) => (string)GetLocalizationInvoker(obj);
+    private static readonly MethodInvoker GetLocalizationInvoker =
+        Reflect.Method(typeof(HearthMirror.Reflection).GetMethod("GetLocalization", FasterflectFlags.StaticPrivate));
 
-#pragma warning disable CS0067 // Event is never used
+#pragma warning disable CS0067,CS0414 // Event is never used
     public static event Action<Exception> Exception = null!;
-#pragma warning restore CS0067 // Event is never used
+#pragma warning restore CS0067,CS0414 // Event is never used
 
     internal static dynamic GetService(string name) => HearthMirror.Reflection.GetService(name);
+
+    public static void Reinitialize() => HearthMirror.Reflection.Reinitialize();
 
     public static Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsInternal);
     private static Dictionary<int, QuestRecord> GetQuestRecordsInternal()

@@ -43,11 +43,10 @@ public class Generator : ISourceGenerator
                     AddReflectionSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken)
                         .Replace("HearthMirror.Reflection.", ""));
                     break;
-                case "Reinitialize":
-                case "GetLocalization":
-                    AddReflectionSource(context, method.Name,
-                        decompiler.DecompileAsString(method.MetadataToken));
-                    break;
+                //case "GetLocalization":
+                //    AddReflectionSource(context, method.Name,
+                //        decompiler.DecompileAsString(method.MetadataToken));
+                //    break;
             }
         }
     }
