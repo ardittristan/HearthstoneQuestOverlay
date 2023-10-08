@@ -22,7 +22,7 @@ public class QuestViewModel : ViewModel
         QuestType = quest.PoolType;
         HasXpReward = quest is { RewardTrackXp: > 0, RewardTrackType: RewardTrackType.GLOBAL or RewardTrackType.EVENT };
         XpReward = quest.RewardTrackXp.ToString();
-        BonusXpColor = quest.RewardTrackBonusXp > 0 ? "#60FF08" : "#FFF";
+        BonusXpColor = quest is { RewardTrackBonusXp: > 0, RewardTrackType: RewardTrackType.GLOBAL } ? "#60FF08" : "#FFF";
         ShowXpReward = Plugin.Instance.Settings.ShowRewardOverlay;
         IsGlobal = quest.RewardTrackType == RewardTrackType.GLOBAL;
         IsEvent = quest.RewardTrackType == RewardTrackType.EVENT;

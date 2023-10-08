@@ -11,6 +11,8 @@ namespace HSReflection;
 
 public static partial class Reflection
 {
+    #region [BaseClass inheritors]
+
     internal static Mirror Mirror => (Mirror)MirrorGetter(null);
 
     private static readonly MemberGetter MirrorGetter =
@@ -26,19 +28,30 @@ public static partial class Reflection
 
     public static void Reinitialize() => HMReflection.Reinitialize();
 
+    #endregion
+
+    #region public static Dictionary<int, QuestRecord> GetQuestRecords()
+
+    private static Dictionary<int, QuestRecord> _questRecords = new();
+    private static readonly Dictionary<int, QuestRecord> QuestRecordCache = new();
+    private static readonly object QuestRecordCacheLock = new();
+
     public static Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsInternal);
 
     private static Dictionary<int, QuestRecord> GetQuestRecordsInternal()
     {
         Dictionary<int, QuestRecord> questRecords = new();
 
+        MonoWrapper? questPoolState = Services.QuestManager["m_questPoolState"];
+
+        MonoWrapper? quests = Services.GameDbf["Quest"]?["m_records"];
+
+        if (quests == null) return questRecords;
+
         lock (QuestRecordCacheLock)
         {
-            MonoWrapper? questPoolState = Services.QuestManager["m_questPoolState"];
-
-            MonoWrapper? quests = Services.GameDbf["Quest"]?["m_records"];
-
-            if (quests == null) return questRecords;
+            if (((dynamic[])quests["_items"]!.Value!).Length <= _questRecords.Count)
+                return _questRecords;
 
             MonoWrapper[] questEntries = quests["_items"]!.AsArray();
 
@@ -76,13 +89,15 @@ public static partial class Reflection
 
                 questRecords.Add(questId, QuestRecordCache[questId]);
             }
-        }
 
-        return questRecords;
+            _questRecords = questRecords;
+            return questRecords;
+        }
     }
 
-    private static readonly Dictionary<int, QuestRecord> QuestRecordCache = new();
-    private static readonly object QuestRecordCacheLock = new();
+    #endregion
+
+    #region public static List<PlayerQuestState> GetQuestStates()
 
     public static List<PlayerQuestState> GetQuestStates() => TryGetInternal(GetQuestStatesInternal);
 
@@ -110,6 +125,9 @@ public static partial class Reflection
         return quests;
     }
 
+    #endregion
+
+    #region public static List<Quest> GetQuests()
     public static List<Quest> GetQuests() => TryGetInternal(GetQuestsInternal);
 
     private static List<Quest> GetQuestsInternal()
@@ -178,6 +196,10 @@ public static partial class Reflection
         return quests;
     }
 
+    #endregion
+
+    #region public static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes()
+
     public static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
 
     private static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimesInternal()
@@ -208,6 +230,10 @@ public static partial class Reflection
         return questPools;
     }
 
+    #endregion
+
+    #region public static string? FindGameString(string key)
+
     public static string? FindGameString(string key) => TryGetInternal(() => FindGameStringInternal(key));
 
     private static string? FindGameStringInternal(string key)
@@ -217,10 +243,12 @@ public static partial class Reflection
 
         foreach (MonoWrapper? gameStringTable in gameStrings)
         {
-            string? text = Map.GetValue(gameStringTable["m_table"]?.Value, key);
+            string? text = Map.GetValue(gameStringTable["m_table"], key);
             if (text != null) return text;
         }
 
         return null;
     }
+
+    #endregion
 }
