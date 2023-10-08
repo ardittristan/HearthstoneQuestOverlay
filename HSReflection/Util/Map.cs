@@ -2,23 +2,23 @@
 
 public static class Map
 {
-    public static dynamic? GetValue(dynamic map, dynamic key)
+    public static dynamic? GetValue(MonoWrapper? map, dynamic key)
     {
         if (map == null) return null;
 
         if (map["keySlots"] == null)
-            foreach (dynamic? curEntry in map["_entries"])
+            foreach (MonoWrapper? curEntry in map["_entries"]!.AsArray())
             {
-                if (curEntry == null) continue;
-                if (key == curEntry["key"]) return curEntry["value"];
+                if (curEntry.Value == null) continue;
+                if (key == curEntry["key"]!.Value) return curEntry["value"]!.Value;
             }
         else
         {
             int i = 0;
-            foreach (dynamic? curKey in map["keySlots"])
+            foreach (MonoWrapper? curKey in map["keySlots"]!.AsArray())
             {
-                if (curKey == null) continue;
-                if (key == curKey) return map["valueSlots"][i];
+                if (curKey.Value == null) continue;
+                if (key == curKey.Value) return map["valueSlots"]!.Value[i];
 
                 i++;
             }

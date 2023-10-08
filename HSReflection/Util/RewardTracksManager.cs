@@ -1,5 +1,4 @@
 ﻿using HSReflection.Enums;
-using ScryDotNet;
 
 namespace HSReflection.Util;
 
@@ -13,21 +12,21 @@ internal static class RewardTracksManager
         { RewardTrackType.NONE, -1 }
     };
 
-    private static dynamic[] Entries => Services.RewardTrackManager["m_rewardTrackEntries"]["_entries"];
+    private static MonoWrapper[] Entries => Services.RewardTrackManager["m_rewardTrackEntries"]!["_entries"]!.AsArray();
 
-    public static MonoObject? Global => GetRewardTrack(RewardTrackType.GLOBAL);
+    public static MonoWrapper? Global => GetRewardTrack(RewardTrackType.GLOBAL);
 
-    public static MonoObject? BattleGrounds => GetRewardTrack(RewardTrackType.BATTLEGROUNDS);
+    public static MonoWrapper? BattleGrounds => GetRewardTrack(RewardTrackType.BATTLEGROUNDS);
 
-    public static MonoObject? Event => GetRewardTrack(RewardTrackType.EVENT);
+    public static MonoWrapper? Event => GetRewardTrack(RewardTrackType.EVENT);
 
-    public static MonoObject? GetRewardTrack(RewardTrackType type)
+    public static MonoWrapper? GetRewardTrack(RewardTrackType type)
     {
         if (TypeIndex[type] == -1)
             TypeIndex[type] = Entries
                 .Select((entry, index) => (
-                    (int?)entry["value"]?["<TrackDataModel>k__BackingField"]?[
-                        "m_RewardTrackType"], index)).First(tuple => tuple.Item1 == (int)type).index;
+                    (int?)entry["value"]?["TrackDataModel"]?["m_RewardTrackType"]?.Value, index))
+                .First(tuple => tuple.Item1 == (int)type).index;
 
         return Entries[TypeIndex[type]]["value"];
     }

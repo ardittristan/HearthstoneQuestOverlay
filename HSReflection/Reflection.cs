@@ -5,71 +5,84 @@ using HSReflection.Enums;
 using HSReflection.Objects;
 using HSReflection.Util;
 using ScryDotNet;
+using HMReflection = HearthMirror.Reflection;
 
 namespace HSReflection;
 
 public static partial class Reflection
 {
     internal static Mirror Mirror => (Mirror)MirrorGetter(null);
+
     private static readonly MemberGetter MirrorGetter =
-        Reflect.PropertyGetter(typeof(HearthMirror.Reflection), "Mirror", FasterflectFlags.StaticPrivate);
+        Reflect.PropertyGetter(typeof(HMReflection), "Mirror", FasterflectFlags.StaticPrivate);
 
-    public static string GetLocalization(dynamic obj) => (string)GetLocalizationInvoker(obj);
-    private static readonly MethodInvoker GetLocalizationInvoker =
-        Reflect.Method(typeof(HearthMirror.Reflection).GetMethod("GetLocalization", FasterflectFlags.StaticPrivate));
+    public static event Action<Exception> Exception
+    {
+        add => HMReflection.Exception += value;
+        remove => HMReflection.Exception -= value;
+    }
 
-#pragma warning disable CS0067,CS0414 // Event is never used
-    public static event Action<Exception> Exception = null!;
-#pragma warning restore CS0067,CS0414 // Event is never used
+    internal static dynamic GetService(string name) => HMReflection.GetService(name);
 
-    internal static dynamic GetService(string name) => HearthMirror.Reflection.GetService(name);
-
-    public static void Reinitialize() => HearthMirror.Reflection.Reinitialize();
+    public static void Reinitialize() => HMReflection.Reinitialize();
 
     public static Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsInternal);
+
     private static Dictionary<int, QuestRecord> GetQuestRecordsInternal()
     {
         Dictionary<int, QuestRecord> questRecords = new();
 
-        MonoObject? questPoolState = Services.QuestManager["m_questPoolState"];
-
-        MonoObject? quests = Services.GameDbf["Quest"]?["m_records"];
-
-        if (quests == null) return questRecords;
-
-        object[] questEntries = quests["_items"];
-
-        foreach (MonoObject quest in questEntries.Cast<MonoObject>())
+        lock (QuestRecordCacheLock)
         {
-            int questPoolId = quest["m_questPoolId"];
+            MonoWrapper? questPoolState = Services.QuestManager["m_questPoolState"];
 
-            MonoObject? questPoolStateEntry = questPoolState == null
-                ? null
-                : Map.GetValue(questPoolState, questPoolId);
+            MonoWrapper? quests = Services.GameDbf["Quest"]?["m_records"];
 
-            questRecords.Add(quest["m_ID"], new QuestRecord()
+            if (quests == null) return questRecords;
+
+            MonoWrapper[] questEntries = quests["_items"]!.AsArray();
+
+            foreach (MonoWrapper quest in questEntries)
             {
-                CanAbandon = quest["m_canAbandon"],
-                Description = GetLocalization(quest["m_description"]),
-                Icon = quest["m_icon"],
-                Name = GetLocalization(quest["m_name"]),
-                NextInChain = quest["m_nextInChainId"],
-                PoolGuaranteed = quest["m_poolGuaranteed"],
-                QuestPool = new QuestPool()
-                {
-                    Id = questPoolId,
-                    PoolType = (QuestPoolType)(questPoolStateEntry?["_QuestPoolId"] ?? QuestPoolType.INVALID),
-                    RerollAvailableCount = questPoolStateEntry?["_RerollAvailableCount"] ?? 0
-                },
-                Quota = quest["m_quota"],
-                RewardList = quest["m_rewardListId"],
-                RewardTrackXp = quest["m_rewardTrackXp"],
-                RewardTrackType = (RewardTrackType)(quest["m_rewardTrackType"] ?? RewardTrackType.NONE)
-            });
+                int questPoolId = quest["m_questPoolId"]!.Value;
+
+                MonoObject? questPoolStateEntry = questPoolState == null
+                    ? null
+                    : Map.GetValue(questPoolState, questPoolId);
+
+                int questId = quest["m_ID"]!.Value;
+
+                if (!QuestRecordCache.ContainsKey(questId))
+                    QuestRecordCache.Add(questId, new QuestRecord()
+                    {
+                        CanAbandon = quest["m_canAbandon"]!.Value,
+                        Description = quest["m_description"]?["m_currentLocaleValue"]?.Value ?? "",
+                        Icon = quest["m_icon"]?.Value,
+                        Name = quest["m_name"]?["m_currentLocaleValue"]?.Value ?? "",
+                        NextInChain = quest["m_nextInChainId"]!.Value,
+                        PoolGuaranteed = quest["m_poolGuaranteed"]!.Value,
+                        QuestPool = new QuestPool()
+                        {
+                            Id = questPoolId,
+                            PoolType = (QuestPoolType)(questPoolStateEntry?["_QuestPoolId"] ?? QuestPoolType.INVALID),
+                            RerollAvailableCount = questPoolStateEntry?["_RerollAvailableCount"] ?? 0
+                        },
+                        Quota = quest["m_quota"]!.Value,
+                        RewardList = quest["m_rewardListId"]!.Value,
+                        RewardTrackXp = quest["m_rewardTrackXp"]!.Value,
+                        RewardTrackType = (RewardTrackType)(quest["m_rewardTrackType"]?.Value ?? RewardTrackType.NONE)
+                    });
+
+
+                questRecords.Add(questId, QuestRecordCache[questId]);
+            }
         }
 
         return questRecords;
     }
+
+    private static readonly Dictionary<int, QuestRecord> QuestRecordCache = new();
+    private static readonly object QuestRecordCacheLock = new();
 
     public static List<PlayerQuestState> GetQuestStates() => TryGetInternal(GetQuestStatesInternal);
 
@@ -77,20 +90,20 @@ public static partial class Reflection
     {
         List<PlayerQuestState> quests = new();
 
-        object[]? currentQuestValues = Services.QuestManager["m_questState"]["_entries"];
+        MonoWrapper[]? currentQuestValues = Services.QuestManager["m_questState"]?["_entries"]?.AsArray();
 
         if (currentQuestValues == null) return quests;
 
-        foreach (MonoStruct? val in currentQuestValues.Cast<MonoStruct?>())
+        foreach (MonoWrapper val in currentQuestValues)
         {
-            MonoObject? curVal = val?["value"];
+            MonoWrapper? curVal = val["value"];
             if (curVal == null) continue;
 
             quests.Add(new PlayerQuestState()
             {
-                Progress = (int)curVal["_Progress"],
-                QuestId = (int)curVal["_QuestId"],
-                Status = (QuestStatus)(int)curVal["_Status"],
+                Progress = (int)curVal["_Progress"]!.Value!,
+                QuestId = (int)curVal["_QuestId"]!.Value!,
+                Status = (QuestStatus)(int)curVal["_Status"]!.Value!,
             });
         }
 
@@ -98,12 +111,13 @@ public static partial class Reflection
     }
 
     public static List<Quest> GetQuests() => TryGetInternal(GetQuestsInternal);
+
     private static List<Quest> GetQuestsInternal()
     {
         List<Quest> quests = new();
 
         int rewardTrackBonusXp =
-            RewardTracksManager.Global?["<TrackDataModel>k__BackingField"]?["m_XpBonusPercent"] ?? 0;
+            RewardTracksManager.Global?["TrackDataModel"]?["m_XpBonusPercent"]?.Value ?? 0;
 
         Dictionary<int, QuestRecord> questRecords = GetQuestRecordsInternal();
 
@@ -165,23 +179,25 @@ public static partial class Reflection
     }
 
     public static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
+
     private static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimesInternal()
     {
-        MonoObject? questPoolState = Services.QuestManager["m_questPoolState"];
+        MonoWrapper? questPoolState = Services.QuestManager["m_questPoolState"];
 
         if (questPoolState == null) return null;
 
         Dictionary<QuestPoolType, DateTime> questPools = new();
 
-        foreach (MonoStruct? curEntry in questPoolState["_entries"])
+        foreach (MonoWrapper curEntry in questPoolState["_entries"]!.AsArray())
         {
-            MonoObject? questPoolEntry = curEntry?["value"];
-            double secondsUntilNextGrant = DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]);
+            MonoWrapper? questPoolEntry = curEntry["value"];
+            double secondsUntilNextGrant =
+                DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]?.Value);
 
             try
             {
                 if (secondsUntilNextGrant != 0)
-                    questPools.Add((QuestPoolType)questPoolEntry!["_QuestPoolId"],
+                    questPools.Add((QuestPoolType)questPoolEntry!["_QuestPoolId"]!.Value!,
                         DateTime.Now.AddSeconds(secondsUntilNextGrant));
             }
             catch (ArgumentException)
@@ -193,14 +209,15 @@ public static partial class Reflection
     }
 
     public static string? FindGameString(string key) => TryGetInternal(() => FindGameStringInternal(key));
+
     private static string? FindGameStringInternal(string key)
     {
-        object[]? gameStrings = Mirror.Root?["GameStrings"]["s_tables"]["valueSlots"];
+        MonoWrapper[]? gameStrings = new MonoWrapper(Mirror.Root?["GameStrings"])["s_tables"]?["valueSlots"]?.AsArray();
         if (gameStrings == null) return null;
 
-        foreach (MonoObject? gameStringTable in gameStrings.Cast<MonoObject?>())
+        foreach (MonoWrapper? gameStringTable in gameStrings)
         {
-            string? text = Map.GetValue(gameStringTable?["m_table"], key);
+            string? text = Map.GetValue(gameStringTable["m_table"]?.Value, key);
             if (text != null) return text;
         }
 
