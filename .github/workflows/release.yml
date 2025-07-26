@@ -29,7 +29,7 @@ jobs:
       tag: ${{ steps.get-tag.outputs.tag }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get Previous tag
@@ -46,9 +46,9 @@ jobs:
     if: needs.should-release.outputs.version != needs.should-release.outputs.tag || github.event.inputs.doNotRelease
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download HSDeckTracker
-        uses: robinraju/release-downloader@v1.3
+        uses: robinraju/release-downloader@v1
         with:
           fileName: HDT-Installer.exe
           latest: true
@@ -57,7 +57,7 @@ jobs:
           zipBall: false
       - name: Cache HSDeckTracker
         id: cache-hdt
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~\AppData\Local\HearthstoneDeckTracker
           key: ${{ runner.os }}-hdt-${{ hashFiles('HDT-Installer.exe') }}
@@ -66,7 +66,7 @@ jobs:
         run: HDT-Installer.exe
         shell: cmd
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x64
       - name: Build solution
@@ -87,7 +87,7 @@ jobs:
           tag: ${{ needs.should-release.outputs.version }}
       - name: Create Artifact
         if: github.event.inputs.doNotRelease
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: HearthstoneQuestOverlay
           path: HearthstoneQuestOverlay.zip
