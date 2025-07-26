@@ -12,7 +12,7 @@ internal static class RewardTracksManager
         { RewardTrackType.NONE, -1 }
     };
 
-    private static MonoWrapper[] Entries => Services.RewardTrackManager["m_rewardTrackEntries"]!["_entries"]!.AsArray();
+    private static MonoWrapper[] Entries => Reflection.Client.GetServiceMonoWrapper("Hearthstone.Progression.RewardTrackManager")["m_rewardTrackEntries"]!["_entries"]!.AsArray();
 
     public static MonoWrapper? Global => GetRewardTrack(RewardTrackType.GLOBAL);
 

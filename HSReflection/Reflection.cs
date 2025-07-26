@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Reflection;
+using System.Text.RegularExpressions;
 using Fasterflect;
 using HearthMirror;
 using HSReflection.Enums;
@@ -9,24 +10,15 @@ using HMReflection = HearthMirror.Reflection;
 
 namespace HSReflection;
 
-public static partial class Reflection
+public partial class Reflection : HMReflection, IReflectionEx
 {
     #region [BaseClass inheritors]
 
-    internal static Mirror Mirror => (Mirror)MirrorGetter(null);
+    private new static IReflectionEx proxy = DispatchProxy.Create<IReflectionEx, LocalReflectionProxy<IReflectionEx>>();
+    public new static IReflectionEx Client => proxy;
+    //public new static IReflectionEx Client = new Reflection();
 
-    private static readonly MemberGetter MirrorGetter =
-        Reflect.PropertyGetter(typeof(HMReflection), "Mirror", FasterflectFlags.StaticPrivate);
-
-    public static event Action<Exception> Exception
-    {
-        add => HMReflection.Exception += value;
-        remove => HMReflection.Exception -= value;
-    }
-
-    internal static dynamic GetService(string name) => HMReflection.GetService(name);
-
-    public static void Reinitialize() => HMReflection.Reinitialize();
+    public MonoWrapper GetServiceMonoWrapper(string service) => new MonoWrapper(GetService(service));
 
     #endregion
 
@@ -36,21 +28,21 @@ public static partial class Reflection
     private static readonly Dictionary<int, QuestRecord> QuestRecordCache = new();
     private static readonly object QuestRecordCacheLock = new();
 
-    public static Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsInternal);
+    public Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsInternal);
 
-    private static Dictionary<int, QuestRecord> GetQuestRecordsInternal()
+    private Dictionary<int, QuestRecord> GetQuestRecordsInternal()
     {
         Dictionary<int, QuestRecord> questRecords = new();
 
-        MonoWrapper? questPoolState = Services.QuestManager["m_questPoolState"];
+        MonoWrapper? questPoolState = GetServiceMonoWrapper("Hearthstone.Progression.QuestManager")["m_questPoolState"];
 
-        MonoWrapper? quests = Services.GameDbf["Quest"]?["m_records"];
+        MonoWrapper? quests = GetServiceMonoWrapper("GameDbf")["Quest"]?["m_records"];
 
         if (quests == null) return questRecords;
 
         lock (QuestRecordCacheLock)
         {
-            if (((dynamic[])quests["_items"]!.Value!).Length <= _questRecords.Count)
+            if (((MonoArray)quests["_items"]!.Value!).size() + 1 <= _questRecords.Count)
                 return _questRecords;
 
             MonoWrapper[] questEntries = quests["_items"]!.AsArray();
@@ -97,15 +89,15 @@ public static partial class Reflection
 
     #endregion
 
-    #region public static List<PlayerQuestState> GetQuestStates()
+    #region public List<PlayerQuestState> GetQuestStates()
 
-    public static List<PlayerQuestState> GetQuestStates() => TryGetInternal(GetQuestStatesInternal);
+    public List<PlayerQuestState> GetQuestStates() => TryGetInternal(GetQuestStatesInternal);
 
-    private static List<PlayerQuestState> GetQuestStatesInternal()
+    private List<PlayerQuestState> GetQuestStatesInternal()
     {
         List<PlayerQuestState> quests = new();
 
-        MonoWrapper[]? currentQuestValues = Services.QuestManager["m_questState"]?["_entries"]?.AsArray();
+        MonoWrapper[]? currentQuestValues = GetServiceMonoWrapper("Hearthstone.Progression.QuestManager")["m_questState"]?["_entries"]?.AsArray();
 
         if (currentQuestValues == null) return quests;
 
@@ -127,10 +119,10 @@ public static partial class Reflection
 
     #endregion
 
-    #region public static List<Quest> GetQuests()
-    public static List<Quest> GetQuests() => TryGetInternal(GetQuestsInternal);
+    #region public List<Quest> GetQuests()
+    public List<Quest> GetQuests() => TryGetInternal(GetQuestsInternal);
 
-    private static List<Quest> GetQuestsInternal()
+    private List<Quest> GetQuestsInternal()
     {
         List<Quest> quests = new();
 
@@ -198,13 +190,13 @@ public static partial class Reflection
 
     #endregion
 
-    #region public static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes()
+    #region public Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes()
 
-    public static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
+    public Dictionary<QuestPoolType, DateTime>? GetNextQuestTimes() => TryGetInternal(GetNextQuestTimesInternal);
 
-    private static Dictionary<QuestPoolType, DateTime>? GetNextQuestTimesInternal()
+    private Dictionary<QuestPoolType, DateTime>? GetNextQuestTimesInternal()
     {
-        MonoWrapper? questPoolState = Services.QuestManager["m_questPoolState"];
+        MonoWrapper? questPoolState = GetServiceMonoWrapper("Hearthstone.Progression.QuestManager")["m_questPoolState"];
 
         if (questPoolState == null) return null;
 
@@ -232,11 +224,11 @@ public static partial class Reflection
 
     #endregion
 
-    #region public static string? FindGameString(string key)
+    #region public string? FindGameString(string key)
 
-    public static string? FindGameString(string key) => TryGetInternal(() => FindGameStringInternal(key));
+    public string? FindGameString(string key) => TryGetInternal(() => FindGameStringInternal(key));
 
-    private static string? FindGameStringInternal(string key)
+    private string? FindGameStringInternal(string key)
     {
         MonoWrapper[]? gameStrings = new MonoWrapper(Mirror.Root?["GameStrings"])["s_tables"]?["valueSlots"]?.AsArray();
         if (gameStrings == null) return null;

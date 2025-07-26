@@ -14,8 +14,17 @@ public class MonoWrapper
 
     public MonoWrapper(dynamic? value) => _value = value!;
 
-    public MonoWrapper[] AsArray() =>
-        ((dynamic[]?)Value)?.Select(v => new MonoWrapper(v)).ToArray() ?? Array.Empty<MonoWrapper>();
+    public MonoWrapper[] AsArray()
+    {
+        MonoArray arr = Value!;
+        uint size = arr.size();
+        MonoWrapper[] list = new MonoWrapper[size];
+        for (uint num = 0; num < size; num++)
+        {
+            list[num] = new MonoWrapper(arr[num]);
+        }
+        return list;
+    }
 
     public MonoWrapper? this[string key]
     {

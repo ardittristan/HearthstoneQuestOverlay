@@ -31,21 +31,44 @@ public class Generator : ISourceGenerator
     {
         FullTypeName reflectionClassName = new("HearthMirror.Reflection");
 
-        ITypeDefinition typeInfo = decompiler.TypeSystem.MainModule.Compilation.FindType(reflectionClassName)
+        ITypeDefinition reflectionTypeInfo = decompiler.TypeSystem.MainModule.Compilation.FindType(reflectionClassName)
             .GetDefinition();
 
-        if (typeInfo == null) return;
+        if (reflectionTypeInfo == null) goto proxy;
 
-        foreach (IMethod method in typeInfo.Methods)
-        {
-            switch (method.Name)
-            {
-                case "TryGetInternal":
-                    AddReflectionSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken)
-                        .Replace("HearthMirror.Reflection.", ""));
-                    break;
-            }
-        }
+        //foreach (IMethod method in reflectionTypeInfo.Methods)
+        //{
+        //    switch (method.Name)
+        //    {
+        //        case "TryGetInternal":
+        //            AddReflectionSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken)
+        //                .Replace("HearthMirror.Reflection.", ""));
+        //            break;
+        //    }
+        //}
+
+        proxy:
+
+        FullTypeName localReflectionProxyClassName = new("HearthMirror.LocalReflectionProxy`1");
+
+        ITypeDefinition localReflectionProxyTypeInfo =
+            decompiler.TypeSystem.MainModule.Compilation.FindType(localReflectionProxyClassName).GetDefinition();
+
+        if (localReflectionProxyTypeInfo == null) return;
+
+        AddLocalReflectionProxySource(context, localReflectionProxyTypeInfo.Name,
+            decompiler.DecompileAsString(localReflectionProxyTypeInfo.MetadataToken)
+                .Replace("HearthMirror.Reflection", "Reflection"));
+    }
+
+    private static void AddLocalReflectionProxySource(GeneratorExecutionContext context, string name, string code)
+    {
+        context.AddSource($"HearthMirror.{name}.g.cs", SourceText.From($@"
+namespace HSReflection
+{{
+{code}
+}}
+", Encoding.UTF8));
     }
 
     private static void AddReflectionSource(GeneratorExecutionContext context, string name, string code)

@@ -174,7 +174,7 @@ public class Plugin : IPlugin, Updater.IUpdater
         GameEvents.OnModeChanged.Add(OnGameStart);
         GameEvents.OnModeChanged.Add(UpdateQuestWindow);
         Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
-        Watchers.BaconWatcher.Change += UpdateEventHandler;
+        Watchers.UiWatcher.Change += UpdateEventHandler;
         if (Core.Game.IsRunning) Update();
         if (Core.Game.IsRunning) OnGameStart();
 
@@ -276,7 +276,7 @@ public class Plugin : IPlugin, Updater.IUpdater
     public void OnUnload()
     {
         Watchers.ExperienceWatcher.NewExperienceHandler -= UpdateEventHandler;
-        Watchers.BaconWatcher.Change -= UpdateEventHandler;
+        Watchers.UiWatcher.Change -= UpdateEventHandler;
 
         RemoveOverlay();
         _questListWindow.Shutdown();
@@ -410,7 +410,7 @@ public class Plugin : IPlugin, Updater.IUpdater
         if (args.IsChanged) Update();
     }
 
-    public static void UpdateEventHandler(object sender, BaconEventArgs args)
+    public static void UpdateEventHandler(object sender, UIEventArgs args)
     {
         if (args.IsJournalOpen) Update();
     }

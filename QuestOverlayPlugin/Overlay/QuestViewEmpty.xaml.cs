@@ -43,7 +43,7 @@ public partial class QuestViewEmpty : UserControl
         InitializeComponent();
         Cursor = Plugin.Instance.DefaultCursor;
 
-        NextQuestTimes = Reflection.GetNextQuestTimes();
+        NextQuestTimes = Reflection.Client.GetNextQuestTimes();
 
         DataContext = this;
     }

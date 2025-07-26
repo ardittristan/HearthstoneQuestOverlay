@@ -12,7 +12,7 @@ public static class QuestDataUtil
     public static async Task<bool> UpdateQuestDataAsync(bool force)
     {
         if (QuestData == null || force)
-            QuestData = await Task.Run(Reflection.GetQuests);
+            QuestData = await Task.Run(Reflection.Client.GetQuests);
 
         return QuestData != null;
     }
@@ -21,7 +21,7 @@ public static class QuestDataUtil
     public static bool UpdateQuestData(bool force)
     {
         if (QuestData == null || force)
-            QuestData = (List<Quest>?)Reflection.GetQuests();
+            QuestData = (List<Quest>?)Reflection.Client.GetQuests();
 
         return QuestData != null;
     }

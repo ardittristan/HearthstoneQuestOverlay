@@ -31,7 +31,7 @@ public partial class QuestWindowEmpty : UserControl
     {
         InitializeComponent();
 
-        NextQuestTimes = Reflection.GetNextQuestTimes();
+        NextQuestTimes = Reflection.Client.GetNextQuestTimes();
 
         DataContext = this;
     }
