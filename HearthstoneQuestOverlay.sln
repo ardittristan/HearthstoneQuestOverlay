@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HearthMirrorGenerator", "He
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestOverlayPlugin", "QuestOverlayPlugin\QuestOverlayPlugin.csproj", "{48EAC139-5942-437D-BFD1-01823ACA9930}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HSReflection", "HSReflection\HSReflection.csproj", "{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{70AD2C46-D59D-40C1-9008-1A2CAD76F2BB}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\release.yml = .github\workflows\release.yml
@@ -50,10 +48,6 @@ Global
 		{48EAC139-5942-437D-BFD1-01823ACA9930}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48EAC139-5942-437D-BFD1-01823ACA9930}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48EAC139-5942-437D-BFD1-01823ACA9930}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE444626-5DDB-4F54-A7AB-C4C45DF80A78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8788EA49-0808-4875-BD9A-CD86DA7D646A}.Release|Any CPU.ActiveCfg = Release|Any CPU

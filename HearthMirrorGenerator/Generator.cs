@@ -29,26 +29,6 @@ public class Generator : ISourceGenerator
 
     private static void ExecuteReflection(GeneratorExecutionContext context, CSharpDecompiler decompiler)
     {
-        FullTypeName reflectionClassName = new("HearthMirror.Reflection");
-
-        ITypeDefinition reflectionTypeInfo = decompiler.TypeSystem.MainModule.Compilation.FindType(reflectionClassName)
-            .GetDefinition();
-
-        if (reflectionTypeInfo == null) goto proxy;
-
-        //foreach (IMethod method in reflectionTypeInfo.Methods)
-        //{
-        //    switch (method.Name)
-        //    {
-        //        case "TryGetInternal":
-        //            AddReflectionSource(context, method.Name, decompiler.DecompileAsString(method.MetadataToken)
-        //                .Replace("HearthMirror.Reflection.", ""));
-        //            break;
-        //    }
-        //}
-
-        proxy:
-
         FullTypeName localReflectionProxyClassName = new("HearthMirror.LocalReflectionProxy`1");
 
         ITypeDefinition localReflectionProxyTypeInfo =
@@ -64,33 +44,10 @@ public class Generator : ISourceGenerator
     private static void AddLocalReflectionProxySource(GeneratorExecutionContext context, string name, string code)
     {
         context.AddSource($"HearthMirror.{name}.g.cs", SourceText.From($@"
-namespace HSReflection
+namespace QuestOverlayPlugin.HSReflection
 {{
 {code}
 }}
-", Encoding.UTF8));
-    }
-
-    private static void AddReflectionSource(GeneratorExecutionContext context, string name, string code)
-    {
-        context.AddSource($"HearthMirror.Reflection.{name}.g.cs", SourceText.From($@"
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using HearthMirror;
-
-#nullable disable
-
-namespace HSReflection
-{{
-public partial class Reflection
-{{
-{code}
-}}
-}}
-
-#nullable restore
 ", Encoding.UTF8));
     }
 

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using Hearthstone_Deck_Tracker.Utility.Extensions;
-using HSReflection.Enums;
+using QuestOverlayPlugin.HSReflection.Enums;
 
 namespace QuestOverlayPlugin.Overlay;
 

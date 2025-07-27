@@ -1,6 +1,6 @@
-﻿using HSReflection.Enums;
+﻿using QuestOverlayPlugin.HSReflection.Enums;
 
-namespace HSReflection.Objects;
+namespace QuestOverlayPlugin.HSReflection.Objects;
 
 public class QuestPool
 {

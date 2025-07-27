@@ -15,10 +15,10 @@ using Hearthstone_Deck_Tracker.Utility.Extensions;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using Hearthstone_Deck_Tracker.Windows;
 using HearthWatcher.EventArgs;
-using HSReflection;
-using HSReflection.Enums;
 using MahApps.Metro.Controls;
 using QuestOverlayPlugin.Controls;
+using QuestOverlayPlugin.HSReflection;
+using QuestOverlayPlugin.HSReflection.Enums;
 using QuestOverlayPlugin.Overlay;
 using QuestOverlayPlugin.Util;
 using QuestOverlayPlugin.Windows;
@@ -384,15 +384,15 @@ public class Plugin : IPlugin, Updater.IUpdater
     internal void ShowQuests()
     {
         ShowQuestsButton();
-        if (QuestListVM.Update())
-            _questListBehavior.Show();
+        QuestListVM.UpdateAsync();
+        _questListBehavior.Show();
     }
 
     internal void ShowBattlegroundsQuests()
     {
         ShowBattlegroundsQuestsButton();
-        if (BattlegroundsQuestListVM.Update())
-            _battlegroundsQuestListBehavior.Show();
+        BattlegroundsQuestListVM.UpdateAsync();
+        _battlegroundsQuestListBehavior.Show();
     }
 
     internal void HideQuests()

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace HSReflection.Util;
+namespace QuestOverlayPlugin.HSReflection.Util;
 
 internal static class DynamicUtil
 {

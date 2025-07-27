@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
-using HSReflection;
-using HSReflection.Enums;
+using QuestOverlayPlugin.HSReflection;
+using QuestOverlayPlugin.HSReflection.Enums;
 
 namespace QuestOverlayPlugin.Windows;
 

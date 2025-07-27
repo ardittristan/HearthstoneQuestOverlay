@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace HSReflection.Enums;
+namespace QuestOverlayPlugin.HSReflection.Enums;
 
 public enum QuestStatus
 {

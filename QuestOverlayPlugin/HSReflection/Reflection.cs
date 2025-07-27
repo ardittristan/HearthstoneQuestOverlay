@@ -1,24 +1,47 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
-using Fasterflect;
-using HearthMirror;
-using HSReflection.Enums;
-using HSReflection.Objects;
-using HSReflection.Util;
+using QuestOverlayPlugin.HSReflection.Enums;
+using QuestOverlayPlugin.HSReflection.Objects;
+using QuestOverlayPlugin.HSReflection.Util;
 using ScryDotNet;
 using HMReflection = HearthMirror.Reflection;
 
-namespace HSReflection;
+namespace QuestOverlayPlugin.HSReflection;
 
 public partial class Reflection : HMReflection, IReflectionEx
 {
     #region [BaseClass inheritors]
 
-    private new static IReflectionEx proxy = DispatchProxy.Create<IReflectionEx, LocalReflectionProxy<IReflectionEx>>();
-    public new static IReflectionEx Client => proxy;
-    //public new static IReflectionEx Client = new Reflection();
+    public new static IReflectionEx Client { get; } = DispatchProxy.Create<IReflectionEx, LocalReflectionProxy<IReflectionEx>>();
 
-    public MonoWrapper GetServiceMonoWrapper(string service) => new MonoWrapper(GetService(service));
+    internal new static IEnumerable<KeyValuePair<dynamic, dynamic>> GetIteratorFromDict(dynamic? dict)
+    {
+        if (dict == null)
+            yield break;
+
+        MonoArray arr = ((MonoObject)dict)["_entries"];
+        for (uint i = 0; i < arr.size(); i++)
+        {
+            yield return new KeyValuePair<dynamic, dynamic>(((dynamic)arr[i])["key"], ((dynamic)arr[i])["value"]);
+        }
+    }
+
+    internal new static IEnumerable<dynamic> GetIteratorFromList(dynamic? list) =>
+        GetIteratorFromArray(((MonoObject?)list)?["_items"]);
+
+    internal static IEnumerable<dynamic> GetIteratorFromArray(dynamic? array)
+    {
+        if (array == null)
+            yield break;
+
+        MonoArray arr = array;
+        for (uint i = 0; i < arr.size(); i++)
+            yield return arr[i];
+    }
+
+    private static uint GetListSize(dynamic list) => ((MonoArray)list["_items"]).size();
+
+    public new dynamic GetService(string name) => base.GetService(name);
 
     #endregion
 
@@ -34,48 +57,48 @@ public partial class Reflection : HMReflection, IReflectionEx
     {
         Dictionary<int, QuestRecord> questRecords = new();
 
-        MonoWrapper? questPoolState = GetServiceMonoWrapper("Hearthstone.Progression.QuestManager")["m_questPoolState"];
+        // MonoObject dictionary
+        MonoObject? questPoolState = GetService(Services.QuestManager)["m_questPoolState"];
 
-        MonoWrapper? quests = GetServiceMonoWrapper("GameDbf")["Quest"]?["m_records"];
+        // MonoObject list
+        MonoObject? quests = GetService(Services.GameDbf)["Quest"]?["m_records"];
 
         if (quests == null) return questRecords;
 
         lock (QuestRecordCacheLock)
         {
-            if (((MonoArray)quests["_items"]!.Value!).size() + 1 <= _questRecords.Count)
+            if (GetListSize(quests) + 1 <= _questRecords.Count)
                 return _questRecords;
 
-            MonoWrapper[] questEntries = quests["_items"]!.AsArray();
-
-            foreach (MonoWrapper quest in questEntries)
+            foreach (dynamic quest in GetIteratorFromList(quests))
             {
-                int questPoolId = quest["m_questPoolId"]!.Value;
+                int questPoolId = quest["m_questPoolId"];
 
                 MonoObject? questPoolStateEntry = questPoolState == null
                     ? null
-                    : Map.GetValue(questPoolState, questPoolId);
+                    : GetIteratorFromDict(questPoolState).FirstOrDefault(entry => entry.Key == questPoolId).Value;
 
-                int questId = quest["m_ID"]!.Value;
+                int questId = quest["m_ID"];
 
                 if (!QuestRecordCache.ContainsKey(questId))
                     QuestRecordCache.Add(questId, new QuestRecord()
                     {
-                        CanAbandon = quest["m_canAbandon"]!.Value,
-                        Description = quest["m_description"]?["m_currentLocaleValue"]?.Value ?? "",
-                        Icon = quest["m_icon"]?.Value,
-                        Name = quest["m_name"]?["m_currentLocaleValue"]?.Value ?? "",
-                        NextInChain = quest["m_nextInChainId"]!.Value,
-                        PoolGuaranteed = quest["m_poolGuaranteed"]!.Value,
+                        CanAbandon = quest["m_canAbandon"],
+                        Description = quest["m_description"]?["m_currentLocaleValue"] ?? "",
+                        Icon = quest["m_icon"],
+                        Name = quest["m_name"]?["m_currentLocaleValue"] ?? "",
+                        NextInChain = quest["m_nextInChainId"],
+                        PoolGuaranteed = quest["m_poolGuaranteed"],
                         QuestPool = new QuestPool()
                         {
                             Id = questPoolId,
                             PoolType = (QuestPoolType)(questPoolStateEntry?["_QuestPoolId"] ?? QuestPoolType.INVALID),
                             RerollAvailableCount = questPoolStateEntry?["_RerollAvailableCount"] ?? 0
                         },
-                        Quota = quest["m_quota"]!.Value,
-                        RewardList = quest["m_rewardListId"]!.Value,
-                        RewardTrackXp = quest["m_rewardTrackXp"]!.Value,
-                        RewardTrackType = (RewardTrackType)(quest["m_rewardTrackType"]?.Value ?? RewardTrackType.NONE)
+                        Quota = quest["m_quota"],
+                        RewardList = quest["m_rewardListId"],
+                        RewardTrackXp = quest["m_rewardTrackXp"],
+                        RewardTrackType = (RewardTrackType)(quest["m_rewardTrackType"] ?? RewardTrackType.NONE)
                     });
 
 
@@ -95,22 +118,23 @@ public partial class Reflection : HMReflection, IReflectionEx
 
     private List<PlayerQuestState> GetQuestStatesInternal()
     {
-        List<PlayerQuestState> quests = new();
+        List<PlayerQuestState> quests = [];
 
-        MonoWrapper[]? currentQuestValues = GetServiceMonoWrapper("Hearthstone.Progression.QuestManager")["m_questState"]?["_entries"]?.AsArray();
+        // MonoObject dictionary
+        MonoObject? currentQuestValues = GetService(Services.QuestManager)["m_questState"];
 
         if (currentQuestValues == null) return quests;
 
-        foreach (MonoWrapper val in currentQuestValues)
+        foreach (KeyValuePair<dynamic, dynamic> val in GetIteratorFromDict(currentQuestValues))
         {
-            MonoWrapper? curVal = val["value"];
+            MonoObject? curVal = val.Value;
             if (curVal == null) continue;
 
             quests.Add(new PlayerQuestState()
             {
-                Progress = (int)curVal["_Progress"]!.Value!,
-                QuestId = (int)curVal["_QuestId"]!.Value!,
-                Status = (QuestStatus)(int)curVal["_Status"]!.Value!,
+                Progress = (int)curVal["_Progress"],
+                QuestId = (int)curVal["_QuestId"],
+                Status = (QuestStatus)(int)curVal["_Status"],
             });
         }
 
@@ -120,14 +144,16 @@ public partial class Reflection : HMReflection, IReflectionEx
     #endregion
 
     #region public List<Quest> GetQuests()
+
     public List<Quest> GetQuests() => TryGetInternal(GetQuestsInternal);
 
     private List<Quest> GetQuestsInternal()
     {
-        List<Quest> quests = new();
+        List<Quest> quests = [];
 
-        int rewardTrackBonusXp =
-            RewardTracksManager.Global?["TrackDataModel"]?["m_XpBonusPercent"]?.Value ?? 0;
+        MonoObject? trackDataModel = RewardTracksManager.Global?["TrackDataModel"];
+
+        int rewardTrackBonusXp = trackDataModel?["m_XpBonusPercent"] ?? 0;
 
         Dictionary<int, QuestRecord> questRecords = GetQuestRecordsInternal();
 
@@ -136,7 +162,7 @@ public partial class Reflection : HMReflection, IReflectionEx
         {
             if (!questRecords.TryGetValue(questState.QuestId, out QuestRecord questRecord)) continue;
 
-            List<string> dataModelList = new();
+            List<string> dataModelList = [];
             string? icon = questRecord.Icon;
             icon?.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).Aggregate(dataModelList,
                 delegate(List<string> list, string element)
@@ -154,7 +180,7 @@ public partial class Reflection : HMReflection, IReflectionEx
 
             string progressMessage = string.Format(
                 FindGameStringInternal("GLOBAL_PROGRESSION_PROGRESS_MESSAGE") ?? string.Empty,
-                new object[] { questState.Progress, questRecord.Quota }
+                [questState.Progress, questRecord.Quota]
             );
 
             int rewardTrackXp = questRecord.RewardTrackType == RewardTrackType.GLOBAL
@@ -196,22 +222,23 @@ public partial class Reflection : HMReflection, IReflectionEx
 
     private Dictionary<QuestPoolType, DateTime>? GetNextQuestTimesInternal()
     {
-        MonoWrapper? questPoolState = GetServiceMonoWrapper("Hearthstone.Progression.QuestManager")["m_questPoolState"];
+        // MonoObject dictionary
+        MonoObject? questPoolState = GetService(Services.QuestManager)["m_questPoolState"];
 
         if (questPoolState == null) return null;
 
         Dictionary<QuestPoolType, DateTime> questPools = new();
 
-        foreach (MonoWrapper curEntry in questPoolState["_entries"]!.AsArray())
+        foreach (KeyValuePair<dynamic, dynamic> curEntry in GetIteratorFromDict(questPoolState))
         {
-            MonoWrapper? questPoolEntry = curEntry["value"];
+            MonoObject? questPoolEntry = curEntry.Value;
             double secondsUntilNextGrant =
-                DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]?.Value);
+                DynamicUtil.TryCast<double>(questPoolEntry?["_SecondsUntilNextGrant"]);
 
             try
             {
                 if (secondsUntilNextGrant != 0)
-                    questPools.Add((QuestPoolType)questPoolEntry!["_QuestPoolId"]!.Value!,
+                    questPools.Add((QuestPoolType)questPoolEntry!["_QuestPoolId"],
                         DateTime.Now.AddSeconds(secondsUntilNextGrant));
             }
             catch (ArgumentException)
@@ -230,12 +257,14 @@ public partial class Reflection : HMReflection, IReflectionEx
 
     private string? FindGameStringInternal(string key)
     {
-        MonoWrapper[]? gameStrings = new MonoWrapper(Mirror.Root?["GameStrings"])["s_tables"]?["valueSlots"]?.AsArray();
+        MonoObject? gameStringsTables = Mirror.Root?["GameStrings"]["s_tables"];
+        MonoArray? gameStrings = gameStringsTables?["valueSlots"];
         if (gameStrings == null) return null;
 
-        foreach (MonoWrapper? gameStringTable in gameStrings)
+        foreach (MonoObject? gameStringTable in GetIteratorFromArray(gameStrings))
         {
-            string? text = Map.GetValue(gameStringTable["m_table"], key);
+            string? text = GetIteratorFromDict((MonoObject?)gameStringTable?["m_table"])
+                .FirstOrDefault(entry => entry.Key == key).Value;
             if (text != null) return text;
         }
 

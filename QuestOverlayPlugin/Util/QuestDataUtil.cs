@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using HSReflection;
-using HSReflection.Objects;
+using QuestOverlayPlugin.HSReflection;
+using QuestOverlayPlugin.HSReflection.Objects;
 
 namespace QuestOverlayPlugin.Util;
 

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using Hearthstone_Deck_Tracker.Utility.Extensions;
 using Hearthstone_Deck_Tracker.Utility.MVVM;
-using HSReflection.Enums;
+using QuestOverlayPlugin.HSReflection.Enums;
 using static QuestOverlayPlugin.Util.QuestDataUtil;
 
 namespace QuestOverlayPlugin.Overlay;

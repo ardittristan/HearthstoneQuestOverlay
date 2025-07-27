@@ -1,9 +1,8 @@
 ﻿using HearthMirror;
-using HSReflection.Enums;
-using HSReflection.Objects;
-using HSReflection.Util;
+using QuestOverlayPlugin.HSReflection.Enums;
+using QuestOverlayPlugin.HSReflection.Objects;
 
-namespace HSReflection
+namespace QuestOverlayPlugin.HSReflection
 {
     public interface IReflectionEx : IReflection
     {
@@ -17,6 +16,6 @@ namespace HSReflection
 
         List<PlayerQuestState>? GetQuestStates();
 
-        MonoWrapper GetServiceMonoWrapper(string name);
+        dynamic GetService(string name);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using Hearthstone_Deck_Tracker.Utility.MVVM;
-using HSReflection.Enums;
-using HSReflection.Objects;
+using QuestOverlayPlugin.HSReflection.Enums;
+using QuestOverlayPlugin.HSReflection.Objects;
 using QuestOverlayPlugin.Util;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 

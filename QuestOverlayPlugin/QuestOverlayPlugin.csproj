@@ -22,15 +22,14 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <NoWarn>1701;1702;4014</NoWarn>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="Build">
     <ItemGroup>
-      <FilesToCopy Include="$(TargetDir)**\HearthMirror.Scripts.dll" />
       <FilesToCopy Include="$(TargetDir)**\QuestOverlayPlugin.dll" />
       <FilesToCopy Include="$(TargetDir)**\TextureExtractor.dll" />
       <FilesToCopy Include="$(TargetDir)**\WriteableBitmapEx.Wpf.dll" />
-      <FilesToCopy Include="$(TargetDir)**\Fasterflect.Reflect.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(APPDATA)\HearthstoneDeckTracker\Plugins\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(CI)' != 'true' " SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)..\..\HearthstoneQuestOverlay\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(Configuration)' == 'Release' " SkipUnchangedFiles="true" />
@@ -42,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="HearthMirror">
+    <Reference Include="HearthMirror" Publicize="true">
       <HintPath>$(HSDTPath)\HearthMirror.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -64,6 +63,11 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(HSDTPath)\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Reflection.DispatchProxy">
+      <HintPath>$(HSDTPath)\System.Reflection.DispatchProxy.dll</HintPath>
+      <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Windows.Interactivity">
@@ -117,10 +121,20 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="WriteableBitmapEx" Version="1.6.8" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HSReflection\HSReflection.csproj" />
+    <ProjectReference Include="..\HearthMirrorGenerator\HearthMirrorGenerator.csproj">
+      <Name>HearthMirrorGenerator</Name>
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </ProjectReference>
     <ProjectReference Include="..\TextureExtractor\TextureExtractor.csproj" />
   </ItemGroup>
 
