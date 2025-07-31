@@ -15,7 +15,5 @@ namespace QuestOverlayPlugin.HSReflection
         List<Quest>? GetQuests();
 
         List<PlayerQuestState>? GetQuestStates();
-
-        dynamic GetService(string name);
     }
 }

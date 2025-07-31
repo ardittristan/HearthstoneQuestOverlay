@@ -14,11 +14,10 @@ public class Quest
     public QuestPoolType PoolType { get; init; }
     public int Progress { get; init; }
     public string ProgressMessage { get; init; } = null!;
-    public dynamic? Properties { get; set; }
     public int QuestId { get; init; }
     public int Quota { get; init; }
     public int RerollCount { get; init; }
-    public dynamic Rewards { get; init; } = null!;
+    //public dynamic Rewards { get; init; } = null!;
     public int RewardTrackXp { get; init; }
     public int RewardTrackBonusXp { get; init; }
     public RewardTrackType RewardTrackType { get; init; }

@@ -7,12 +7,11 @@
     <AssemblyTitle>QuestOverlayPlugin</AssemblyTitle>
     <Company>ardittristan</Company>
     <Product>QuestOverlayPlugin</Product>
-    <Copyright>Copyright ©  2022</Copyright>
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <ProjectGuid>{48EAC139-5942-437D-BFD1-01823ACA9930}</ProjectGuid>
     <TargetFramework>net472</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <Nullable>enable</Nullable>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>obj\Generated</CompilerGeneratedFilesOutputPath>
@@ -23,6 +22,11 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <NoWarn>1701;1702;4014</NoWarn>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(HSDTPath)\HearthstoneDeckTracker.exe</StartProgram>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="Build">
