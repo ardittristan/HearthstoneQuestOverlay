@@ -1,4 +1,6 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Interactivity;
+using QuestOverlayPlugin.Behaviors;
 using QuestOverlayPlugin.HSReflection;
 using QuestOverlayPlugin.HSReflection.Enums;
 
@@ -34,5 +36,12 @@ public partial class QuestWindowEmpty : UserControl
         NextQuestTimes = Reflection.Client.GetNextQuestTimes();
 
         DataContext = this;
+
+        Interaction.GetBehaviors(NextQuestTextBlock).Add(new PeriodicBindingUpdateBehavior()
+        {
+            Interval = new TimeSpan(0, 1, 0),
+            Property = TextBlock.TextProperty,
+            Mode = PeriodicBindingUpdateMode.UPDATE_TARGET
+        });
     }
 }

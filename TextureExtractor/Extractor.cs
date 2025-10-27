@@ -75,6 +75,7 @@ public class Extractor
 
             manager.UnloadAssetsFile(assetsFileInst);
         }
+
         Break:
 
         manager.UnloadAll(true);
@@ -107,7 +108,12 @@ public class Extractor
 
             string name = textureField.m_Name;
 
-            byte[] texDat = textureField.GetTextureData(assetsFileInst);
+            byte[] texDat = TextureFile.DecodeManagedData(
+                textureField.FillPictureData(assetsFileInst),
+                (TextureFormat)textureField.m_TextureFormat,
+                textureField.m_Width,
+                textureField.m_Height
+            );
             unsafe
             {
                 fixed (byte* p = texDat)

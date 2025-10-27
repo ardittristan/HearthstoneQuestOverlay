@@ -15,9 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AssetsTools.NET" Version="3.0.1" />
-    <PackageReference Include="AssetsTools.NET.Texture" Version="1.0.0" />
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43">
+    <PackageReference Include="AssetsTools.NET" Version="3.0.2" />
+    <PackageReference Include="AssetsTools.NET.Texture" Version="3.0.2" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="PortableSettingsProvider" Version="0.2.5">

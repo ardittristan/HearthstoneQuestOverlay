@@ -15,11 +15,7 @@
                 <Grid DockPanel.Dock="Top">
                     <TextBlock Text="All quests completed" Foreground="White" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Left" />
                 </Grid>
-                <TextBlock Text="{Binding NextQuest}" d:Text="New quest in 6 hours"  Foreground="White" Margin="0,4" FontSize="14">
-                    <i:Interaction.Behaviors>
-                        <b:PeriodicBindingUpdateBehavior Interval="0:01:00" Property="{x:Static TextBlock.TextProperty}" Mode="UPDATE_TARGET" />
-                    </i:Interaction.Behaviors>
-                </TextBlock>
+                <TextBlock x:Name="NextQuestTextBlock" Text="{Binding NextQuest}" d:Text="New quest in 6 hours"  Foreground="White" Margin="0,4" FontSize="14" />
             </DockPanel>
         </Border>
     </Grid>
