@@ -45,7 +45,7 @@
                     </Border>
                     <hearthstoneDeckTracker:HearthstoneTextBlock Text="{Binding ProgressText}" d:Text="1 / 5"  Fill="#FFF" FontSize="16" Margin="0,2" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
-                <TextBlock Text="{Binding Description}" d:Text="Win 5 games of Tavern Brawl, Arena, Battlegrounds, or Duels." Foreground="White" TextWrapping="Wrap" Margin="0,4" FontSize="14" />
+                <controls:HtmlTextBlock Html="{Binding Description}" d:Html="Win 5 games of Tavern Brawl, Arena, Battlegrounds, or &lt;i&gt;Duels.&lt;/i&gt;" Foreground="White" TextWrapping="Wrap" Margin="0,4" FontSize="14" />
             </DockPanel>
         </Border>
         <Ellipse Width="163" Fill="#221717" Margin="-1,9,0,6" HorizontalAlignment="Left" />
