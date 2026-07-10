@@ -11,9 +11,17 @@ public class QuestViewModel : ViewModel
 {
     public QuestViewModel(Quest quest)
     {
-        Title = quest.Name.Length == 0
-            ? StringUtils.UpperFirst(Enum.GetName(typeof(QuestPoolType), (int)quest.PoolType)!)
-            : quest.Name;
+        if (quest.Name.Length == 0)
+            try
+            {
+                Title = quest.PoolType.GetDescription();
+            }
+            catch (ArgumentException)
+            {
+                Title = $"Unknown ({(int)quest.PoolType})";
+            }
+        else
+            Title = quest.Name;
         Description = quest.Description;
         bool completed = quest.Progress >= quest.Quota;
         ProgressText = completed ? "Completed" : quest.ProgressMessage;

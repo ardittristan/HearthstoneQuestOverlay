@@ -14,7 +14,7 @@ public partial class QuestWindowEmpty : UserControl
         {
             DateTime nextQuestTime = NextQuestTimes == null
                 ? DateTime.Now
-                : NextQuestTimes.Values.Where(dt => dt >= DateTime.Now).Min();
+                : NextQuestTimes.Values.Where(dt => dt >= DateTime.Now).DefaultIfEmpty().Min();
             TimeSpan timeLeft = nextQuestTime - DateTime.Now;
             return "New quest in " + timeLeft switch
             {

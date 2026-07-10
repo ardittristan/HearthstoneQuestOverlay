@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
+using Hearthstone_Deck_Tracker.Utility.Logging;
 using QuestOverlayPlugin.HSReflection.Enums;
 using QuestOverlayPlugin.HSReflection.Objects;
 using QuestOverlayPlugin.HSReflection.Util;
@@ -78,6 +79,12 @@ public class Reflection : HMReflection, IReflectionEx
 
                 int questId = quest.Get<int>("m_ID");
 
+                QuestPoolType poolType = (QuestPoolType?)questPoolStateEntry.TryGet<int?>("_QuestPoolId") ??
+                                         QuestPoolType.INVALID;
+
+                if (!Enum.IsDefined(typeof(QuestPoolType), poolType))
+                    Log.Error("Unknown Pool Type " + (int)poolType);
+
                 if (!QuestRecordCache.ContainsKey(questId))
                     QuestRecordCache.Add(questId, new QuestRecord()
                     {
@@ -100,7 +107,6 @@ public class Reflection : HMReflection, IReflectionEx
                         RewardTrackType = (RewardTrackType?)quest.TryGet<int?>("m_rewardTrackType") ??
                                           RewardTrackType.NONE
                     });
-
 
                 questRecords.Add(questId, QuestRecordCache[questId]);
             }
