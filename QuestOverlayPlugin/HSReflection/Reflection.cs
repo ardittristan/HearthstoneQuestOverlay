@@ -46,6 +46,13 @@ public class Reflection : HMReflection, IReflectionEx
     private static readonly Dictionary<int, QuestRecord> QuestRecordCache = new();
     private static readonly object QuestRecordCacheLock = new();
 
+    public static void ClearQuestRecordCache()
+    {
+        _questRecords.Clear();
+        lock (QuestRecordCacheLock)
+            QuestRecordCache.Clear();
+    }
+
 #if DEBUG
     public Dictionary<int, QuestRecord> GetQuestRecords() => TryGetInternal(GetQuestRecordsWrap);
     private Dictionary<int, QuestRecord> GetQuestRecordsWrap() => Wrap(GetQuestRecordsInternal);

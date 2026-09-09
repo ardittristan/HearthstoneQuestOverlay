@@ -37,6 +37,14 @@ public class QuestListViewModel : ViewModel
         }
     }
 
+    private double _scale = 1;
+
+    public double Scale
+    {
+        get => _scale;
+        set { _scale = value; OnPropertyChanged(); }
+    }
+
     private List<QuestViewModel>? _quests;
     public List<QuestViewModel>? Quests
     {

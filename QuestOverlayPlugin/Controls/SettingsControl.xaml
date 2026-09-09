@@ -24,5 +24,9 @@
             <Label Content="Enable battlegrounds quest overlay" FontSize="16" />
             <controls:ToggleSwitch d:Height="14" d:Width="32" Name="BattlegroundsQuestOverlayToggle" HorizontalAlignment="Right" OnLabel="" OffLabel="" />
         </DockPanel>
+        <DockPanel Margin="10,10,10,0">
+            <Label Content="Scale quest overlay" FontSize="16" />
+            <controls:NumericUpDown Minimum="0.5" Maximum="2" Interval="0.05" Name="OverlayScale" HorizontalAlignment="Right" SnapToMultipleOfInterval="True" />
+        </DockPanel>
     </StackPanel>
 </UserControl>

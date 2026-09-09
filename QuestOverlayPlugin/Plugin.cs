@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using HearthMirror.Objects;
 using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.API;
 using Hearthstone_Deck_Tracker.Controls.Overlay.Mercenaries;
@@ -37,6 +38,7 @@ public class Plugin : IPlugin, Updater.IUpdater
     private SettingsControl _settingsControl = null!;
 
     private static bool _gameRunning = false;
+    private static bool _gameRunningAtStartup = false;
 
     private static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -103,6 +105,8 @@ public class Plugin : IPlugin, Updater.IUpdater
                     Path.Combine(Config.Instance.HearthstoneDirectory, @"Hearthstone_Data\hand.cur"), 20, 2), true);
 
         InitSettings();
+
+        _gameRunningAtStartup = Core.Game.IsRunning;
 
         Log.Info("Loaded Hearthstone Quest Overlay.");
 
@@ -173,7 +177,7 @@ public class Plugin : IPlugin, Updater.IUpdater
         GameEvents.OnModeChanged.Add(Update);
         GameEvents.OnModeChanged.Add(OnGameStart);
         GameEvents.OnModeChanged.Add(UpdateQuestWindow);
-        Watchers.ExperienceWatcher.NewExperienceHandler += UpdateEventHandler;
+        Watchers.ExperienceWatcher.RewardTrackDataChanged += UpdateEventHandler;
         Watchers.UiWatcher.Change += UpdateEventHandler;
         if (Core.Game.IsRunning) Update();
         if (Core.Game.IsRunning) OnGameStart();
@@ -208,6 +212,13 @@ public class Plugin : IPlugin, Updater.IUpdater
         hearthstoneProcess.EnableRaisingEvents = true;
         hearthstoneProcess.Exited += OnGameExit;
 
+        if (!_gameRunningAtStartup)
+            Task.Delay(30_000).ContinueWith(t =>
+            {
+                Reflection.ClearQuestRecordCache();
+                ForceNext();
+            });
+
         if (Settings.ShowPopupWindow)
         {
             _questListWindow.Dispatcher.Invoke(() => _questListWindow.Show());
@@ -232,6 +243,9 @@ public class Plugin : IPlugin, Updater.IUpdater
     {
         Settings = Settings.Load();
 
+        QuestListVM.Scale = Settings.OverlayScale;
+        BattlegroundsQuestListVM.Scale = Settings.OverlayScale;
+
         _settingsControl = new SettingsControl();
 
         _settingsFlyout = new Flyout
@@ -249,8 +263,12 @@ public class Plugin : IPlugin, Updater.IUpdater
             Settings.ShowQuestOverlay = (bool)_settingsControl.QuestOverlayToggle.IsChecked!;
             Settings.ShowBattlegroundsQuestOverlay = (bool)_settingsControl.BattlegroundsQuestOverlayToggle.IsChecked!;
             Settings.ShowPopupWindow = (bool)_settingsControl.PopupWindowToggle.IsChecked!;
+            Settings.OverlayScale = (double)_settingsControl.OverlayScale.Value!;
 
             Settings.Save();
+
+            QuestListVM.Scale = Settings.OverlayScale;
+            BattlegroundsQuestListVM.Scale = Settings.OverlayScale;
 
             if (Core.Game.IsRunning && Settings.ShowPopupWindow &&
                 !Application.Current.Windows.OfType<QuestListWindow>().Any())
@@ -275,7 +293,7 @@ public class Plugin : IPlugin, Updater.IUpdater
 
     public void OnUnload()
     {
-        Watchers.ExperienceWatcher.NewExperienceHandler -= UpdateEventHandler;
+        Watchers.ExperienceWatcher.RewardTrackDataChanged -= UpdateEventHandler;
         Watchers.UiWatcher.Change -= UpdateEventHandler;
 
         RemoveOverlay();
@@ -347,7 +365,7 @@ public class Plugin : IPlugin, Updater.IUpdater
 
     internal void ShowQuestsButton()
     {
-        _questListButtonBehavior.Show();
+        _questListButtonBehavior.Show(AnimationType.Slide);
         OverlayExtensions.SetIsOverlayHitTestVisible(_questListButton, false);
         OverlayExtensions.SetIsOverlayHitTestVisible(_questListButton, true);
     }
@@ -355,7 +373,7 @@ public class Plugin : IPlugin, Updater.IUpdater
     internal void HideQuestsButton()
     {
         HideQuests();
-        _questListButtonBehavior.Hide();
+        _questListButtonBehavior.Hide(AnimationType.Slide);
     }
 
     internal void ShowOrHideBattlegroundsQuestsButton()
@@ -368,7 +386,7 @@ public class Plugin : IPlugin, Updater.IUpdater
 
     internal void ShowBattlegroundsQuestsButton()
     {
-        _battlegroundsQuestListButtonBehavior.Show();
+        _battlegroundsQuestListButtonBehavior.Show(AnimationType.Slide);
         OverlayExtensions.SetIsOverlayHitTestVisible(_battlegroundsQuestListButton, false);
         OverlayExtensions.SetIsOverlayHitTestVisible(_battlegroundsQuestListButton, true);
     }
@@ -376,7 +394,7 @@ public class Plugin : IPlugin, Updater.IUpdater
     internal void HideBattlegroundsQuestsButton()
     {
         HideBattlegroundsQuests();
-        _battlegroundsQuestListButtonBehavior.Hide();
+        _battlegroundsQuestListButtonBehavior.Hide(AnimationType.Slide);
     }
 
     internal void ForceNextQuestWindowUpdate() => QuestListWindowVM.ForceNext = true;
@@ -385,29 +403,29 @@ public class Plugin : IPlugin, Updater.IUpdater
     {
         ShowQuestsButton();
         QuestListVM.UpdateAsync();
-        _questListBehavior.Show();
+        _questListBehavior.Show(AnimationType.Slide);
     }
 
     internal void ShowBattlegroundsQuests()
     {
         ShowBattlegroundsQuestsButton();
         BattlegroundsQuestListVM.UpdateAsync();
-        _battlegroundsQuestListBehavior.Show();
+        _battlegroundsQuestListBehavior.Show(AnimationType.Slide);
     }
 
     internal void HideQuests()
     {
-        _questListBehavior.Hide();
+        _questListBehavior.Hide(AnimationType.Slide);
     }
 
     internal void HideBattlegroundsQuests()
     {
-        _battlegroundsQuestListBehavior.Hide();
+        _battlegroundsQuestListBehavior.Hide(AnimationType.Slide);
     }
 
-    public static void UpdateEventHandler(object sender, ExperienceEventArgs args)
+    public static void UpdateEventHandler(RewardTrackData obj)
     {
-        if (args.IsChanged) Update();
+        Update();
     }
 
     public static void UpdateEventHandler(object sender, UIEventArgs args)
@@ -421,6 +439,11 @@ public class Plugin : IPlugin, Updater.IUpdater
     {
         Instance.ShowOrHideQuestsButton();
         Instance.ShowOrHideBattlegroundsQuestsButton();
+        ForceNext();
+    }
+
+    internal static void ForceNext()
+    {
         Instance.QuestListVM.ForceNext = true;
         Instance.BattlegroundsQuestListVM.ForceNext = true;
         Instance.QuestListWindowVM.ForceNext = true;

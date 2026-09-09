@@ -13,6 +13,7 @@ public class Settings
     public bool ShowQuestOverlay = true;
     public bool ShowPopupWindow = false;
     public bool ShowBattlegroundsQuestOverlay = true;
+    public double OverlayScale = 0.85;
 
     public void Save()
     {

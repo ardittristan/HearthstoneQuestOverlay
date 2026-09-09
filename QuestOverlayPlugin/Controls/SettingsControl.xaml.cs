@@ -12,5 +12,6 @@ public sealed partial class SettingsControl : UserControl
         PopupWindowToggle.IsChecked = Plugin.Instance.Settings.ShowPopupWindow;
         QuestOverlayToggle.IsChecked = Plugin.Instance.Settings.ShowQuestOverlay;
         BattlegroundsQuestOverlayToggle.IsChecked = Plugin.Instance.Settings.ShowBattlegroundsQuestOverlay;
+        OverlayScale.Value = Plugin.Instance.Settings.OverlayScale;
     }
 }
